@@ -13,6 +13,7 @@ import * as space from '../cinema/spaceScenes';
 import { audio } from '../core/audio';
 import { haptic, inApp, post, setHaptics } from '../core/bridge';
 import { CELL } from '../core/constants';
+import { FrameWatch, resolveAuto, stepDown } from '../core/graphics';
 import { lang, setLang, tr } from '../core/i18n';
 import { Input } from '../core/input';
 import { heroCourse } from '../entities/heroes/course';
@@ -116,6 +117,8 @@ export class Game {
   private frames = 0;
   private fpsT = 0;
   private hudT = 0;
+  /** Auto graphics: watches the frame rate during play and steps the quality down when it can't keep up. */
+  private watch = new FrameWatch();
   private director: Director | null = null;
   private ship: CinemaScene | null = null;
   private queue: { script: (d: Director) => Promise<void>; resolve: () => void }[] = [];
@@ -130,7 +133,10 @@ export class Game {
     this.save = loadSave() ?? newSave();
     // Finished a chapter before the next one existed? It's open now.
     if (catchUpChapters(this.save)) writeSave(this.save);
-    this.renderer = new THREE.WebGLRenderer({ canvas, antialias: this.save.settings.quality !== 'low', powerPreference: 'high-performance' });
+    resolveAuto(this.save.settings);
+    // No antialiasing on the canvas itself: medium and high smooth edges in the bloom pass's own multisampled target,
+    // so a multisampled screen would only cost memory and fill rate.
+    this.renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: 'high-performance' });
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 0.92;
@@ -319,6 +325,17 @@ export class Game {
     this.post.configure(s.quality);
   }
 
+  /** Auto graphics found play too slow: one step down now (sharpness and glow change at once, shadows from the next deck), and remembered. */
+  private slowDown() {
+    const s = this.save.settings;
+    const next = stepDown(s.quality);
+    if (!next) return;
+    s.quality = next;
+    s.autoCap = next;
+    this.applySettings(s);
+    writeSave(this.save);
+  }
+
   private resize() {
     const w = window.innerWidth;
     const h = window.innerHeight;
@@ -449,6 +466,7 @@ export class Game {
     this.ui.settings(
       this.save.settings,
       (s) => {
+        resolveAuto(s);
         this.save.settings = s;
         this.applySettings(s);
         writeSave(this.save);
@@ -464,6 +482,8 @@ export class Game {
               () => {
                 clearSave();
                 this.save = newSave();
+                resolveAuto(this.save.settings);
+                this.applySettings(this.save.settings);
                 this.toTitle();
               },
               () => this.settings(back, allowReset),
@@ -1063,8 +1083,11 @@ export class Game {
   }
 
   private step(t: number) {
-    const dt = Math.min(0.05, Math.max(0, (t - this.last) / 1000));
+    const raw = (t - this.last) / 1000;
+    const dt = Math.min(0.05, Math.max(0, raw));
     this.last = t;
+    if (this.state !== 'play') this.watch.reset();
+    else if (this.save.settings.autoQuality && this.watch.sample(raw)) this.slowDown();
     this.frames += 1;
     this.fpsT += dt;
     if (this.fpsT >= 1) {

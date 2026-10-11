@@ -479,6 +479,8 @@ export const EL: Record<string, string> = {
   "LUX’s force pulse hits every enemy around you and shorts out lasers for a few seconds. It takes a long time to recharge.": "ο Παλμός Ισχύος του ΛΟΥΞ χτυπάει όλους τους εχθρούς γύρω σου και βραχυκυκλώνει τα λέιζερ για λίγα δευτερόλεπτα. Θέλει πολλή ώρα για να ξαναφορτίσει.",
   "Keyboard: WASD move · Space jump · J blast · K spin/pound · L dash · I pulse · E use · Q/R camera · Esc pause": "Πληκτρολόγιο: WASD κίνηση · Space άλμα · J βολή · K σβούρα/κάρφωμα · L ορμή · I παλμός · E χρήση · Q/R κάμερα · Esc παύση",
   "Got it!": "Κατάλαβα!",
+  "Auto": "Αυτόματα",
+  "Auto picks graphics this device runs smoothly. Now: {q}.": "Η αυτόματη επιλογή διαλέγει γραφικά που η συσκευή τρέχει ομαλά. Τώρα: {q}.",
   "Low": "Χαμηλή",
   "Medium": "Μεσαία",
   "High": "Υψηλή",

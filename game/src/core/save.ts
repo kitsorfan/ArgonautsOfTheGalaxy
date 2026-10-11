@@ -16,7 +16,12 @@ export type Quality = 'low' | 'medium' | 'high';
 export interface Settings {
   music: number;
   sfx: number;
+  /** The quality in effect (with Auto on, the game picks it; see core/graphics.ts). */
   quality: Quality;
+  /** Auto graphics: the game picks the quality for this device and steps it down if play gets slow. */
+  autoQuality: boolean;
+  /** The highest quality Auto may pick here, lowered when play was too slow; cleared by choosing Auto again. */
+  autoCap?: Quality;
   camSpeed: number;
   haptics: boolean;
   lang: Lang;
@@ -78,8 +83,7 @@ export interface SaveData {
 const KEY = 'leviathan3d.save.v1';
 
 export function defaultSettings(): Settings {
-  const lowEnd = (navigator.hardwareConcurrency ?? 8) <= 4;
-  return { music: 0.6, sfx: 0.85, quality: lowEnd ? 'low' : 'medium', camSpeed: 1, haptics: true, lang: detectLang() };
+  return { music: 0.6, sfx: 0.85, quality: 'medium', autoQuality: true, camSpeed: 1, haptics: true, lang: detectLang() };
 }
 
 export function newSave(): SaveData {
@@ -173,7 +177,9 @@ export function loadSave(): SaveData | null {
     }
   }
   if (best) {
-    best.settings = { ...defaultSettings(), ...best.settings };
+    // Saves from before Auto graphics: High was always a player's own choice, so it stays; anything else goes Auto.
+    const auto = best.settings?.autoQuality ?? best.settings?.quality !== 'high';
+    best.settings = { ...defaultSettings(), ...best.settings, autoQuality: auto };
     migrateSave(best);
   }
   return best;
