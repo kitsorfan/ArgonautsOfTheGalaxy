@@ -1,6 +1,6 @@
 import { audio } from '../core/audio';
 import { GAME_NAME, SHIP } from '../core/brand';
-import { LANGS, tr, upper } from '../core/i18n';
+import { LANGS, lang, tr, upper, type Lang } from '../core/i18n';
 import { resolveAuto } from '../core/graphics';
 import type { ButtonName, Input } from '../core/input';
 import { cleanBolts, type AtalantaUpgradeId, type OutfitHero, type Quality, type SaveData, type Settings, type UpgradeId } from '../core/save';
@@ -1184,9 +1184,14 @@ export class UI {
 
   /**
    * The boot splash: emblem and logo animate in over black, a loading bar fills while the game warms
-   * up (`ready`), then the 3D title scene fades in behind "TAP TO START".
+   * up (`ready`), then the 3D title scene fades in behind "TAP TO START". Until a language has been
+   * chosen (`pick`), it asks for one instead, in both languages, and the choice is the tap that starts.
    */
-  tapToStart(ready: Promise<void>, done: () => void) {
+  tapToStart(ready: Promise<void>, pick: ((l: Lang) => void) | null, done: () => void) {
+    // The question is asked in both languages at once, so it isn't translated.
+    const ask = pick
+      ? `<div class="boot-lang"><div class="boot-ask">Choose your language · Διάλεξε γλώσσα</div><div class="boot-langs">${LANGS.map((l) => `<button class="menu-btn${l.id === lang() ? ' primary' : ''}" data-l="${l.id}">${l.name}</button>`).join('')}</div></div>`
+      : `<div class="boot-tap">${tr('TAP TO START')}</div>`;
     const el = this.open(`<div class="boot">
       <div class="boot-bg"></div>
       <div class="boot-core">
@@ -1194,7 +1199,7 @@ export class UI {
         <div class="boot-logo"><span>${upper(tr(GAME_NAME))}</span></div>
         <div class="boot-tag">${tr('Six decks. One brave engineer. One very nervous robot.')}</div>
         <div class="boot-load"><i></i></div>
-        <div class="boot-tap">${tr('TAP TO START')}</div>
+        ${ask}
       </div>
       <div class="boot-foot">${tr('Headphones on for the best adventure')}</div>
     </div>`, false);
@@ -1213,13 +1218,29 @@ export class UI {
       bar.style.width = '100%';
       setTimeout(() => el.querySelector('.boot')?.classList.add('ready'), 250);
     });
+    let started = false;
     const go = () => {
-      if (!loaded) return;
-      window.removeEventListener('keydown', go);
+      if (!loaded || started) return;
+      started = true;
+      window.removeEventListener('keydown', key);
       done();
     };
-    el.addEventListener('pointerdown', go);
-    window.addEventListener('keydown', go);
+    // A key press picks the highlighted language.
+    const key = () => {
+      if (loaded && pick) pick(lang());
+      go();
+    };
+    if (pick) {
+      for (const b of el.querySelectorAll<HTMLElement>('.boot-langs button')) {
+        b.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (!loaded) return;
+          pick(b.dataset.l as Lang);
+          go();
+        });
+      }
+    } else el.addEventListener('pointerdown', go);
+    window.addEventListener('keydown', key);
   }
 
   confirm(text: string, yes: () => void, no: () => void) {
@@ -1383,6 +1404,7 @@ export class UI {
       b.addEventListener('click', () => {
         if (cur.lang === b.dataset.l) return;
         cur.lang = b.dataset.l as Settings['lang'];
+        cur.langChosen = true;
         audio.play('select');
         emit();
         // Redraw this screen in the new language.
