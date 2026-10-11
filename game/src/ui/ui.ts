@@ -1,6 +1,7 @@
 import { audio } from '../core/audio';
 import { GAME_NAME, SHIP } from '../core/brand';
 import { LANGS, tr, upper } from '../core/i18n';
+import { resolveAuto } from '../core/graphics';
 import type { ButtonName, Input } from '../core/input';
 import { cleanBolts, type AtalantaUpgradeId, type OutfitHero, type Quality, type SaveData, type Settings, type UpgradeId } from '../core/save';
 import {
@@ -1326,19 +1327,20 @@ export class UI {
   }
 
   settings(s: Settings, change: (s: Settings) => void, back: () => void, reset?: () => void) {
-    const q: Quality[] = ['low', 'medium', 'high'];
-    const qName: Record<Quality, string> = { low: tr('Low'), medium: tr('Medium'), high: tr('High') };
+    const q: (Quality | 'auto')[] = ['auto', 'low', 'medium', 'high'];
+    const qName: Record<Quality | 'auto', string> = { auto: tr('Auto'), low: tr('Low'), medium: tr('Medium'), high: tr('High') };
+    const autoNote = (x: Settings) => (x.autoQuality ? tr('Auto picks graphics this device runs smoothly. Now: {q}.', { q: qName[x.quality] }) : '');
     const el = this.open(`<div class="panel settings-panel">
       <div class="panel-head"><h2>${tr('SETTINGS')}</h2><button class="icon-btn back" aria-label="${tr('Done')}">${ICON.close}</button></div>
       <div class="settings-grid">
         <label class="slider"><span>${tr('Music')}</span><input type="range" min="0" max="1" step="0.05" value="${s.music}" class="music"/></label>
         <label class="slider"><span>${tr('Sounds')}</span><input type="range" min="0" max="1" step="0.05" value="${s.sfx}" class="sfx"/></label>
         <label class="slider"><span>${tr('Camera speed')}</span><input type="range" min="0.4" max="2" step="0.1" value="${s.camSpeed}" class="cam"/></label>
-        <div class="slider"><span>${tr('Graphics')}</span><div class="seg quality">${q.map((x) => `<button data-q="${x}" class="${s.quality === x ? 'on' : ''}">${qName[x]}</button>`).join('')}</div></div>
+        <div class="slider"><span>${tr('Graphics')}</span><div class="seg quality">${q.map((x) => `<button data-q="${x}" class="${(s.autoQuality ? 'auto' : s.quality) === x ? 'on' : ''}">${qName[x]}</button>`).join('')}</div></div>
         <div class="slider"><span>${tr('Vibration')}</span><div class="seg vib"><button data-v="1" class="${s.haptics ? 'on' : ''}">${tr('On')}</button><button data-v="0" class="${s.haptics ? '' : 'on'}">${tr('Off')}</button></div></div>
         <div class="slider"><span>${ICON.globe}</span><div class="seg lang">${LANGS.map((l) => `<button data-l="${l.id}" class="${s.lang === l.id ? 'on' : ''}">${l.name}</button>`).join('')}</div></div>
       </div>
-      <p class="note">${tr('Graphics changes apply when you enter the next deck.')}</p>
+      <p class="note"><span class="auto-note">${autoNote(s)}</span> ${tr('Graphics changes apply when you enter the next deck.')}</p>
       <div class="grid2"><button class="menu-btn primary done">${tr('Done')}</button>${reset ? `<button class="menu-btn danger reset">${tr('Erase save')}</button>` : '<span></span>'}</div></div>`);
     const cur = { ...s };
     const emit = () => change({ ...cur });
@@ -1365,7 +1367,17 @@ export class UI {
         });
       }
     };
-    seg('.quality', (b) => (cur.quality = b.dataset.q as Quality));
+    seg('.quality', (b) => {
+      if (b.dataset.q === 'auto') {
+        cur.autoQuality = true;
+        cur.autoCap = undefined;
+        resolveAuto(cur);
+      } else {
+        cur.autoQuality = false;
+        cur.quality = b.dataset.q as Quality;
+      }
+      $(el, '.auto-note').textContent = autoNote(cur);
+    });
     seg('.vib', (b) => (cur.haptics = b.dataset.v === '1'));
     for (const b of el.querySelectorAll<HTMLElement>('.lang button')) {
       b.addEventListener('click', () => {

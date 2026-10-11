@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Device from 'expo-device';
 import * as Haptics from 'expo-haptics';
 import { useKeepAwake } from 'expo-keep-awake';
 import * as NavigationBar from 'expo-navigation-bar';
@@ -12,12 +13,16 @@ import { WebView, type WebViewMessageEvent } from 'react-native-webview';
 import html from '@/generated/gameHtml';
 import { Music } from '@/music';
 
+import type { DeviceInfo } from '../../game/src/core/graphics';
 import type { MusicFile } from '../../game/src/core/music';
 
 /** Named after the game's old title; kept so existing saves carry over. */
 const SAVE_KEY = 'leviathan3d.save.v1';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
+
+/** What the game's Auto graphics needs to know about this phone (the page can't see its memory or age itself). */
+const DEVICE: DeviceInfo = { memory: Device.totalMemory, year: Device.deviceYearClass, model: Device.modelName, os: Platform.OS };
 
 type GameMessage =
   | { type: 'save'; data: string }
@@ -132,7 +137,7 @@ export default function Game() {
         style={styles.web}
         source={{ html }}
         originWhitelist={['*']}
-        injectedJavaScriptBeforeContentLoaded={`window.__SAVE__ = ${JSON.stringify(save ?? '')}; true;`}
+        injectedJavaScriptBeforeContentLoaded={`window.__SAVE__ = ${JSON.stringify(save ?? '')}; window.__DEVICE__ = ${JSON.stringify(DEVICE)}; true;`}
         onMessage={onMessage}
         onLoadEnd={() => SplashScreen.hideAsync().catch(() => {})}
         javaScriptEnabled
