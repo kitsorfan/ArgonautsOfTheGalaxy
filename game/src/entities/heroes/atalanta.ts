@@ -612,12 +612,20 @@ export class AtalantaMoves {
     this.wasHeld = held;
   }
 
-  /** Picks what to shoot at: the best enemy in front, else an arrow target she is facing. */
+  /**
+   * Picks what to shoot at: the best enemy in front, else an arrow target she is facing. A power arrow
+   * goes for a bullseye she is facing first (it still pierces any enemy on the way), so a guard nearby
+   * can't steal the shot.
+   */
   private aim(origin: THREE.Vector3, power: boolean): Target | THREE.Vector3 | null {
-    const w = this.world;
     const range = ATALANTA.aimRange * (power ? 1.4 : 1);
-    const enemy = w.findAimTarget(origin, this.p.facing, range);
-    if (enemy) return enemy;
+    const bullseye = power ? this.bullseye(origin) : null;
+    return bullseye ?? this.world.findAimTarget(origin, this.p.facing, range) ?? this.bullseye(origin);
+  }
+
+  /** The un-hit arrow target she is facing (the nearest and most in line), if any. */
+  private bullseye(origin: THREE.Vector3): THREE.Vector3 | null {
+    const w = this.world;
     let best: THREE.Vector3 | null = null;
     let bestScore = Infinity;
     for (const t of heroWorld(w).targets) {
