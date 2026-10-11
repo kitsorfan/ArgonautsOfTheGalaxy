@@ -11,6 +11,8 @@ import type { ArgoFlight } from './argo';
  */
 
 const V = (x = 0, y = 0, z = 0) => new THREE.Vector3(x, y, z);
+/** A point framed on the Argo's hull (the flight position is the middle of the whole ship, above the hull). */
+const H = (a: ArgoFlight, x: number, y: number, z: number) => V(x, y + a.keel, z);
 
 function chase(a: ArgoFlight): Rig {
   return a.cameraPose({ pos: V(), look: V(), fov: 50 }, 0);
@@ -20,7 +22,7 @@ function chase(a: ArgoFlight): Rig {
 export async function flightIntro(d: Director, a: ArgoFlight) {
   const w = a.world;
   const end = chase(a);
-  d.cut(V(-5.5, 1.6, -12), V(0, 1.2, 0), 42);
+  d.cut(H(a, -5.5, 1.6, -12), H(a, 0, 1.2, 0), 42);
   d.fade('#000000', 1, 0);
   audio.play('dash', 0.6, 0.6);
   const caption = d.caption(FLYOVER[w.def.id], 6);
@@ -28,8 +30,8 @@ export async function flightIntro(d: Director, a: ArgoFlight) {
     d.fade('#000000', 0, 1.2),
     d.fly(
       [
-        { pos: V(-8, 4, -3), look: V(0, 1.4, -1) },
-        { pos: V(4, 5, 7), look: V(0, 1, -4) },
+        { pos: H(a, -8, 4, -3), look: H(a, 0, 1.4, -1) },
+        { pos: H(a, 4, 5, 7), look: H(a, 0, 1, -4) },
         { pos: end.pos, look: end.look },
       ],
       6.5,
@@ -45,11 +47,11 @@ export async function flightOutro(d: Director, a: ArgoFlight) {
   const w = a.world;
   const off = a.offset;
   off.set(0, 0, 46);
-  d.cut(V(20, 5, -14), V(0, 0, 18), 52);
+  d.cut(H(a, 20, 5, -14), H(a, 0, 0, 18), 52);
   audio.play('dash', 0.9);
   await Promise.all([
     d.tween(5, (k) => off.set(0, Math.sin(k * Math.PI) * 1.5, 46 - k * 120), ease.inOut),
-    d.cam(V(10, 7, -30), V(0, 1, -80), 5, ease.inOut),
+    d.cam(H(a, 10, 7, -30), H(a, 0, 1, -80), 5, ease.inOut),
   ]);
   const g = a.giantPosition();
   await d.cam(V(0, 6, -60), g, 3, ease.inOut, 46);
