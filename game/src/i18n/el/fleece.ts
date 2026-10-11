@@ -32,6 +32,7 @@ export const EL_FLEECE: Record<string, string> = {
   "The Fleece vault. The Gardeners closed it with three seals, and wrote on the gate in light-words.": "Το θησαυροφυλάκιο του Δέρατος. Οι Κηπουροί το έκλεισαν με τρεις σφραγίδες κι έγραψαν στην πύλη με λέξεις από φως.",
   "It says: “Only those who stand TOGETHER may enter.” Three seals. Three heroes. That’s us!": "Λέει: «Μόνο όσοι στέκονται ΜΑΖΙ μπορούν να μπουν.» Τρεις σφραγίδες. Τρεις ήρωες. Εμείς είμαστε!",
   "Together. I keep finding that word everywhere these days.": "Μαζί. Αυτή τη λέξη τη βρίσκω παντού τελευταία.",
+  "See the three beams of light? One for each hero, in their colour. Bring the right hero close to a beam and press the action button!": "Βλέπετε τις τρεις δέσμες φωτός; Μία για κάθε ήρωα, στο χρώμα του. Φέρε τον σωστό ήρωα κοντά σε μια δέσμη και πάτα το κουμπί δράσης!",
   "Ah, the Argonauts! Right on time to watch me collect my prize. Look at it. The GOLDEN FLEECE.": "Α, οι Αργοναύτες! Ακριβώς στην ώρα σας για να με δείτε να παίρνω το βραβείο μου. Κοιτάξτε το. Το ΧΡΥΣΟΜΑΛΛΟ ΔΕΡΑΣ.",
   "With this I can make a thousand green planets... and sell every single one of them!": "Με αυτό μπορώ να φτιάξω χίλιους πράσινους πλανήτες... και να τους πουλήσω όλους, έναν έναν!",
   "You can’t SELL a planet!": "Δεν ΠΟΥΛΑΣ έναν πλανήτη!",
@@ -89,7 +90,7 @@ export const EL_FLEECE: Record<string, string> = {
   "A crawl tunnel in the roots, with yellow-and-black stripes: only Atalanta’s SLIDE fits under. Something glows at the far end...": "Ένα στενό τούνελ στις ρίζες, με κίτρινες και μαύρες ρίγες: χωράει μόνο η ΓΛΙΣΤΡΑ της Αταλάντης. Κάτι λάμπει στην άκρη...",
   "Cracked rock with gold in the cracks! Only General Brennus can smash it: switch to him, then CHARGE into it, or HOLD the CANNON for a BIG BLAST.": "Ραγισμένος βράχος με χρυσάφι στις ρωγμές! Μόνο ο Στρατηγός Βρέννος μπορεί να τον γκρεμίσει: γίνε αυτός, και μετά κάνε ΕΦΟΡΜΗΣΗ πάνω του ή ΚΡΑΤΑ το ΚΑΝΟΝΙ για μια ΜΕΓΑΛΗ ΒΟΛΗ.",
   "A Legion COMMAND POST! As General Brennus, walk up and press COMMAND. His old robots still know his voice.": "Ένας ΣΤΑΘΜΟΣ ΔΙΑΤΑΓΩΝ της Λεγεώνας! Ως Στρατηγός Βρέννος, πήγαινε κοντά και πάτα ΔΙΑΤΑΓΗ. Τα παλιά του ρομπότ αναγνωρίζουν ακόμα τη φωνή του.",
-  "THE FLEECE VAULT. Three seals, three heroes: a bullseye up high for Atalanta, a red switch on the root pillar for Jason (GRAPPLE up!), and a switch behind cracked rock for General Brennus.": "ΤΟ ΘΗΣΑΥΡΟΦΥΛΑΚΙΟ ΤΟΥ ΔΕΡΑΤΟΣ. Τρεις σφραγίδες, τρεις ήρωες: ένας στόχος ψηλά για την Αταλάντη, ένας κόκκινος διακόπτης πάνω στην κολόνα από ρίζες για τον Ιάσονα (ανέβα με τον ΓΑΝΤΖΟ!), κι ένας διακόπτης πίσω από ραγισμένο βράχο για τον Στρατηγό Βρέννο.",
+  "THE FLEECE VAULT. Three seals, three heroes: follow the three beams of light! Atalanta: a POWER ARROW at the bullseye up high. Jason: GRAPPLE up the root pillar, then POUND the red switch. General Brennus: SMASH the cracked rock, then POUND the switch behind it.": "ΤΟ ΘΗΣΑΥΡΟΦΥΛΑΚΙΟ ΤΟΥ ΔΕΡΑΤΟΣ. Τρεις σφραγίδες, τρεις ήρωες: ακολούθα τις τρεις δέσμες φωτός! Αταλάντη: ένα ΔΥΝΑΤΟ ΒΕΛΟΣ στον στόχο ψηλά. Ιάσονας: ανέβα με τον ΓΑΝΤΖΟ στην κολόνα από ρίζες και κάνε ΚΑΡΦΩΜΑ στον κόκκινο διακόπτη. Στρατηγός Βρέννος: σπάσε τον ραγισμένο βράχο και κάνε ΚΑΡΦΩΜΑ στον διακόπτη από πίσω.",
   "The Gardeners’ oldest poem, in light-words: “Under the SKY, the little seeds GROW. A FRIEND carries them HOME.” Step on the colours of the poem in order, and the Gardeners’ chest will open.": "Το πιο παλιό ποίημα των Κηπουρών, γραμμένο με φως: «Κάτω από τον ΟΥΡΑΝΟ, οι μικροί σπόροι ΜΕΓΑΛΩΝΟΥΝ. Ένας ΦΙΛΟΣ τους πηγαίνει ΣΠΙΤΙ.» Πάτησε τα χρώματα του ποιήματος με τη σειρά, και το σεντούκι των Κηπουρών θα ανοίξει.",
   // Story text, the boss card and the ring guard's intel card.
   "The great tree-temple of the <b>Gardeners</b>, taller than any mountain. Somewhere at the top, the <b style=\"color:#ffd166\">Golden Fleece</b> is waiting... and so is Aeëtes.": "Ο μεγάλος ναός-δέντρο των <b>Κηπουρών</b>, πιο ψηλός από κάθε βουνό. Κάπου στην κορυφή περιμένει το <b style=\"color:#ffd166\">Χρυσόμαλλο Δέρας</b>... και ο Αιήτης.",
@@ -158,4 +159,13 @@ export const EL_FLEECE: Record<string, string> = {
   "THINGS YOU WON BACK": "ΠΡΑΓΜΑΤΑ ΠΟΥ ΠΗΡΕΣ ΠΙΣΩ",
   "Everything found its way home!": "Όλα βρήκαν τον δρόμο για το σπίτι!",
   "GARDENER LIGHT-STONES": "ΦΩΤΟΠΕΤΡΕΣ ΤΩΝ ΚΗΠΟΥΡΩΝ",
+  // The vault seals' buttons and hints.
+  "POWER ARROW": "ΔΥΝΑΤΟ ΒΕΛΟΣ",
+  "POUND": "ΚΑΡΦΩΜΑ",
+  "SMASH": "ΣΠΑΣ’ ΤΟ",
+  "This seal is for Atalanta! Tap the SWITCH button until she is playing, then press POWER ARROW.": "Αυτή η σφραγίδα είναι για την Αταλάντη! Πάτα το κουμπί ΑΛΛΑΓΗ ώσπου να παίζεις μ’ εκείνη, και μετά πάτα ΔΥΝΑΤΟ ΒΕΛΟΣ.",
+  "Atalanta can’t pound switches! Tap the SWITCH button to play as Jason or General Brennus, then press POUND.": "Η Αταλάντη δεν μπορεί να καρφώσει διακόπτες! Πάτα το κουμπί ΑΛΛΑΓΗ για να παίξεις με τον Ιάσονα ή τον Στρατηγό Βρέννο, και μετά πάτα ΚΑΡΦΩΜΑ.",
+  "Only General Brennus can smash this rock! Tap the SWITCH button until he is playing, then press SMASH.": "Μόνο ο Στρατηγός Βρέννος μπορεί να σπάσει αυτόν τον βράχο! Πάτα το κουμπί ΑΛΛΑΓΗ ώσπου να παίζεις μ’ εκείνον, και μετά πάτα ΣΠΑΣ’ ΤΟ.",
+  "Seal broken! {n} more to go.": "Η σφραγίδα έσπασε! Μένουν ακόμα: {n}.",
+  "All three seals are broken! The Fleece vault is open!": "Έσπασαν και οι τρεις σφραγίδες! Το θησαυροφυλάκιο του Δέρατος άνοιξε!",
 };
