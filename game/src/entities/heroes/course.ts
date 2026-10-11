@@ -5,7 +5,7 @@
  * left wall over a chasm, a low gap to slide under, an arrow target on an island that opens the
  * door, and a few sporelings to try the bow and the kick on.
  */
-import type { Track } from '../../core/songs';
+import type { Track } from '../../core/music';
 import type { DeckId, LevelDef } from '../../world/levelTypes';
 
 const MAP = `

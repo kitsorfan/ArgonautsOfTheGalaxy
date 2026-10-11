@@ -1,4 +1,4 @@
-import type { Track } from '../core/songs';
+import type { Track } from '../core/music';
 import type { PuzzleKind } from '../game/puzzles';
 import type { PanelId } from '../ui/panels/ids';
 import type { FlightCourse } from '../vehicles/course';

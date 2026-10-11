@@ -404,6 +404,7 @@ export const EL: Record<string, string> = {
   "{n} of 18": "{n} από 18",
   "Thank you for playing!": "Ευχαριστούμε που έπαιξες!",
   "STARRING": "ΠΡΩΤΑΓΩΝΙΣΤΟΥΝ",
+  "MUSIC": "ΜΟΥΣΙΚΗ",
   "Jason, junior engineer": "Ιάσονας, δόκιμος μηχανικός",
   "LUX, a very brave little drone": "ΛΟΥΞ, ένα πολύ γενναίο ρομποτάκι",
   "WITH": "ΣΥΜΜΕΤΕΧΟΥΝ",

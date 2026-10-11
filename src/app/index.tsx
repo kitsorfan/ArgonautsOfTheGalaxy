@@ -10,6 +10,9 @@ import { AppState, BackHandler, Platform, StyleSheet, View } from 'react-native'
 import { WebView, type WebViewMessageEvent } from 'react-native-webview';
 
 import html from '@/generated/gameHtml';
+import { Music } from '@/music';
+
+import type { MusicFile } from '../../game/src/core/music';
 
 /** Named after the game's old title; kept so existing saves carry over. */
 const SAVE_KEY = 'leviathan3d.save.v1';
@@ -21,6 +24,8 @@ type GameMessage =
   | { type: 'haptic'; kind: 'light' | 'medium' | 'heavy' | 'success' | 'warning' }
   | { type: 'exit' }
   | { type: 'review' }
+  | { type: 'music'; file: MusicFile | null; volume: number }
+  | { type: 'musicVolume'; volume: number }
   | { type: 'error'; message: string };
 
 function haptic(kind: Extract<GameMessage, { type: 'haptic' }>['kind']) {
@@ -42,6 +47,7 @@ function haptic(kind: Extract<GameMessage, { type: 'haptic' }>['kind']) {
 export default function Game() {
   useKeepAwake();
   const web = useRef<WebView>(null);
+  const music = useRef<Music | null>(null);
   // undefined while loading; null when there is no save yet.
   const [save, setSave] = useState<string | null | undefined>(undefined);
 
@@ -57,11 +63,21 @@ export default function Game() {
   }, []);
 
   useEffect(() => {
+    const m = new Music();
+    music.current = m;
+    return () => {
+      m.release();
+      music.current = null;
+    };
+  }, []);
+
+  useEffect(() => {
     const back = BackHandler.addEventListener('hardwareBackPress', () => {
       web.current?.injectJavaScript('window.__onBack && window.__onBack(); true;');
       return true;
     });
     const app = AppState.addEventListener('change', (state) => {
+      music.current?.setActive(state === 'active');
       if (state !== 'active') web.current?.injectJavaScript('window.__onPause && window.__onPause(); true;');
       else if (Platform.OS === 'android') NavigationBar.setVisibilityAsync('hidden').catch(() => {});
     });
@@ -94,6 +110,12 @@ export default function Game() {
         StoreReview.isAvailableAsync()
           .then((ok) => (ok ? StoreReview.requestReview() : undefined))
           .catch(() => {});
+        break;
+      case 'music':
+        music.current?.play(msg.file, msg.volume);
+        break;
+      case 'musicVolume':
+        music.current?.setVolume(msg.volume);
         break;
       case 'error':
         console.warn('[game]', msg.message);

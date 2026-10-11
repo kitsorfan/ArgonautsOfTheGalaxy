@@ -23,8 +23,8 @@ It's made for players around 10 and up: bright, forgiving, and about 5–6 hours
 ## Highlights
 
 - **The whole game is one offline HTML page.** The game is TypeScript and three.js, and esbuild bundles it, fonts included, into a single 1.5 MB page. The Expo app shows that page full screen in a WebView and handles what the page can't: saving, haptics, the Android back button and screen orientation.
-- **No asset files.** Characters, bosses and levels are built from code, textures are drawn on canvases at runtime, and all music and sound effects are synthesized with the Web Audio API.
-- **A song for every level and every boss.** A small synthesizer (`game/src/core/audio.ts`, instruments in `instruments.ts`) plays songs written as data in `game/src/core/songs.ts`: a written tune and a second voice over chords, bass, arpeggio and drum patterns, in sections. The ship's decks sound synthy, Gaia Nova's regions match their biomes, and the Argonauts' voyage has Greek colour (bouzouki, lyre, aulos and santouri, Dorian, Phrygian and Hijaz modes, 7/8 and 9/8 dances). The story bosses have their own themes, and the smaller bosses each play their own variation of their chapter's boss theme.
+- **Almost no asset files.** Characters, bosses and levels are built from code, textures are drawn on canvases at runtime, and the sound effects are synthesized with the Web Audio API. The music is the one exception (below).
+- **Openly licensed music, played natively.** Thirteen CC0 and CC BY recordings in `assets/music` (credited in `assets/music/CREDITS.md` and the end credits), one per mood: calm and tense ship decks, Gaia Nova's open lands, frost and jungle, the voyage, mystery, epic, and three kinds of boss fight. `game/src/core/music.ts` maps every level and boss to one. In the app the page only names the track; the phone plays it with expo-audio (`src/music.ts`), so the music costs the game's frame nothing. In a browser an `<audio>` element plays it.
 - **Levels are ASCII maps, checked by a solver.** A reachability checker simulates Jason's jumps, dashes and hovering on every deck. It reports anything Jason can't reach, checks that each deck really needs its new ability, and times the fastest route through every countdown puzzle to prove it can be beaten with time to spare. The Jest suite runs the same checks.
 - **In-engine cutscenes.** A small cutscene director moves the camera through the real level and adds letterbox bars, boss name cards and slow-motion finishes.
 - **Storybook pictures.** The big story moments also get hand-drawn cartoon illustrations, written as inline SVG, that slowly pan inside a picture frame while the narration plays.
@@ -350,7 +350,7 @@ The game is in English and Greek: in Greek it is called **Αργοναύτες �
 ```text
 game/                    the 3D game (TypeScript, three.js), bundled with esbuild
   build.mjs              bundles everything, fonts included, into one offline HTML page
-  src/core/              input, audio (synthesized music and sound effects), save data, app bridge, translations
+  src/core/              input, audio (synthesized sound effects, the music's track list), save data, app bridge, translations
   src/world/             grid level parser, physics, level mesh builder, sky, particles, decor
   src/entities/          Jason, LUX and IRIS, enemies, bosses, pickups and interactive props
   src/entities/heroes/   the hero table and switching rules, Atalanta (model, moves, arrows), the follower,

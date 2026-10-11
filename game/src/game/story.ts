@@ -1,5 +1,6 @@
 import { GAME_NAME } from '../core/brand';
 import { tr, upper } from '../core/i18n';
+import { MUSIC_CREDITS } from '../core/music';
 import type { SaveData } from '../core/save';
 import { CHAPTER_DECKS, LEVELS, chapterTotals, inChapter, type Chapter } from '../levels';
 import { plannedFinds } from './collectibles';
@@ -455,6 +456,12 @@ function endingText3(kind: EndingKind, save: SaveData): string[] {
   return out;
 }
 
+/** The soundtrack's recordings, each once: title, artist and license (names stay untranslated). */
+function musicCredits(): string {
+  const lines = new Set(Object.values(MUSIC_CREDITS).map((c) => `“${c.title}” · ${c.artist} · ${c.license}`));
+  return [`<h3>${tr('MUSIC')}</h3>`, ...[...lines].map((l) => `<p>${l}</p>`)].join('');
+}
+
 function colonistNames(save: SaveData, ch: Chapter): string[] {
   const names: string[] = [];
   for (const id of CHAPTER_DECKS[ch]) {
@@ -509,6 +516,7 @@ function finalCredits(kind: EndingKind, save: SaveData): string {
     ...(won.length ? won.map(p) : [p('Everything found its way home!')]),
     head('GARDENER LIGHT-STONES'),
     `<p>${tr('{n} of {total}', { n, total })}</p>`,
+    musicCredits(),
     `<h2>${tr('THE END')}</h2>`,
     `<p class="end">${tr('Thank you for playing!')}</p>`,
   ].join('');
@@ -541,6 +549,7 @@ export function creditsHtml(kind: EndingKind, save: SaveData): string {
       ...(rescued.length ? rescued.map(p) : [p('Everyone made it home safe and sound!')]),
       head('JOURNAL PAGES'),
       `<p>${tr('{n} of 18', { n: inChapter(save.shards, 2) })}</p>`,
+      musicCredits(),
       `<p class="end">${tr('Thank you for playing!')}</p>`,
     ].join('');
   }
@@ -563,6 +572,7 @@ export function creditsHtml(kind: EndingKind, save: SaveData): string {
     ...(rescued.length ? rescued.map(p) : [p('Everyone woke up safe and sound!')]),
     head('MEMORY SHARDS'),
     `<p>${tr('{n} of 18', { n: inChapter(save.shards, 1) })}</p>`,
+    musicCredits(),
     `<p class="end">${tr('Thank you for playing!')}</p>`,
   ].join('');
 }

@@ -7,6 +7,8 @@ node_modules/
 .expo/
 dist/
 web-build/
+# Copied from assets/music by game/build.mjs
+public/music/
 expo-env.d.ts
 
 # Native
