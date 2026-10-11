@@ -96,6 +96,7 @@ export const EL_LABYRINTH: Record<string, string> = {
   "Crystal lit!": "Ο κρύσταλλος άναψε!",
   // MEDUSA's fight.
   "Aeëtes’s security AI · one look turns you to stone": "Η τεχνητή νοημοσύνη ασφαλείας του Αιήτη · ένα βλέμμα της σε κάνει πέτρα",
+  "MEDUSA’S GAZE! Hide behind a pillar, or raise the MIRROR SHIELD!": "ΤΟ ΒΛΕΜΜΑ ΤΗΣ ΜΕΔΟΥΣΑΣ! Κρύψου πίσω από μια κολόνα ή σήκωσε την ΚΑΘΡΕΦΤΕΝΙΑ ΑΣΠΙΔΑ!",
   "Dazzled by her own gaze! Her eye is open: hit it, quick!": "Τη θάμπωσε το δικό της βλέμμα! Το μάτι της είναι ανοιχτό: χτύπα το, γρήγορα!",
   "Her snakes are tied in a knot over her eye! Only Atalanta’s POWER ARROW can untie it: hold BOW!": "Τα φίδια της έγιναν κόμπος πάνω από το μάτι της! Μόνο το ΔΥΝΑΤΟ ΒΕΛΟΣ της Αταλάντης μπορεί να τον λύσει: κράτα πατημένο το ΤΟΞΟ!",
   "Her eye is too tough! Bounce her own gaze back at her with the MIRROR SHIELD first.": "Το μάτι της είναι πολύ σκληρό! Πρώτα στείλε της πίσω το δικό της βλέμμα με την ΚΑΘΡΕΦΤΕΝΙΑ ΑΣΠΙΔΑ.",

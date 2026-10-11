@@ -551,6 +551,7 @@ export class Game {
     // Shared helpers (cached geometry, glow textures) are simply uploaded again when the next deck uses them.
     disposeScene(this.world.scene);
     this.world = null;
+    this.ui.warn(null);
     this.ui.voice = (who) => who;
     this.queue = [];
     this.renderer.renderLists.dispose();
@@ -897,6 +898,7 @@ export class Game {
         this.refreshHud();
       },
       reward: (text) => this.ui.reward(text),
+      warn: (text) => this.ui.warn(text),
       threat: (kind) => {
         const info = INTEL[kind];
         const icon = enemyIconUrl(kind === 'elite' ? 'brute' : kind, kind === 'elite');

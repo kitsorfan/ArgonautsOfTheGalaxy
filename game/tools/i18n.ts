@@ -30,7 +30,7 @@ const lit = `(['"\`])((?:\\\\.|(?!\\1)[^\\\\])*)\\1`;
 
 /** Code patterns whose first string argument ends up on screen. */
 const PATTERNS = [
-  new RegExp(`\\b(?:tr|toast|reward|confirm|label|caption)\\(\\s*${lit}`, 'g'),
+  new RegExp(`\\b(?:tr|toast|reward|warn|confirm|label|caption)(?:\\?\\.)?\\(\\s*${lit}`, 'g'),
   new RegExp(`\\btext:\\s*${lit}`, 'g'),
   new RegExp(`\\breadonly title = ${lit}`, 'g'),
 ];

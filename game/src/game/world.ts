@@ -103,6 +103,8 @@ export interface WorldHooks {
   prize(reward: string): void;
   /** A gold banner for rewards (bolts, hearts, quests). */
   reward(text: string): void;
+  /** A pulsing warning banner that stays up until it is cleared with null (MEDUSA's glare). */
+  warn?(text: string | null): void;
   /** The first time Jason meets a kind of enemy (or an elite), show what it is and what it's up to. */
   threat(kind: BadgeKind | 'elite'): void;
   /** Jason tried to dash with no energy left. */

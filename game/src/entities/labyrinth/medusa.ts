@@ -8,7 +8,9 @@ import { Grid } from '../../world/grid';
 import { Boss } from '../bossBase';
 import type { Enemy } from '../enemies';
 import { Entity, type HitKind, type Target } from '../entity';
+import { InstancedParts } from '../instanced';
 import { mat, mesh, sphere } from '../models';
+import { pointBlocked } from '../../world/physics';
 import { BeamFx, labWorld, traceBeam, type BeamCatcher } from './beams';
 import { LAB } from './gaze';
 import { makeMedusaModel, MEDUSA_EYE_Y } from './medusaModel';
@@ -29,7 +31,7 @@ import { makeMedusaModel, MEDUSA_EYE_Y } from './medusaModel';
 
 const HP = 30;
 const DAZE = 6;
-const CHARGE = 1.7;
+const CHARGE = 2;
 const SWEEP = 3.2;
 const SWEEP_ANGRY = 2.5;
 /** How far either side of straight ahead her gaze sweeps (radians). */
@@ -38,12 +40,18 @@ const ARC = 1.05;
 type State = 'idle' | 'snakes' | 'charge' | 'gaze' | 'dazed' | 'wake' | 'tie';
 
 const tmp = new THREE.Vector3();
+const NO_BOXES: never[] = [];
+/** A strike's floor ring and its beads (one sphere, scaled per bead), shared by every strike. */
+const RING_GEO = new THREE.RingGeometry(0.2, 1.3, 32).rotateX(-Math.PI / 2);
+const BEAD_R = 0.34;
 
 /** A cable snake striking from MEDUSA's head: a green ring on the floor, the snake rears over it, then slams down. */
 class SnakeStrike extends Entity {
   private t = 0;
   private beads: THREE.Mesh[] = [];
   private disc: THREE.Mesh;
+  /** The beads are drawn as a few instanced meshes (a strike has 26 of them, and there are often four strikes at once). */
+  private parts: InstancedParts;
   private hitDone = false;
   private from: THREE.Vector3;
   private to: THREE.Vector3;
@@ -57,23 +65,35 @@ class SnakeStrike extends Entity {
     super(world, `strike${Math.random()}`);
     this.from = from.clone();
     this.to = to.clone();
-    this.disc = new THREE.Mesh(
-      new THREE.RingGeometry(0.2, 1.3, 32).rotateX(-Math.PI / 2),
-      new THREE.MeshBasicMaterial({ color: LAB.gaze, transparent: true, opacity: 0.4, depthWrite: false, toneMapped: false }),
-    );
+    this.disc = new THREE.Mesh(RING_GEO, new THREE.MeshBasicMaterial({ color: LAB.gaze, transparent: true, opacity: 0.4, depthWrite: false, toneMapped: false }));
     this.disc.position.set(to.x, to.y + 0.06, to.z);
     this.obj.add(this.disc);
     const gold = mat(LAB.gold, { metal: 0.7, rough: 0.3 });
     const dark = mat('#3a3a2a', { metal: 0.5, rough: 0.5 });
     for (let i = 0; i < 26; i++) {
-      const b = mesh(sphere(0.34 - i * 0.004, 8), i % 3 === 2 ? dark : gold, 0, 0, 0, false);
+      const b = mesh(sphere(BEAD_R, 8), i % 3 === 2 ? dark : gold, 0, 0, 0, false);
+      b.scale.setScalar((BEAD_R - i * 0.004) / BEAD_R);
       this.beads.push(b);
       this.obj.add(b);
     }
     const head = this.beads[this.beads.length - 1];
-    head.scale.set(1.5, 1.1, 1.9);
+    // The eyes are placed as on a plain bead of the head's size, before it is stretched into a head.
+    const k = 1 / head.scale.x;
+    head.scale.multiply(tmp.set(1.5, 1.1, 1.9));
     const eye = mat('#c8ffd8', { emissive: LAB.gaze, ei: 2.5 });
-    head.add(mesh(sphere(0.07, 6), eye, 0.13, 0.09, 0.14, false), mesh(sphere(0.07, 6), eye, -0.13, 0.09, 0.14, false));
+    for (const sx of [-1, 1]) {
+      const e = mesh(sphere(0.07, 6), eye, sx * 0.13 * k, 0.09 * k, 0.14 * k, false);
+      e.scale.setScalar(k);
+      head.add(e);
+    }
+    this.parts = new InstancedParts(this.beads);
+    this.obj.add(this.parts.group);
+  }
+
+  remove() {
+    super.remove();
+    this.parts.dispose();
+    (this.disc.material as THREE.Material).dispose();
   }
 
   update(dt: number) {
@@ -96,6 +116,8 @@ class SnakeStrike extends Entity {
     }
     const head = this.beads[n - 1];
     head.lookAt(this.to);
+    this.obj.updateMatrixWorld(true);
+    this.parts.sync();
     if (slam >= 1 && !this.hitDone) {
       this.hitDone = true;
       const p = w.player.body;
@@ -118,6 +140,10 @@ export class Medusa extends Boss implements Target, BeamCatcher {
   readonly pos = new THREE.Vector3();
   private m = makeMedusaModel();
   private beam = new BeamFx(LAB.gaze);
+  /** While her eye charges: a faint aiming line where the glare will start. */
+  private sight = new BeamFx(LAB.gaze);
+  /** Her crown's hundred-odd snake beads, drawn as a few instanced meshes. */
+  private crown: InstancedParts;
   private state: State = 'idle';
   private stateT = 0;
   private floorY: number;
@@ -139,7 +165,8 @@ export class Medusa extends Boss implements Target, BeamCatcher {
     super(world, id, cx, cz, h, HP + 5 * (world.save.upgrades.blaster ?? 0));
     this.floorY = h;
     this.m.root.position.set(this.center.x, h, this.center.z);
-    this.obj.add(this.m.root, this.beam.group);
+    this.crown = new InstancedParts(this.m.snakes.map((s) => s.group));
+    this.obj.add(this.m.root, this.beam.group, this.sight.group, this.crown.group);
     world.boxes.push({ minX: this.center.x - 2.2, maxX: this.center.x + 2.2, minZ: this.center.z - 2.2, maxZ: this.center.z + 2.2, bottom: h, top: h + 2.8, solid: true, dx: 0, dy: 0, dz: 0, owner: this });
     world.addTarget(this);
     labWorld(world).catchers.push(this);
@@ -165,8 +192,15 @@ export class Medusa extends Boss implements Target, BeamCatcher {
   }
 
   private set(state: State, t: number) {
+    const was = this.state;
     this.state = state;
     this.stateT = t;
+    if (state !== 'charge') this.sight.hide();
+    // The on-screen warning stays up from the first glow of her eye to the end of the glare.
+    const glaring = state === 'charge' || state === 'gaze';
+    if (glaring === (was === 'charge' || was === 'gaze')) return;
+    if (glaring) this.world.hooks.warn?.('MEDUSA’S GAZE! Hide behind a pillar, or raise the MIRROR SHIELD!');
+    else this.world.hooks.warn?.(null);
   }
 
   protected onStart() {
@@ -181,6 +215,7 @@ export class Medusa extends Boss implements Target, BeamCatcher {
     this.hooded = false;
     this.set('idle', 0);
     this.beam.hide();
+    this.world.hooks.warn?.(null);
     for (const e of this.helpers) if (e.alive) e.die();
     this.helpers = [];
   }
@@ -251,6 +286,8 @@ export class Medusa extends Boss implements Target, BeamCatcher {
   private startCharge(t = CHARGE) {
     this.set('charge', t);
     audio.play('charge', 0.6);
+    audio.play('alarm', 0.8);
+    haptic('warning');
     // Sweep from one side to the other, starting on the side away from the hero.
     const p = this.player.body;
     const side = Math.sign(p.x - this.center.x) || 1;
@@ -291,6 +328,7 @@ export class Medusa extends Boss implements Target, BeamCatcher {
       return;
     }
     if (this.defeated) {
+      if (this.state !== 'idle') this.set('idle', 0);
       this.beam.hide();
       this.hooded = false;
       // Her cable snakes go to sleep with her.
@@ -330,6 +368,7 @@ export class Medusa extends Boss implements Target, BeamCatcher {
       }
       case 'charge':
         this.yaw = damp(this.yaw, this.sweepFrom, 4, dt);
+        this.aimSight();
         if (this.stateT <= 0) this.set('gaze', this.angry ? SWEEP_ANGRY : SWEEP);
         break;
       case 'gaze': {
@@ -382,15 +421,34 @@ export class Medusa extends Boss implements Target, BeamCatcher {
     if (Math.abs(v.x - this.center.x) < 3.2 && dz < 3.2) v.z = this.center.z + 3.2;
   }
 
-  /** One frame of her gaze: a beam from her eye, sweeping across the hall at chest height. */
-  private glare(dt: number) {
-    const w = this.world;
+  /** Where her gaze points this frame: from her eye, down to chest height where the hero is. */
+  private aimGaze() {
     const p = this.player.body;
     const dist = THREE.MathUtils.clamp(Math.hypot(p.x - this.pos.x, p.z - this.pos.z), 4, 30);
     const drop = this.pos.y - (this.floorY + 1.2);
     const pitch = Math.atan2(drop, dist);
     this.dir.set(Math.sin(this.yaw) * Math.cos(pitch), -Math.sin(pitch), Math.cos(this.yaw) * Math.cos(pitch));
     this.origin.copy(this.pos).addScaledVector(this.dir, 0.4);
+  }
+
+  /** While her eye charges, a faint flickering line shows where the glare will start (it does nothing yet). */
+  private aimSight() {
+    this.aimGaze();
+    const g = this.world.grid;
+    const end = tmp.copy(this.origin);
+    for (let d = 0; d < 30; d += 0.5) {
+      end.addScaledVector(this.dir, 0.5);
+      if (pointBlocked(g, NO_BOXES, end.x, end.y, end.z)) break;
+    }
+    const k = 1 - Math.max(0, this.stateT) / CHARGE;
+    this.sight.alpha = (0.15 + k * 0.45) * (0.75 + Math.sin(this.t * 24) * 0.25);
+    this.sight.show([this.origin, end]);
+  }
+
+  /** One frame of her gaze: a beam from her eye, sweeping across the hall at chest height. */
+  private glare(dt: number) {
+    const w = this.world;
+    this.aimGaze();
     const r = traceBeam(w, this.origin, this.dir, this, dt);
     if (this.state === 'gaze') this.beam.show(r.points, r.shielded ? 1 : 0.4);
     if (Math.random() < 0.3) audio.play('zap', 0.4, 0.25);
@@ -439,6 +497,7 @@ export class Medusa extends Boss implements Target, BeamCatcher {
     m.eye.getWorldPosition(this.pos);
     if (this.hooded) m.knot.getWorldPosition(this.aim);
     else this.aim.copy(this.pos);
+    this.crown.sync();
     this.aimable = this.started && !this.defeated;
   }
 }

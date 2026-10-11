@@ -246,7 +246,7 @@ export class UI {
     </div>`);
     this.skipBtn = h(`<button class="skip clickable hidden">${label('SKIP')} ▶▶</button>`);
     // Order matters: fades under everything, cutscene bars under dialogue, and the skip button on top.
-    root.append(this.fadeEl, this.hud, this.cine, this.overlay, this.skipBtn, h(`<div class="reward-banner"></div>`));
+    root.append(this.fadeEl, this.hud, h(`<div class="warn-edge"></div>`), h(`<div class="warn-banner"></div>`), this.cine, this.overlay, this.skipBtn, h(`<div class="reward-banner"></div>`));
     this.skipBtn.addEventListener('pointerdown', (e) => {
       e.preventDefault();
       e.stopPropagation();
@@ -608,6 +608,12 @@ export class UI {
 
   private rewardQueue: string[] = [];
   private rewardBusy = false;
+
+  /** A pulsing green warning with the screen's edges glowing (MEDUSA is about to glare); null hides it. */
+  warn(text: string | null) {
+    if (text) $(this.root, '.warn-banner').textContent = `👁 ${tr(text)}`;
+    this.root.classList.toggle('warning', !!text);
+  }
 
   /** A gold banner across the top of the screen for rewards. Several in a row queue up. */
   reward(text: string) {
