@@ -452,7 +452,7 @@ export const EL: Record<string, string> = {
   "Start over": "Από την αρχή",
   "Fill the gaps so every row and every column has one of each colour. Tap a gap to change its colour.": "Γέμισε τα κενά ώστε κάθε γραμμή και κάθε στήλη να έχει ένα από κάθε χρώμα. Πάτα ένα κενό για να αλλάξεις το χρώμα του.",
   "Almost! The red tiles share a colour with their row or column.": "Παραλίγο! Τα κόκκινα πλακάκια έχουν το ίδιο χρώμα με κάποιο άλλο στη γραμμή ή τη στήλη τους.",
-  "Six decks. One brave engineer. One very nervous robot.": "Έξι καταστρώματα. Ένας γενναίος μηχανικός. Ένα πολύ αγχωμένο ρομπότ.",
+  "Three chapters. Three heroes. One very nervous robot.": "Τρία κεφάλαια. Τρεις ήρωες. Ένα πολύ αγχωμένο ρομπότ.",
   "Continue": "Συνέχεια",
   "New Game": "Νέο παιχνίδι",
   "Settings": "Ρυθμίσεις",

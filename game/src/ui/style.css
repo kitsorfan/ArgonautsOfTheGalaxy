@@ -1932,6 +1932,21 @@ canvas#game {
   transition: opacity 1.4s ease;
 }
 
+/* It starts as the native splash's flat colour (app.json), then the glow comes up behind the emblem. */
+.boot-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #03040a;
+  animation: bootGlow 1.2s 0.2s ease both;
+}
+
+@keyframes bootGlow {
+  to {
+    opacity: 0;
+  }
+}
+
 .boot.ready .boot-bg {
   opacity: 0.5;
 }
@@ -1947,7 +1962,6 @@ canvas#game {
 .boot-emblem {
   width: min(180px, 34vh);
   height: min(180px, 34vh);
-  animation: emblemIn 1.1s cubic-bezier(0.2, 0.9, 0.2, 1) both;
   filter: drop-shadow(0 0 22px rgba(94, 224, 255, 0.45));
   transition: transform 1.2s ease, width 1.2s ease, height 1.2s ease;
 }
@@ -1962,15 +1976,9 @@ canvas#game {
   height: min(110px, 22vh);
 }
 
-.boot-emblem svg circle:nth-of-type(3) {
+/* LUX's antenna light blinks. */
+.boot-emblem .lux-tip {
   animation: blink 2.2s infinite;
-}
-
-@keyframes emblemIn {
-  from {
-    opacity: 0;
-    transform: scale(0.6) rotate(-40deg);
-  }
 }
 
 .boot-logo {

@@ -1169,7 +1169,7 @@ export class UI {
 
   title(opts: { canContinue: boolean; continueText: string; hasDecks: boolean; onContinue: () => void; onNew: () => void; onDecks: () => void; onSettings: () => void }) {
     const el = this.open(`<div class="overlay title-screen" style="position:absolute">
-      <div class="title-logo"><div class="name logo">${upper(tr(GAME_NAME))}</div><div class="tag">${tr('Six decks. One brave engineer. One very nervous robot.')}</div></div>
+      <div class="title-logo"><div class="name logo">${upper(tr(GAME_NAME))}</div><div class="tag">${tr('Three chapters. Three heroes. One very nervous robot.')}</div></div>
       <div class="title-menu">
         ${opts.canContinue ? `<button class="menu-btn primary cont">▶ ${tr('Continue')} <small>${tr(opts.continueText)}</small></button>` : ''}
         <button class="menu-btn ${opts.canContinue ? '' : 'primary'} new">${opts.canContinue ? tr('New Game') : `▶ ${tr('New Game')}`}</button>
@@ -1199,13 +1199,22 @@ export class UI {
       <div class="boot-core">
         <div class="boot-emblem">${emblemSvg(180)}</div>
         <div class="boot-logo"><span>${upper(tr(GAME_NAME))}</span></div>
-        <div class="boot-tag">${tr('Six decks. One brave engineer. One very nervous robot.')}</div>
+        <div class="boot-tag">${tr('Three chapters. Three heroes. One very nervous robot.')}</div>
         <div class="boot-load"><i></i></div>
         ${ask}
       </div>
       <div class="boot-foot">${tr('Headphones on for the best adventure')}</div>
     </div>`, false);
     el.style.padding = '0';
+    // Pick up where the native splash leaves off (the same emblem, 200 px wide in the middle of the
+    // screen; app.json), then glide up into place as the name fades in.
+    const em = $<HTMLElement>(el, '.boot-emblem');
+    const at = em.getBoundingClientRect();
+    if (at.width) {
+      const dx = window.innerWidth / 2 - (at.left + at.width / 2);
+      const dy = window.innerHeight / 2 - (at.top + at.height / 2);
+      em.animate([{ transform: `translate(${dx}px, ${dy}px) scale(${200 / at.width})` }, { transform: 'none' }], { duration: 900, delay: 250, easing: 'cubic-bezier(0.5, 0, 0.2, 1)', fill: 'backwards' });
+    }
     const bar = $<HTMLElement>(el, '.boot-load i');
     let loaded = false;
     let fake = 0;
