@@ -1503,7 +1503,8 @@ export class Exit extends Entity implements Interactable {
 
   label() {
     if (!this.world.canExit() || this.used) return null;
-    return this.planet ? 'TAKE OFF' : 'RIDE LIFT';
+    // Not TAKE OFF: in Greek that is the outfit shop’s button for taking clothes off.
+    return this.planet ? 'BOARD' : 'RIDE LIFT';
   }
 
   interact() {
