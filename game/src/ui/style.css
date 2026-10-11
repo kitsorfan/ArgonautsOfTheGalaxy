@@ -3312,3 +3312,102 @@ canvas#game {
     font-size: 13px;
   }
 }
+
+/* ---------------- settings actions, About and What's new ---------------- */
+
+.settings-actions {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 10px;
+}
+
+.settings-actions .menu-btn,
+.about-panel .menu-btn {
+  justify-content: center;
+  padding: 10px 16px;
+}
+
+.settings-actions .menu-btn svg,
+.about-panel .menu-btn svg {
+  width: 20px;
+  height: 20px;
+  flex: none;
+}
+
+.about-panel {
+  width: min(560px, 94vw);
+}
+
+.about-panel .menu-btn {
+  justify-content: flex-start;
+  margin: 6px 0;
+}
+
+.about-top {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 2px 0 6px;
+}
+
+.about-emblem {
+  width: min(96px, 18vh);
+  height: min(96px, 18vh);
+  flex: none;
+  filter: drop-shadow(0 0 14px rgba(94, 224, 255, 0.45));
+}
+
+.about-emblem svg {
+  width: 100%;
+  height: 100%;
+}
+
+.about-name {
+  font-size: clamp(16px, 3.6vh, 24px);
+  line-height: 1.1;
+  color: #c9f3ff;
+  text-shadow: 0 0 14px rgba(94, 224, 255, 0.5);
+}
+
+.about-ver {
+  margin-top: 4px;
+  color: var(--dim);
+  font-size: 14px;
+}
+
+.about-by {
+  margin: 4px 0 6px;
+  font-size: 16px;
+}
+
+.about-panel .note {
+  color: var(--dim);
+  font-size: 12px;
+  margin: 8px 0 0;
+}
+
+.release h3 {
+  margin: 8px 0 4px;
+}
+
+.release h3 small {
+  color: var(--dim);
+  font-weight: 500;
+  font-size: 13px;
+  margin-left: 6px;
+}
+
+.release ul {
+  margin: 0 0 10px;
+  padding-left: 20px;
+  line-height: 1.4;
+}
+
+.release li {
+  margin: 4px 0;
+}
+
+.about-panel .menu-btn.done {
+  justify-content: center;
+}

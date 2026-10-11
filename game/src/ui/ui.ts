@@ -1,5 +1,7 @@
 import { audio } from '../core/audio';
-import { GAME_NAME, SHIP } from '../core/brand';
+import { CREATOR, GAME_NAME, SHIP, VERSION } from '../core/brand';
+import { openLink } from '../core/bridge';
+import { RELEASES } from '../game/releaseNotes';
 import { LANGS, lang, tr, upper, type Lang } from '../core/i18n';
 import { resolveAuto } from '../core/graphics';
 import type { ButtonName, Input } from '../core/input';
@@ -1362,7 +1364,7 @@ export class UI {
         <div class="slider"><span>${ICON.globe}</span><div class="seg lang">${LANGS.map((l) => `<button data-l="${l.id}" class="${s.lang === l.id ? 'on' : ''}">${l.name}</button>`).join('')}</div></div>
       </div>
       <p class="note"><span class="auto-note">${autoNote(s)}</span> ${tr('Graphics changes apply when you enter the next deck.')}</p>
-      <div class="grid2"><button class="menu-btn primary done">${tr('Done')}</button>${reset ? `<button class="menu-btn danger reset">${tr('Erase save')}</button>` : '<span></span>'}</div></div>`);
+      <div class="settings-actions"><button class="menu-btn primary done">${tr('Done')}</button><button class="menu-btn about">${ICON.info} ${tr('About')}</button>${reset ? `<button class="menu-btn danger reset">${tr('Erase save')}</button>` : ''}</div></div>`);
     const cur = { ...s };
     const emit = () => change({ ...cur });
     $<HTMLInputElement>(el, '.music').addEventListener('input', (e) => {
@@ -1413,7 +1415,39 @@ export class UI {
     }
     this.button(el, '.back', back);
     this.button(el, '.done', back);
+    this.button(el, '.about', () => this.about(() => this.settings(cur, change, back, reset)));
     if (reset) this.button(el, '.reset', reset);
+  }
+
+  /** Settings → About: the game, its version, who made it (with a way to get in touch) and what's new. */
+  about(back: () => void) {
+    const el = this.open(`<div class="panel about-panel">
+      <div class="panel-head"><h2>${tr('ABOUT')}</h2><button class="icon-btn back" aria-label="${tr('Back')}">${ICON.close}</button></div>
+      <div class="about-top">
+        <div class="about-emblem">${emblemSvg(96)}</div>
+        <div><div class="about-name logo">${upper(tr(GAME_NAME))}</div><div class="about-ver">${tr('Version {v}', { v: VERSION })}</div></div>
+      </div>
+      <p class="about-by">${tr('Created by {name}', { name: `<b>${CREATOR.name}</b>` })}</p>
+      <button class="menu-btn mail">${ICON.mail} ${tr('Contact me')} <small>${CREATOR.email}</small></button>
+      <button class="menu-btn site">${ICON.globe} ${tr('My website')} <small>${CREATOR.site}</small></button>
+      <button class="menu-btn notes">${ICON.sparkle} ${tr('What’s new')} <small>${RELEASES[0].version}</small></button>
+      <p class="note">${tr('Free and open source (MIT license). The music is openly licensed: every track is credited in the end credits.')}</p>
+    </div>`);
+    this.button(el, '.back', back);
+    this.button(el, '.mail', () => openLink(`mailto:${CREATOR.email}`));
+    this.button(el, '.site', () => openLink(`https://${CREATOR.site}`));
+    this.button(el, '.notes', () => this.whatsNew(() => this.about(back)));
+  }
+
+  /** The release notes, newest version first. */
+  whatsNew(back: () => void) {
+    const el = this.open(`<div class="panel about-panel">
+      <div class="panel-head"><h2>${upper(tr('What’s new'))}</h2><button class="icon-btn back" aria-label="${tr('Back')}">${ICON.close}</button></div>
+      ${RELEASES.map((r) => `<div class="release"><h3>${tr('Version {v}', { v: r.version })} <small>${r.date}</small></h3><ul>${r.notes.map((n) => `<li>${tr(n.text)}</li>`).join('')}</ul></div>`).join('')}
+      <button class="menu-btn primary done">${tr('Back')}</button>
+    </div>`);
+    this.button(el, '.back', back);
+    this.button(el, '.done', back);
   }
 
   /** The shop tab showing (kept while the shop is open, and between visits). */
