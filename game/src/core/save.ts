@@ -25,6 +25,8 @@ export interface Settings {
   camSpeed: number;
   haptics: boolean;
   lang: Lang;
+  /** True once the player has picked a language (on the boot screen or in Settings); until then the boot screen asks. */
+  langChosen: boolean;
 }
 
 /** A flight level's best results: the most rings and drones in one flight, and whether the dove's way was ever flown clean. */
@@ -83,7 +85,7 @@ export interface SaveData {
 const KEY = 'leviathan3d.save.v1';
 
 export function defaultSettings(): Settings {
-  return { music: 0.6, sfx: 0.85, quality: 'medium', autoQuality: true, camSpeed: 1, haptics: true, lang: detectLang() };
+  return { music: 0.6, sfx: 0.85, quality: 'medium', autoQuality: true, camSpeed: 1, haptics: true, lang: detectLang(), langChosen: false };
 }
 
 export function newSave(): SaveData {

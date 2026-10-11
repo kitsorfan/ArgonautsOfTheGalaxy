@@ -1,6 +1,8 @@
 import { audio } from '../core/audio';
-import { GAME_NAME, SHIP } from '../core/brand';
-import { LANGS, tr, upper } from '../core/i18n';
+import { CREATOR, GAME_NAME, SHIP, VERSION } from '../core/brand';
+import { openLink } from '../core/bridge';
+import { RELEASES } from '../game/releaseNotes';
+import { LANGS, lang, tr, upper, type Lang } from '../core/i18n';
 import { resolveAuto } from '../core/graphics';
 import type { ButtonName, Input } from '../core/input';
 import { cleanBolts, type AtalantaUpgradeId, type OutfitHero, type Quality, type SaveData, type Settings, type UpgradeId } from '../core/save';
@@ -1167,7 +1169,7 @@ export class UI {
 
   title(opts: { canContinue: boolean; continueText: string; hasDecks: boolean; onContinue: () => void; onNew: () => void; onDecks: () => void; onSettings: () => void }) {
     const el = this.open(`<div class="overlay title-screen" style="position:absolute">
-      <div class="title-logo"><div class="name logo">${upper(tr(GAME_NAME))}</div><div class="tag">${tr('Six decks. One brave engineer. One very nervous robot.')}</div></div>
+      <div class="title-logo"><div class="name logo">${upper(tr(GAME_NAME))}</div><div class="tag">${tr('Three chapters. Three heroes. One very nervous robot.')}</div></div>
       <div class="title-menu">
         ${opts.canContinue ? `<button class="menu-btn primary cont">▶ ${tr('Continue')} <small>${tr(opts.continueText)}</small></button>` : ''}
         <button class="menu-btn ${opts.canContinue ? '' : 'primary'} new">${opts.canContinue ? tr('New Game') : `▶ ${tr('New Game')}`}</button>
@@ -1184,21 +1186,35 @@ export class UI {
 
   /**
    * The boot splash: emblem and logo animate in over black, a loading bar fills while the game warms
-   * up (`ready`), then the 3D title scene fades in behind "TAP TO START".
+   * up (`ready`), then the 3D title scene fades in behind "TAP TO START". Until a language has been
+   * chosen (`pick`), it asks for one instead, in both languages, and the choice is the tap that starts.
    */
-  tapToStart(ready: Promise<void>, done: () => void) {
+  tapToStart(ready: Promise<void>, pick: ((l: Lang) => void) | null, done: () => void) {
+    // The question is asked in both languages at once, so it isn't translated.
+    const ask = pick
+      ? `<div class="boot-lang"><div class="boot-ask">Choose your language · Διάλεξε γλώσσα</div><div class="boot-langs">${LANGS.map((l) => `<button class="menu-btn${l.id === lang() ? ' primary' : ''}" data-l="${l.id}">${l.name}</button>`).join('')}</div></div>`
+      : `<div class="boot-tap">${tr('TAP TO START')}</div>`;
     const el = this.open(`<div class="boot">
       <div class="boot-bg"></div>
       <div class="boot-core">
         <div class="boot-emblem">${emblemSvg(180)}</div>
         <div class="boot-logo"><span>${upper(tr(GAME_NAME))}</span></div>
-        <div class="boot-tag">${tr('Six decks. One brave engineer. One very nervous robot.')}</div>
+        <div class="boot-tag">${tr('Three chapters. Three heroes. One very nervous robot.')}</div>
         <div class="boot-load"><i></i></div>
-        <div class="boot-tap">${tr('TAP TO START')}</div>
+        ${ask}
       </div>
       <div class="boot-foot">${tr('Headphones on for the best adventure')}</div>
     </div>`, false);
     el.style.padding = '0';
+    // Pick up where the native splash leaves off (the same emblem, 200 px wide in the middle of the
+    // screen; app.json), then glide up into place as the name fades in.
+    const em = $<HTMLElement>(el, '.boot-emblem');
+    const at = em.getBoundingClientRect();
+    if (at.width) {
+      const dx = window.innerWidth / 2 - (at.left + at.width / 2);
+      const dy = window.innerHeight / 2 - (at.top + at.height / 2);
+      em.animate([{ transform: `translate(${dx}px, ${dy}px) scale(${200 / at.width})` }, { transform: 'none' }], { duration: 900, delay: 250, easing: 'cubic-bezier(0.5, 0, 0.2, 1)', fill: 'backwards' });
+    }
     const bar = $<HTMLElement>(el, '.boot-load i');
     let loaded = false;
     let fake = 0;
@@ -1213,13 +1229,29 @@ export class UI {
       bar.style.width = '100%';
       setTimeout(() => el.querySelector('.boot')?.classList.add('ready'), 250);
     });
+    let started = false;
     const go = () => {
-      if (!loaded) return;
-      window.removeEventListener('keydown', go);
+      if (!loaded || started) return;
+      started = true;
+      window.removeEventListener('keydown', key);
       done();
     };
-    el.addEventListener('pointerdown', go);
-    window.addEventListener('keydown', go);
+    // A key press picks the highlighted language.
+    const key = () => {
+      if (loaded && pick) pick(lang());
+      go();
+    };
+    if (pick) {
+      for (const b of el.querySelectorAll<HTMLElement>('.boot-langs button')) {
+        b.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (!loaded) return;
+          pick(b.dataset.l as Lang);
+          go();
+        });
+      }
+    } else el.addEventListener('pointerdown', go);
+    window.addEventListener('keydown', key);
   }
 
   confirm(text: string, yes: () => void, no: () => void) {
@@ -1341,7 +1373,7 @@ export class UI {
         <div class="slider"><span>${ICON.globe}</span><div class="seg lang">${LANGS.map((l) => `<button data-l="${l.id}" class="${s.lang === l.id ? 'on' : ''}">${l.name}</button>`).join('')}</div></div>
       </div>
       <p class="note"><span class="auto-note">${autoNote(s)}</span> ${tr('Graphics changes apply when you enter the next deck.')}</p>
-      <div class="grid2"><button class="menu-btn primary done">${tr('Done')}</button>${reset ? `<button class="menu-btn danger reset">${tr('Erase save')}</button>` : '<span></span>'}</div></div>`);
+      <div class="settings-actions"><button class="menu-btn primary done">${tr('Done')}</button><button class="menu-btn about">${ICON.info} ${tr('About')}</button>${reset ? `<button class="menu-btn danger reset">${tr('Erase save')}</button>` : ''}</div></div>`);
     const cur = { ...s };
     const emit = () => change({ ...cur });
     $<HTMLInputElement>(el, '.music').addEventListener('input', (e) => {
@@ -1383,6 +1415,7 @@ export class UI {
       b.addEventListener('click', () => {
         if (cur.lang === b.dataset.l) return;
         cur.lang = b.dataset.l as Settings['lang'];
+        cur.langChosen = true;
         audio.play('select');
         emit();
         // Redraw this screen in the new language.
@@ -1391,7 +1424,39 @@ export class UI {
     }
     this.button(el, '.back', back);
     this.button(el, '.done', back);
+    this.button(el, '.about', () => this.about(() => this.settings(cur, change, back, reset)));
     if (reset) this.button(el, '.reset', reset);
+  }
+
+  /** Settings → About: the game, its version, who made it (with a way to get in touch) and what's new. */
+  about(back: () => void) {
+    const el = this.open(`<div class="panel about-panel">
+      <div class="panel-head"><h2>${tr('ABOUT')}</h2><button class="icon-btn back" aria-label="${tr('Back')}">${ICON.close}</button></div>
+      <div class="about-top">
+        <div class="about-emblem">${emblemSvg(96)}</div>
+        <div><div class="about-name logo">${upper(tr(GAME_NAME))}</div><div class="about-ver">${tr('Version {v}', { v: VERSION })}</div></div>
+      </div>
+      <p class="about-by">${tr('Created by {name}', { name: `<b>${CREATOR.name}</b>` })}</p>
+      <button class="menu-btn mail">${ICON.mail} ${tr('Contact me')} <small>${CREATOR.email}</small></button>
+      <button class="menu-btn site">${ICON.globe} ${tr('My website')} <small>${CREATOR.site}</small></button>
+      <button class="menu-btn notes">${ICON.sparkle} ${tr('What’s new')} <small>${RELEASES[0].version}</small></button>
+      <p class="note">${tr('Free and open source (MIT license). The music is openly licensed: every track is credited in the end credits.')}</p>
+    </div>`);
+    this.button(el, '.back', back);
+    this.button(el, '.mail', () => openLink(`mailto:${CREATOR.email}`));
+    this.button(el, '.site', () => openLink(`https://${CREATOR.site}`));
+    this.button(el, '.notes', () => this.whatsNew(() => this.about(back)));
+  }
+
+  /** The release notes, newest version first. */
+  whatsNew(back: () => void) {
+    const el = this.open(`<div class="panel about-panel">
+      <div class="panel-head"><h2>${upper(tr('What’s new'))}</h2><button class="icon-btn back" aria-label="${tr('Back')}">${ICON.close}</button></div>
+      ${RELEASES.map((r) => `<div class="release"><h3>${tr('Version {v}', { v: r.version })} <small>${r.date}</small></h3><ul>${r.notes.map((n) => `<li>${tr(n.text)}</li>`).join('')}</ul></div>`).join('')}
+      <button class="menu-btn primary done">${tr('Back')}</button>
+    </div>`);
+    this.button(el, '.back', back);
+    this.button(el, '.done', back);
   }
 
   /** The shop tab showing (kept while the shop is open, and between visits). */

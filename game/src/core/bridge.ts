@@ -14,6 +14,12 @@ export function post(msg: Record<string, unknown>) {
   window.ReactNativeWebView?.postMessage(JSON.stringify(msg));
 }
 
+/** Opens a web page or an email to write, outside the game (the app hands it to the phone). */
+export function openLink(url: string) {
+  if (inApp()) post({ type: 'link', url });
+  else window.open(url, '_blank', 'noopener');
+}
+
 let hapticsOn = true;
 export function setHaptics(on: boolean) {
   hapticsOn = on;

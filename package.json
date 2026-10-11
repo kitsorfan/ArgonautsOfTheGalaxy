@@ -61,7 +61,7 @@
     "lint": "expo lint",
     "test": "jest",
     "typecheck": "npm run game:build && tsc --noEmit",
-    "gen:icons": "node game/tools/gen-icons.mjs",
+    "gen:icons": "node game/tools/run.mjs icons",
     "game:build": "node game/build.mjs",
     "game:dev": "node game/build.mjs --watch",
     "game:check": "node game/tools/run.mjs levelcheck",

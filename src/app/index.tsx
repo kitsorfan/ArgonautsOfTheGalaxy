@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Device from 'expo-device';
 import * as Haptics from 'expo-haptics';
+import * as Linking from 'expo-linking';
 import { useKeepAwake } from 'expo-keep-awake';
 import * as NavigationBar from 'expo-navigation-bar';
 import * as ScreenOrientation from 'expo-screen-orientation';
@@ -29,6 +30,7 @@ type GameMessage =
   | { type: 'haptic'; kind: 'light' | 'medium' | 'heavy' | 'success' | 'warning' }
   | { type: 'exit' }
   | { type: 'review' }
+  | { type: 'link'; url: string }
   | { type: 'music'; file: MusicFile | null; volume: number }
   | { type: 'musicVolume'; volume: number }
   | { type: 'error'; message: string };
@@ -115,6 +117,10 @@ export default function Game() {
         StoreReview.isAvailableAsync()
           .then((ok) => (ok ? StoreReview.requestReview() : undefined))
           .catch(() => {});
+        break;
+      case 'link':
+        // Only web pages and emails (the About screen's links), never anything else the page might ask for.
+        if (/^(https:\/\/|mailto:)/.test(msg.url)) Linking.openURL(msg.url).catch(() => {});
         break;
       case 'music':
         music.current?.play(msg.file, msg.volume);

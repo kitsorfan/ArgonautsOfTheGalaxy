@@ -1,5 +1,9 @@
 # Argonauts of the Galaxy
 
+<img src="assets/images/icon.png" alt="The app icon: LUX, a little white repair drone with a big glowing eye, circled by a golden orbit in deep space" width="112" align="right"/>
+
+**Version 1.0.0** · made by **Kitsos Orfanopoulos** ([kitsorfan@protonmail.com](mailto:kitsorfan@protonmail.com) · [www.kitsorfan.com](https://www.kitsorfan.com)) · [release notes](#release-notes)
+
 ![The title screen (from before the game was renamed Argonauts of the Galaxy): Jason waving in front of the colony ship Syracusia, overgrown with pink GaScu vines](docs/store/en/feature-graphic.jpg)
 
 *In Greek: Αργοναύτες του Γαλαξία*
@@ -12,7 +16,9 @@ The colony ship *Syracusia* is carrying ten thousand sleeping colonists when a g
 
 In **Chapter 2** the ship reaches its new home, the planet **Gaia Nova** (Γαία Νόβα), only to find General Brennus waiting. Forty years ago he led the planet's first expedition, and when he tried to destroy the heart of all its plants, a great glowing flower the scientists named **Celestia**, they mutinied and launched it into space. Celestia is GaScu: that is why it turned the ship away, it was running from him. In Chapter 2 it goes by its real name. Brennus has captured the science team and stolen Celestia to power his Thorn Legion and the Colossus inside the volcano Mount Atlantas. Jason and LUX cross six outdoor regions to free them both, though not always together: Brennus has his eye on LUX too, and in the jungle Jason meets a new droid, **IRIS**, who speaks in rainbows.
 
-It's made for players around 10 and up: bright, forgiving, and about 5–6 hours long across both chapters if you hunt for the secrets.
+In **Chapter 3: The Argonauts** Celestia starts to fade, and the crew rebuild the shuttle into the **Argo** to fetch the Golden Fleece from Colchis before the salvage tycoon Aeëtes gets there first. Ten levels of Greek myth in space: the Clashing Rocks, the Harpy Isles, the Sirens' Sea in a little submarine, Talos's forge in a bronze mech, Medusa's labyrinth and the Sleepless Dragon. Jason is joined by **Atalanta**, the colony's fastest runner and best archer, and you also get to play **General Brennus**, out to pay his debts.
+
+It's made for players around 10 and up: bright and forgiving, with three chapters, 22 levels and plenty of secrets to hunt for.
 
 | | |
 | --- | --- |
@@ -22,14 +28,15 @@ It's made for players around 10 and up: bright, forgiving, and about 5–6 hours
 
 ## Highlights
 
-- **The whole game is one offline HTML page.** The game is TypeScript and three.js, and esbuild bundles it, fonts included, into a single 1.5 MB page. The Expo app shows that page full screen in a WebView and handles what the page can't: saving, haptics, the Android back button and screen orientation.
+- **The whole game is one offline HTML page.** The game is TypeScript and three.js, and esbuild bundles it, fonts included, into a single 3.6 MB page. The Expo app shows that page full screen in a WebView and handles what the page can't: saving, haptics, the Android back button and screen orientation.
 - **Almost no asset files.** Characters, bosses and levels are built from code, textures are drawn on canvases at runtime, and the sound effects are synthesized with the Web Audio API. The music is the one exception (below).
 - **Openly licensed music, played natively.** Thirteen CC0 and CC BY recordings in `assets/music` (credited in `assets/music/CREDITS.md` and the end credits), one per mood: calm and tense ship decks, Gaia Nova's open lands, frost and jungle, the voyage, mystery, epic, and three kinds of boss fight. `game/src/core/music.ts` maps every level and boss to one. In the app the page only names the track; the phone plays it with expo-audio (`src/music.ts`), so the music costs the game's frame nothing. In a browser an `<audio>` element plays it.
 - **Levels are ASCII maps, checked by a solver.** A reachability checker simulates Jason's jumps, dashes and hovering on every deck. It reports anything Jason can't reach, checks that each deck really needs its new ability, and times the fastest route through every countdown puzzle to prove it can be beaten with time to spare. The Jest suite runs the same checks.
 - **In-engine cutscenes.** A small cutscene director moves the camera through the real level and adds letterbox bars, boss name cards and slow-motion finishes.
 - **Storybook pictures.** The big story moments also get hand-drawn cartoon illustrations, written as inline SVG, that slowly pan inside a picture frame while the narration plays.
-- **Built for phones.** Each deck frees its GPU memory when you leave it. Shaders compile behind the title cards so play doesn't stutter. The quality preset on first launch is picked from the phone's CPU core count.
-- **Two languages.** English and Greek, with a test that fails if any visible string is missing its Greek translation.
+- **Built for phones.** Each deck frees its GPU memory when you leave it. Shaders compile behind the title cards so play doesn't stutter.
+- **Auto graphics.** Graphics are on **Auto** by default (`game/src/core/graphics.ts`). At launch the game sizes the phone up from its graphics chip (Adreno, Mali, PowerVR, Xclipse...), memory, CPU cores and age (the last two from `expo-device`) and picks Low, Medium or High. During play it watches the frame rate: if a deck stays under 40 fps for ten seconds, it drops one step on the spot (sharpness and glow at once, shadows from the next deck) and remembers that for next time. Picking Auto again in Settings starts over; picking Low, Medium or High turns Auto off.
+- **Two languages.** English and Greek. The first time the game starts it asks which one you want, and there's a test that fails if any visible string is missing its Greek translation.
 
 ## Running it on your phone
 
@@ -343,7 +350,7 @@ Tap to hurry a caption along, or press **SKIP** (or the Android back button) to 
 
 ## Languages
 
-The game is in English and Greek: in Greek it is called **Αργοναύτες του Γαλαξία**, Captain Argus is **Κυβερνήτης Άργος**, the ship is the **Συρακουσία**, Jason is **Ιάσονας** GaScu is **Γάκου** (Γαλαξιακή Κουσκούτα Εχινόχλοη) and Celestia is **Σελέστια**, and the app shows that name on phones set to Greek (`assets/languages/el.json`, for builds made with EAS). The game starts in Greek on a phone set to Greek, and you can switch at any time in **Settings**. The Greek is written as natural Greek for young players rather than word for word. Every string the player sees goes through `tr()` (`game/src/core/i18n.ts`) with its English text as the key, and the Greek table lives in `game/src/i18n/el.ts`. The game and ship names are in `game/src/core/brand.ts`; story text refers to the ship as `{ship}`. `npm run game:i18n` lists anything still missing, and the Jest suite fails if a visible string has no Greek. Fredoka and Orbitron have no Greek letters, so the build fills them in with just the Greek glyphs of M PLUS Rounded 1c and Play.
+The game is in English and Greek: in Greek it is called **Αργοναύτες του Γαλαξία**, Captain Argus is **Κυβερνήτης Άργος**, the ship is the **Συρακουσία**, Jason is **Ιάσονας** GaScu is **Γάκου** (Γαλαξιακή Κουσκούτα Εχινόχλοη) and Celestia is **Σελέστια**, and the app shows that name on phones set to Greek (`assets/languages/el.json`, for builds made with EAS). The first time the game starts, the boot screen asks *Choose your language · Διάλεξε γλώσσα* (with the phone's own language highlighted) instead of TAP TO START, and keeps asking until a language has been picked; you can switch at any time in **Settings**. The Greek is written as natural Greek for young players rather than word for word. Every string the player sees goes through `tr()` (`game/src/core/i18n.ts`) with its English text as the key, and the Greek table lives in `game/src/i18n/el.ts`. The game and ship names are in `game/src/core/brand.ts`; story text refers to the ship as `{ship}`. `npm run game:i18n` lists anything still missing, and the Jest suite fails if a visible string has no Greek. Fredoka and Orbitron have no Greek letters, so the build fills them in with just the Greek glyphs of M PLUS Rounded 1c and Play.
 
 ## Project layout
 
@@ -368,7 +375,8 @@ game/                    the 3D game (TypeScript, three.js), bundled with esbuil
   src/i18n/              the Greek translation
   src/ui/                HUD, touch controls, menus, dialogue and hacking screens
   tools/                 level reachability checker (npm run game:check), translation check (npm run game:i18n),
-                         app icon generator (npm run gen:icons)
+                         brand art renderer (npm run gen:icons: the app icon, Android icon layers, favicon,
+                         Play Store icon and splash image, drawn from src/ui/emblem.ts; needs Chrome or Edge)
   tests/                 Jest tests: deck data, reachability of every deck, physics, translations, review prompt
 src/app/                 Expo Router screens: the WebView host (plus an iframe version for web)
 src/generated/           game page as a string (generated, git-ignored)
@@ -399,9 +407,40 @@ npm run game:i18n     # English strings still missing a Greek translation
 npx eas-cli@latest build -p android --profile production   # an .aab for Play Console
 ```
 
+For a new version, raise `expo.version` in `app.json` and add its entry at the top of `game/src/game/releaseNotes.ts` (with the Greek), then add it to **Release notes** above.
+
 The Play listing text in English and Greek, the answers for Play Console's forms, the screenshots and the store graphics are in [docs/store/](docs/store/listing.md). The privacy policy the listing links to is [docs/privacy-policy.md](docs/privacy-policy.md).
 
 The first time a player finishes decks 2, 4 and 6, the app asks Google Play to show its review card (`game/src/game/review.ts`, then `expo-store-review` in the app). Following Google's rules, it never shows a button or asks a question first. Google Play decides whether the card actually appears: it limits how often each player sees it, and it never shows in Expo Go or in builds that weren't installed from Play. To see it, install a build from an internal testing track.
+
+## The app icon and splash
+
+The app icon is LUX in deep space, circled by a golden orbit (the Argonauts' voyage); the splash screen and the boot screen show the game's emblem, LUX inside a glowing ring wrapped in GaScu's pink vine. Both are drawn as SVG in `game/src/ui/emblem.ts`, and `npm run gen:icons` renders every PNG from them (`assets/images/` and `docs/store/icon-512.png`) with a headless Chrome or Edge. Android 12 and later crop the splash image to a circle, which is why the emblem is round. The boot screen picks up exactly where the native splash leaves off: the same emblem, the same size, in the middle of the screen, which then glides up as the game's name fades in.
+
+## About, version and release notes
+
+**Settings → About** shows the game's version, who made it, a **Contact me** button (opens an email to kitsorfan@protonmail.com), **My website** (www.kitsorfan.com, in the phone's browser) and **What's new**, the release notes. The version comes from `expo.version` in `app.json`, stamped into the game page by `game/build.mjs`. The release notes live in `game/src/game/releaseNotes.ts` (their Greek in `game/src/i18n/el.ts`); a test fails if the newest entry doesn't match `app.json`, so a new version needs both.
+
+## Release notes
+
+### 1.0.0 (2026-10-11)
+
+The first release:
+
+- The whole adventure in three chapters and 22 levels: the six decks of the *Syracusia*, six regions of Gaia Nova and the ten-level voyage of the Argonauts.
+- Three heroes to play: Jason, Atalanta the archer and General Brennus, plus the Gardeners' bronze mech.
+- Fly the Argo through the Clashing Rocks and dive the submarine Dolphin under the Sirens' Sea.
+- PANDORA's shop: upgrades, new weapons and outfits for Jason and Atalanta.
+- Side quests, secret endings and story pictures drawn like a graphic novel.
+- Thirteen openly licensed music tracks.
+- Play in English or Greek: the game asks on first launch, and you can switch any time in Settings.
+- Auto graphics: the game picks the right quality for your phone and lowers it if play gets slow.
+
+## Credits
+
+Created by **Kitsos Orfanopoulos**: [kitsorfan@protonmail.com](mailto:kitsorfan@protonmail.com) · [www.kitsorfan.com](https://www.kitsorfan.com).
+
+The music is by the artists credited in [assets/music/CREDITS.md](assets/music/CREDITS.md) (and in the game's end credits).
 
 ## License
 

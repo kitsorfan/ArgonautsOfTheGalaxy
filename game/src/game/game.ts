@@ -14,7 +14,7 @@ import { audio } from '../core/audio';
 import { haptic, inApp, post, setHaptics } from '../core/bridge';
 import { CELL } from '../core/constants';
 import { FrameWatch, resolveAuto, stepDown } from '../core/graphics';
-import { lang, setLang, tr } from '../core/i18n';
+import { lang, setLang, tr, type Lang } from '../core/i18n';
 import { Input } from '../core/input';
 import { heroCourse } from '../entities/heroes/course';
 import { heroDev, parseHeroes } from '../entities/heroes/heroes';
@@ -192,7 +192,15 @@ export class Game {
       void ready.then(() => this.devJump(dev));
       return;
     }
-    this.ui.tapToStart(ready, () => {
+    // First launch (or until a language is picked): the boot screen asks for English or Greek.
+    const pick = this.save.settings.langChosen
+      ? null
+      : (l: Lang) => {
+          this.save.settings = { ...this.save.settings, lang: l, langChosen: true };
+          this.applySettings(this.save.settings);
+          writeSave(this.save);
+        };
+    this.ui.tapToStart(ready, pick, () => {
       audio.unlock();
       this.toTitle();
     });

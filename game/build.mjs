@@ -131,7 +131,11 @@ const options = {
   write: false,
   legalComments: 'none',
   logLevel: 'warning',
-  define: { 'process.env.NODE_ENV': '"production"' },
+  define: {
+    'process.env.NODE_ENV': '"production"',
+    // The version shown under Settings → About.
+    __APP_VERSION__: JSON.stringify(JSON.parse(readFileSync(join(root, 'app.json'), 'utf8')).expo.version),
+  },
   plugins: [
     {
       name: 'emit-html',
