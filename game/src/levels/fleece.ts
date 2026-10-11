@@ -67,7 +67,7 @@ export const fleece: LevelDef = {
      #1^111111111111R111111111oo11111111111^1#
      #11111;11A99111111111111111111111R111111#####
      #111111119<91111111111111111111111111111#1[1#
-     #1h11111199911111111111E1111111111111111%111#
+     #1h11111199911111111111E11111111111111110111#
      #1&11111111111111111c11111111111oo111111#1|1#
 ######111111111111111111111111111111111111111#111#
 #1111#111oo11:p1111111p111111;11R1111111111&1#####
@@ -163,9 +163,11 @@ export const fleece: LevelDef = {
     k: { type: 'trigger', id: 'incourt', dialogue: 'seals', w: 5, d: 1, when: { flag: 'brennus' } },
     // Hero puzzles: bullseyes for Atalanta, red switches for Jason (or Brennus's stomp), cracked rock for Brennus.
     t: { type: 'target', flag: 'tA' },
-    '"': { type: 'target', flag: 'sealA' },
-    '<': { type: 'switch', flag: 'sealJ' },
-    '|': { type: 'switch', flag: 'sealB' },
+    // The three vault seals glow with a beam in their hero's colour, and the action button does the move up close.
+    '"': { type: 'target', flag: 'sealA', seal: 'atalanta' },
+    '<': { type: 'switch', flag: 'sealJ', seal: 'jason' },
+    '|': { type: 'switch', flag: 'sealB', seal: 'brennus' },
+    '0': { type: 'cracked', seal: 'brennus' },
     '%': { type: 'cracked' },
     q: { type: 'post', flag: 'turn', order: 'fight', room: 'squad' },
     Y: { type: 'wallrun' },
@@ -203,7 +205,7 @@ export const fleece: LevelDef = {
     i: { type: 'sign', text: 'A crawl tunnel in the roots, with yellow-and-black stripes: only Atalanta’s SLIDE fits under. Something glows at the far end...' },
     d: { type: 'sign', text: 'Cracked rock with gold in the cracks! Only General Brennus can smash it: switch to him, then CHARGE into it, or HOLD the CANNON for a BIG BLAST.' },
     f: { type: 'sign', text: 'A Legion COMMAND POST! As General Brennus, walk up and press COMMAND. His old robots still know his voice.' },
-    P: { type: 'sign', text: 'THE FLEECE VAULT. Three seals, three heroes: a bullseye up high for Atalanta, a red switch on the root pillar for Jason (GRAPPLE up!), and a switch behind cracked rock for General Brennus.' },
+    P: { type: 'sign', text: 'THE FLEECE VAULT. Three seals, three heroes: follow the three beams of light! Atalanta: a POWER ARROW at the bullseye up high. Jason: GRAPPLE up the root pillar, then POUND the red switch. General Brennus: SMASH the cracked rock, then POUND the switch behind it.' },
     S: { type: 'sign', text: 'The Gardeners’ oldest poem, in light-words: “Under the SKY, the little seeds GROW. A FRIEND carries them HOME.” Step on the colours of the poem in order, and the Gardeners’ chest will open.' },
     // Decor.
     Q: { type: 'decor', kind: 'pillar', scale: 1.3 },
@@ -257,6 +259,7 @@ export const fleece: LevelDef = {
       { who: 'iris', text: 'The Fleece vault. The Gardeners closed it with three seals, and wrote on the gate in light-words.' },
       { who: 'bolt', text: 'It says: “Only those who stand TOGETHER may enter.” Three seals. Three heroes. That’s us!' },
       { who: 'brennus', text: 'Together. I keep finding that word everywhere these days.' },
+      { who: 'iris', text: 'See the three beams of light? One for each hero, in their colour. Bring the right hero close to a beam and press the action button!' },
     ],
     boss: [
       { who: 'aeetes', text: 'Ah, the Argonauts! Right on time to watch me collect my prize. Look at it. The GOLDEN FLEECE.' },

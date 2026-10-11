@@ -10,6 +10,7 @@ import { addBolts, type Quality, type SaveData } from '../core/save';
 import type { Director, Rig } from '../cinema/director';
 import * as fleeceScenes from '../cinema/fleeceScenes';
 import type { GoldenKing } from '../entities/ch3/goldenKing';
+import { addSeal } from '../entities/ch3/seals';
 import * as scenes from '../cinema/scenes';
 import { Bolt, HelmetLamp, Torch } from '../entities/bolt';
 import { makeBoss, type Boss } from '../entities/bosses';
@@ -426,6 +427,7 @@ export class World {
       case 'switch': {
         const sw = this.addEntity(new FloorSwitch(this, id, cx, cz, h, spec.flag, spec.timed, spec.together));
         this.switches.push(sw);
+        if (spec.seal) addSeal(this, sw, spec.seal);
         if (spec.together && this.flags.has(spec.flag)) sw.setDown(true);
         break;
       }
@@ -507,9 +509,11 @@ export class World {
       case 'boulder':
         this.addEntity(new Boulder(this, id, cx, cz, h, spec.axis, spec.length, spec.period, spec.offset));
         break;
-      case 'target':
-        this.addEntity(new ArrowTarget(this, id, cx, cz, h, spec.flag));
+      case 'target': {
+        const t = this.addEntity(new ArrowTarget(this, id, cx, cz, h, spec.flag));
+        if (spec.seal) addSeal(this, t, spec.seal);
         break;
+      }
       case 'wallrun':
         this.addEntity(new WallRun(this, id, cx, cz, h));
         break;
@@ -520,7 +524,10 @@ export class World {
         this.addEntity(new LowGap(this, id, cx, cz, h, spec.axis));
         break;
       case 'cracked':
-        if (!this.taken.has(id)) this.addEntity(new CrackedWall(this, id, cx, cz, h));
+        if (!this.taken.has(id)) {
+          const c = this.addEntity(new CrackedWall(this, id, cx, cz, h));
+          if (spec.seal) addSeal(this, c, spec.seal);
+        }
         break;
       case 'post':
         this.addEntity(new CommandPost(this, id, cx, cz, h, spec.flag, spec.order, spec.room));

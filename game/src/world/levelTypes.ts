@@ -73,7 +73,7 @@ export type Spec = Base &
      * that many seconds. `together` switches share their flag and one clock: the first press starts
      * `timed` seconds, the flag is set once they are all down, and from then on they stay down.
      */
-    | { type: 'switch'; flag: string; timed?: number; together?: boolean }
+    | { type: 'switch'; flag: string; timed?: number; together?: boolean; seal?: HeroId }
     /** A LUX HACK terminal: solving its puzzle (the memory lights unless `puzzle` says otherwise) sets `flag`. */
     | { type: 'terminal'; flag: string; length?: number; label?: string; puzzle?: PuzzleKind }
     | { type: 'cell' }
@@ -117,8 +117,12 @@ export type Spec = Base &
     | { type: 'quicksand' }
     /** A lane that a boulder (or log, or snowball) rolls down every `period` seconds: jump over it. */
     | { type: 'boulder'; axis: 'x' | 'z'; length: number; period?: number; offset?: number }
-    /** A bullseye on a post: only an arrow from Atalanta's bow (a charged power arrow) sets `flag`. */
-    | { type: 'target'; flag: string }
+    /**
+     * A bullseye on a post: only an arrow from Atalanta's bow (a charged power arrow) sets `flag`. With `seal`
+     * (also on `switch` and `cracked`), it is a vault seal made obvious: a beam in that hero's colour, and the
+     * action button does the move once the right hero is close (see `entities/ch3/seals.ts`).
+     */
+    | { type: 'target'; flag: string; seal?: HeroId }
     /** A wall cell with a glowing running stripe: Atalanta can wall-run along its faces. The cell is a wall. */
     | { type: 'wallrun' }
     /**
@@ -131,7 +135,7 @@ export type Spec = Base &
     | { type: 'lowgap'; axis?: 'x' | 'z' }
     /* General Brennus's puzzles (his own levels). */
     /** A cracked rock wall veined with gold: only a charged CANNON blast or Brennus's CHARGE smashes it. The cell under it is floor. */
-    | { type: 'cracked' }
+    | { type: 'cracked'; seal?: HeroId }
     /**
      * A Legion command post: Brennus walks up and gives the order with the action button (COMMAND), which
      * sets `flag`. `order` says what his robots do: walk onto a heavy plate (`plate`), carry him over a
