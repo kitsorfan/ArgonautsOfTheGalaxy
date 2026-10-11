@@ -2,6 +2,7 @@ import * as THREE from 'three';
 
 import { audio } from '../core/audio';
 import { haptic } from '../core/bridge';
+import { addBolts } from '../core/save';
 import { CELL, PLAYER } from '../core/constants';
 import { findKind } from '../game/collectibles';
 import { heartCap } from '../game/shop';
@@ -111,7 +112,7 @@ export class BoltField {
       }
       if (d2 < 0.8) {
         it.alive = false;
-        w.save.bolts += 1;
+        addBolts(w.save, 1);
         this.combo += 1;
         this.comboT = 0.5;
         audio.play('bolt', 1 + Math.min(this.combo, 12) * 0.035);
@@ -184,7 +185,7 @@ export class HeartPickup extends Floater {
   protected collect() {
     const w = this.world;
     if (w.player.hearts >= w.save.maxHearts) {
-      w.save.bolts += 5;
+      addBolts(w.save, 5);
       audio.play('bolt');
     } else {
       w.player.heal(1);

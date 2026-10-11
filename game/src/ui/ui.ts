@@ -2,7 +2,7 @@ import { audio } from '../core/audio';
 import { GAME_NAME, SHIP } from '../core/brand';
 import { LANGS, tr, upper } from '../core/i18n';
 import type { ButtonName, Input } from '../core/input';
-import type { AtalantaUpgradeId, OutfitHero, Quality, SaveData, Settings, UpgradeId } from '../core/save';
+import { cleanBolts, type AtalantaUpgradeId, type OutfitHero, type Quality, type SaveData, type Settings, type UpgradeId } from '../core/save';
 import {
   PUZZLE_COLORS,
   PUZZLE_SHAPES,
@@ -362,7 +362,8 @@ export class UI {
     $<HTMLElement>(el, '.track i').style.width = `${Math.round(k * 100)}%`;
   }
 
-  setBolts(n: number) {
+  setBolts(count: number) {
+    const n = cleanBolts(count);
     const el = $(this.hud, '.bolts');
     if (n !== this.lastBolts && this.lastBolts >= 0) {
       el.classList.remove('pop');
@@ -1494,7 +1495,7 @@ export class UI {
       const el = this.open(`<div class="panel shop-panel">
         <div class="panel-head"><div class="portrait">${portrait('vendy')}</div>
         <div class="shop-title"><h2>${tr('PANDORA’S UPGRADES')}</h2><div class="tagline">${tr('“Bolts in, awesome out!”')}</div></div>
-        <div class="counter">${ICON.bolt}<b>${save.bolts}</b></div><button class="icon-btn close" aria-label="${tr('Leave shop')}">${ICON.close}</button></div>
+        <div class="counter">${ICON.bolt}<b>${cleanBolts(save.bolts)}</b></div><button class="icon-btn close" aria-label="${tr('Leave shop')}">${ICON.close}</button></div>
         ${tabBar}<div class="shop-grid ${this.shopTab}">${pages[this.shopTab]}</div></div>`);
       if (bought) $(el, '.shop-panel').scrollTop = scrolled;
       const on = (sel: string, fn: (b: HTMLElement) => void) => {
@@ -1571,7 +1572,7 @@ export class UI {
     const el = this.open(`<div class="panel card" style="width:min(520px,88vw)">
       <div class="deck">${kicker}</div><div class="deckname" style="color:var(--good);font-size:34px">${upper(tr(r.deck))}</div>
       <div class="stat"><span>${tr('Time')}</span><b>${r.time}</b></div>
-      <div class="stat"><span>${tr('Bolts collected')}</span><b>${r.bolts}</b></div>
+      <div class="stat"><span>${tr('Bolts collected')}</span><b>${cleanBolts(r.bolts)}</b></div>
       ${r.shards ? `<div class="stat"><span>${r.labels?.finds ?? (r.planet ? tr('Journal pages') : tr('Memory shards'))}</span><b>${r.shards}</b></div>` : ''}
       ${r.colonists ? `<div class="stat"><span>${r.labels?.rescues ?? (r.planet ? tr('Scientists freed') : tr('Colonists rescued'))}</span><b>${r.colonists}</b></div>` : ''}
       ${(r.rows ?? []).map(([k, v]) => `<div class="stat"><span>${tr(k)}</span><b>${v}</b></div>`).join('')}

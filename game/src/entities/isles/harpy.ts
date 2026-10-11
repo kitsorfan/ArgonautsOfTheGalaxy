@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { audio } from '../../core/audio';
 import { tr } from '../../core/i18n';
 import { damp } from '../../core/math';
+import { addBolts } from '../../core/save';
 import type { World } from '../../game/world';
 import { Grid } from '../../world/grid';
 import { Enemy } from '../enemies';
@@ -98,9 +99,10 @@ function harpyClass() {
         this.hit(1, 'spin', new THREE.Vector3(pl.body.x, pl.body.y, pl.body.z));
         return;
       }
-      const n = Math.min(T.grab + this.tier, w.save.bolts, T.carry - this.stolen);
+      // The tier can be a fraction (it grows with upgrades), but a sack only holds whole bolts.
+      const n = Math.floor(Math.min(T.grab + this.tier, w.save.bolts, T.carry - this.stolen));
       if (n > 0) {
-        w.save.bolts -= n;
+        addBolts(w.save, -n);
         this.stolen += n;
         this.m.sack.visible = true;
         audio.play('bolt', 0.7);

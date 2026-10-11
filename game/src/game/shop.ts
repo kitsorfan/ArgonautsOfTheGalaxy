@@ -1,5 +1,5 @@
 import { MAX_HEARTS, MAX_HEARTS_MK2 } from '../core/constants';
-import type { AtalantaUpgradeId, OutfitHero, SaveData, UpgradeId } from '../core/save';
+import { cleanBolts, spendBolts, type AtalantaUpgradeId, type OutfitHero, type SaveData, type UpgradeId } from '../core/save';
 import { OUTFITS, type Outfit, type OutfitId } from '../entities/outfits';
 import { WEAPONS, WEAPON_ORDER, ownedWeapons, type Weapon, type WeaponId } from '../entities/weapons';
 import { CHAPTERS, CHAPTER_DECKS, LEVEL_ORDER, chapterOf, type Chapter } from '../levels';
@@ -206,18 +206,17 @@ export function levelUp(save: SaveData, id: UpgradeId, deck?: DeckId): boolean {
 /** Buys the next level of an upgrade. Returns false if it is maxed or Jason can't afford it. */
 export function buyUpgrade(save: SaveData, id: UpgradeId, deck?: DeckId): boolean {
   const offer = shopStock(save, deck).upgrades.find((o) => o.item.id === id);
-  if (!offer || offer.price === null || save.bolts < offer.price) return false;
+  if (!offer || offer.price === null || cleanBolts(save.bolts) < offer.price) return false;
   const price = offer.price;
   if (!levelUp(save, id, deck)) return false;
-  save.bolts -= price;
+  spendBolts(save, price);
   return true;
 }
 
 /** Buys a weapon and equips it. Returns false if it isn't on sale, is owned already, or costs too much. */
 export function buyWeapon(save: SaveData, id: WeaponId, deck?: DeckId): boolean {
   const offer = shopStock(save, deck).weapons.find((o) => o.weapon.id === id);
-  if (!offer || offer.price === null || save.bolts < offer.price) return false;
-  save.bolts -= offer.price;
+  if (!offer || offer.price === null || !spendBolts(save, offer.price)) return false;
   save.weapons = ownedWeapons([...save.weapons, id]);
   save.weapon = id;
   return true;
@@ -233,8 +232,7 @@ export function equipWeapon(save: SaveData, id: WeaponId): boolean {
 /** Buys the next level of one of Atalanta's upgrades. Returns false if it isn't on sale, is maxed, or costs too much. */
 export function buyAtalantaUpgrade(save: SaveData, id: AtalantaUpgradeId, deck?: DeckId): boolean {
   const offer = shopStock(save, deck).atalanta.find((o) => o.item.id === id);
-  if (!offer || offer.price === null || save.bolts < offer.price) return false;
-  save.bolts -= offer.price;
+  if (!offer || offer.price === null || !spendBolts(save, offer.price)) return false;
   save.ataUpgrades[id] = offer.level + 1;
   return true;
 }
@@ -242,8 +240,7 @@ export function buyAtalantaUpgrade(save: SaveData, id: AtalantaUpgradeId, deck?:
 /** Buys an outfit, and the hero puts it on straight away. Returns false if it isn't on sale, is owned already, or costs too much. */
 export function buyOutfit(save: SaveData, id: OutfitId, deck?: DeckId): boolean {
   const offer = shopStock(save, deck).outfits.find((o) => o.outfit.id === id);
-  if (!offer || offer.price === null || save.bolts < offer.price) return false;
-  save.bolts -= offer.price;
+  if (!offer || offer.price === null || !spendBolts(save, offer.price)) return false;
   save.outfits = [...save.outfits, id];
   save.wearing[offer.outfit.hero] = id;
   return true;

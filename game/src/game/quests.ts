@@ -1,5 +1,5 @@
 import { tr } from '../core/i18n';
-import type { SaveData, UpgradeId } from '../core/save';
+import { addBolts, type SaveData, type UpgradeId } from '../core/save';
 import { LEVELS, chapterOf, chapterTotals, inChapter } from '../levels';
 import type { DeckId, LevelDef } from '../world/levelTypes';
 import { flightQuests } from '../vehicles/quests';
@@ -117,10 +117,10 @@ export function payQuests(id: DeckId, save: SaveData): string[] {
     const rescue = rescueKind(ch);
     const find = findKind(ch);
     if (q.pay) {
-      save.bolts += q.pay;
+      addBolts(save, q.pay);
       out.push(tr('Side quest done! +{n} bolts', { n: q.pay }));
     } else if (q.id.endsWith(':colonists')) {
-      save.bolts += QUEST_BOLTS;
+      addBolts(save, QUEST_BOLTS);
       out.push(
         rescue === 'scientist'
           ? tr('Side quest done: every scientist here is free! +{n} bolts', { n: QUEST_BOLTS })
@@ -129,7 +129,7 @@ export function payQuests(id: DeckId, save: SaveData): string[] {
             : tr('Side quest done: every colonist on this deck is free! +{n} bolts', { n: QUEST_BOLTS }),
       );
     } else if (q.id.endsWith(':shards')) {
-      save.bolts += QUEST_BOLTS;
+      addBolts(save, QUEST_BOLTS);
       out.push(
         find === 'page'
           ? tr('Side quest done: every journal page here found! +{n} bolts', { n: QUEST_BOLTS })
@@ -174,12 +174,12 @@ export function shardMilestone(save: SaveData, deck: DeckId): string | null {
  */
 export function givePrize(reward: string, save: SaveData, deck?: DeckId): string {
   if (reward === 'bolts') {
-    save.bolts += 300;
+    addBolts(save, 300);
     return tr('VAULT PRIZE: 300 bolts!');
   }
   const id = reward as UpgradeId;
   if (!levelUp(save, id, deck)) {
-    save.bolts += 150;
+    addBolts(save, 150);
     return tr('VAULT PRIZE: 150 bolts ({name} is already maxed)', { name: tr(UPGRADE_NAME[id]) });
   }
   return tr('VAULT PRIZE: free upgrade, {name}!', { name: tr(UPGRADE_NAME[id]) });
