@@ -6,9 +6,8 @@
  *
  * - Big, heavy and slow (one strong hydraulic jump, no double jump, glide or grapple), but far stronger
  *   than anyone on foot: its punches, slam and flames flatten robots, and only it can fight TALOS.
- * - No hearts aboard: hits drain its STRENGTH (see `mechPower.ts`), which slowly comes back. At 0 it
- *   overheats: it kneels, everyone hops out, and it can't be boarded until it has cooled down (a ring
- *   over it fills up). The heroes' own hearts are untouched while they ride.
+ * - No hearts aboard: hits drain its STRENGTH (see `mechPower.ts`), which only a checkpoint mends. At 0
+ *   the heroes are knocked out, as with no hearts left. Their own hearts are untouched while they ride.
  * - GET OUT (the action button, on solid ground with room beside it): Jason and Atalanta climb out and
  *   play on foot; the empty mech stays parked, kneeling. CLIMB IN (the action button, close to it) puts
  *   everyone back aboard.
@@ -35,16 +34,9 @@ import type { HeroModel } from '../models';
 import type { Player } from '../player';
 import { FLAME, stepFuel, type Tank } from '../weapons';
 import { MECH_COLORS, makeMech, type MechModel } from './mechModel';
-import { coolProgress, drain, freshPower, spent, stepPower, type MechPower } from './mechPower';
+import { drain, freshPower, spent, type MechPower } from './mechPower';
 
 const tmp = new THREE.Vector3();
-const HOT = new THREE.Color('#ff5a1a');
-const COOL = new THREE.Color(MECH_COLORS.light);
-
-/** Segments in the cool-down ring over the parked mech, red-hot at first and gold once nearly cool. */
-const RING_SEGS = 20;
-const RING_HOT = new THREE.Color('#ff3a1a');
-const RING_DONE = new THREE.Color('#ffd166');
 
 export class MechMoves implements Interactable {
   readonly model: MechModel;
@@ -67,7 +59,7 @@ export class MechMoves implements Interactable {
   /** Jason (in the cockpit) and Atalanta (on the shoulder), once they have climbed in. */
   private riders: { jason: HeroModel | null; atalanta: HeroModel | null } = { jason: null, atalanta: null };
   private waveT = 4;
-  /** STRENGTH (instead of hearts) and the cool-down after it runs out. */
+  /** STRENGTH (instead of hearts). */
   power: MechPower = freshPower();
   /** The flamethrower's tank (seconds of fire left), and whether it is burning this frame. */
   tank: Tank = { fuel: MECH.flameFuel, dry: false, rest: 0 };
@@ -78,11 +70,7 @@ export class MechMoves implements Interactable {
   private jet: FlameJet | null = null;
   /** Where it stands, kneeling, while nobody is aboard (null while the heroes ride it). */
   parked: THREE.Vector3 | null = null;
-  private ring: { group: THREE.Group; segs: THREE.Mesh[]; on: THREE.MeshBasicMaterial; off: THREE.MeshBasicMaterial } | null = null;
-  /** Overheated since it was parked: it says so when it has cooled down. */
-  private wasHot = false;
   private toastT = 0;
-  private smokeT = 0;
 
   /* The action button: GET OUT while aboard (when nothing else is in reach), CLIMB IN beside the parked mech. */
   alive = true;
@@ -182,20 +170,12 @@ export class MechMoves implements Interactable {
     const p = this.p;
     if (p.down) return null;
     if (!this.parked) return p.aboard && p.canLeaveMech() ? 'GET OUT' : null;
-    return this.power.cool > 0 ? 'TOO HOT' : 'CLIMB IN';
+    return 'CLIMB IN';
   }
 
   interact() {
-    if (!this.parked) {
-      this.p.leaveMech(false);
-      return;
-    }
-    if (this.power.cool > 0) {
-      audio.play('empty');
-      if (this.mayTalk()) this.world.hooks.toast('Still too hot! When the ring over the mech is full, climb back in.', 'bolt');
-      return;
-    }
-    this.p.climbIn();
+    if (this.parked) this.p.climbIn();
+    else this.p.leaveMech();
   }
 
   /** LUX's reminders come at most every few seconds. */
@@ -205,11 +185,8 @@ export class MechMoves implements Interactable {
     return true;
   }
 
-  /**
-   * Parks the empty mech at (x, y, z), kneeling, and lets the riders out (`hot`: it overheated and has to
-   * cool down before anyone can climb back in).
-   */
-  park(at: THREE.Vector3, facing: number, hot: boolean) {
+  /** Parks the empty mech at (x, y, z), kneeling, and lets the riders out. */
+  park(at: THREE.Vector3, facing: number) {
     this.reset();
     this.parked = at.clone();
     const m = this.model;
@@ -219,39 +196,18 @@ export class MechMoves implements Interactable {
     m.body.scale.setScalar(1);
     m.chargeGlow.scale.setScalar(0.001);
     for (const j of m.jets) j.scale.setScalar(0.001);
-    if (hot) {
-      this.power = { ...this.power, strength: 0, cool: MECH.cool };
-      this.wasHot = true;
-      m.lines.emissive.copy(HOT);
-      m.visor.emissive.copy(HOT);
-    }
     this.unseat();
   }
 
-  /** Everyone is back aboard: it stands up again, its light-lines teal. */
+  /** Everyone is back aboard: it stands up again. */
   unpark() {
     this.parked = null;
-    this.cooled();
   }
 
-  /** Full STRENGTH and a full tank, cooled down at once (checkpoints, starting again at one). */
+  /** Full STRENGTH and a full tank (checkpoints, starting again at one): the only way it is mended. */
   refill() {
     this.power = freshPower();
     this.tank = { fuel: MECH.flameFuel, dry: false, rest: 0 };
-    this.cooled();
-  }
-
-  /** The overheating glow and the cool-down ring go away. */
-  private cooled() {
-    this.wasHot = false;
-    if (this.ring) this.ring.group.visible = false;
-    this.model.lines.emissive.copy(COOL);
-    this.model.visor.emissive.copy(COOL);
-  }
-
-  /** It overheated (out of STRENGTH) but is still moving: it bails out as soon as it stands still on the ground. */
-  get canBail() {
-    return this.p.body.grounded && !this.busy;
   }
 
   /**
@@ -276,13 +232,15 @@ export class MechMoves implements Interactable {
       p.vx += ((b.x - fromX) / d) * 3;
       p.vz += ((b.z - fromZ) / d) * 3;
     }
-    if (spent(this.power) && was > 0) {
-      audio.play('sputter', 0.5);
-      w.hooks.toast('Out of STRENGTH! The mech is overheating: everybody out until it cools down!', 'bolt');
-    } else if (this.power.strength < MECH.strength * 0.3 && was >= MECH.strength * 0.3) {
-      w.hooks.toast('The mech’s STRENGTH is low! Keep away from hits for a bit and it comes back.', 'bolt');
-    }
     w.hooks.hud();
+    if (spent(this.power) && was > 0) {
+      // Out of STRENGTH: knocked out, as with no hearts left (back to the last checkpoint, mech mended).
+      audio.play('sputter', 0.5);
+      p.down = true;
+      w.playerDown();
+    } else if (this.power.strength < MECH.strength * 0.3 && was >= MECH.strength * 0.3) {
+      w.hooks.toast('The mech’s STRENGTH is low! It doesn’t mend by itself: only a checkpoint fixes it. Careful!', 'bolt');
+    }
   }
 
   /* ---------------- aboard ---------------- */
@@ -292,7 +250,6 @@ export class MechMoves implements Interactable {
     const w = this.world;
     const b = p.body;
     const { wx, wz, mag } = p.moveInput(input);
-    this.power = stepPower(this.power, dt);
     this.coyote = b.grounded ? PLAYER.coyote : this.coyote - dt;
     this.jumpBuf -= dt;
     this.thrustCd -= dt;
@@ -530,17 +487,11 @@ export class MechMoves implements Interactable {
 
   /* ---------------- parked ---------------- */
 
-  /**
-   * Every frame while nobody is aboard: it kneels where it was left, its tank refills, its STRENGTH comes
-   * back (cooling down first if it overheated, steaming, with a ring over it filling up).
-   */
+  /** Every frame while nobody is aboard: it kneels where it was left, and its tank refills (its STRENGTH doesn't). */
   updateParked(dt: number) {
-    const at = this.parked;
-    if (!at) return;
+    if (!this.parked) return;
     const w = this.world;
     const m = this.model;
-    const hot = this.power.cool > 0;
-    this.power = stepPower(this.power, dt);
     this.tank = stepFuel(this.tank, false, dt, MECH.flameFuel, MECH.flameRefill);
     // Kneeling: one knee down, fists on the floor, head bowed.
     const k = 6;
@@ -557,66 +508,8 @@ export class MechMoves implements Interactable {
     m.head.rotation.x = damp(m.head.rotation.x, 0.3, k, dt);
     for (const f of m.fists) f.scale.setScalar(1);
     const glow = 0.25 + w.darkness * 0.8;
-    if (hot) {
-      // Glowing orange and hissing steam while it cools.
-      const pulse = 1.2 + Math.sin(w.time * 6) * 0.4;
-      m.lines.emissiveIntensity = pulse;
-      m.visor.emissiveIntensity = pulse;
-      this.smokeT -= dt;
-      if (this.smokeT <= 0) {
-        this.smokeT = 0.12;
-        w.particles.emit(at.x + (Math.random() - 0.5) * 1.4, at.y + 2.4, at.z + (Math.random() - 0.5) * 1.4, { count: 2, color: '#d8d8d8', speed: 1.2, life: 1, size: 0.9, gravity: -2.5, drag: 1 });
-      }
-      if (Math.random() < dt * 1.5) w.soundAt('vent', at.x, at.z, 1.3, 14);
-    } else {
-      m.lines.emissiveIntensity = glow + 0.5;
-      m.visor.emissiveIntensity = glow + 0.6;
-    }
-    if (hot && this.power.cool <= 0) {
-      // Cool again: the lines go back to teal, and LUX says so.
-      m.lines.emissive.copy(COOL);
-      m.visor.emissive.copy(COOL);
-      w.particles.emit(at.x, at.y + 2.2, at.z, { count: 24, color: MECH_COLORS.light, speed: 4, life: 0.6, size: 0.5, up: 2 });
-      audio.play('charged', 0.8);
-      if (this.wasHot) w.hooks.toast('The mech has cooled down! Walk up to it and CLIMB IN.', 'bolt');
-      this.wasHot = false;
-    }
-    this.updateRing(at, hot);
-  }
-
-  /** The cool-down ring over the parked mech: it fills up (red, orange, then gold) as the mech cools. */
-  private updateRing(at: THREE.Vector3, hot: boolean) {
-    if (!hot) {
-      if (this.ring) this.ring.group.visible = false;
-      return;
-    }
-    if (!this.ring) {
-      const group = new THREE.Group();
-      const on = new THREE.MeshBasicMaterial({ color: '#ff6a2a', depthTest: false, transparent: true, toneMapped: false });
-      const off = new THREE.MeshBasicMaterial({ color: '#3a2418', depthTest: false, transparent: true, opacity: 0.8 });
-      const geo = new THREE.PlaneGeometry(0.26, 0.46);
-      const segs: THREE.Mesh[] = [];
-      for (let i = 0; i < RING_SEGS; i++) {
-        // Clockwise from the top, like a clock hand.
-        const a = (i / RING_SEGS) * Math.PI * 2;
-        const s = new THREE.Mesh(geo, off);
-        s.position.set(Math.sin(a) * 0.95, Math.cos(a) * 0.95, 0);
-        s.rotation.z = -a;
-        s.renderOrder = 9;
-        segs.push(s);
-        group.add(s);
-      }
-      this.world.scene.add(group);
-      this.ring = { group, segs, on, off };
-    }
-    const r = this.ring;
-    const k = coolProgress(this.power);
-    const lit = Math.floor(k * RING_SEGS + 0.001);
-    r.segs.forEach((s, i) => (s.material = i < lit ? r.on : r.off));
-    r.on.color.copy(RING_HOT).lerp(RING_DONE, k);
-    r.group.visible = true;
-    r.group.position.set(at.x, at.y + 4.3 + Math.sin(this.world.time * 2) * 0.08, at.z);
-    r.group.quaternion.copy(this.world.camera.quaternion);
+    m.lines.emissiveIntensity = glow + 0.5;
+    m.visor.emissiveIntensity = glow + 0.6;
   }
 
   /* ---------------- animation ---------------- */

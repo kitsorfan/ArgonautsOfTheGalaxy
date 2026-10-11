@@ -1210,7 +1210,7 @@ export class World {
     this.player.heal(99);
     this.player.gainEnergy(99);
     this.player.rechargeArmor();
-    // The bronze mech is mended too (and cooled down, if it is waiting parked somewhere).
+    // The bronze mech is mended too (the only place it is), even if it is waiting parked somewhere.
     this.player.mech?.refill();
     this.hooks.toast('Checkpoint saved!', 'bolt');
     this.hooks.checkpoint();

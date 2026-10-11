@@ -56,8 +56,8 @@ export const EL_FORGE: Record<string, string> = {
     "Η ρομποστολή ξύπνησε! Ο Ιάσονας την οδηγεί, η Αταλάντη κάθεται στον ώμο της, κι ο ΛΟΥΞ με την ΙΡΙΔΑ πετάνε δίπλα.",
   "SPIN is PUNCH. In the air, SPIN is a big SLAM. DASH fires the back jets: THRUST! And hold BLAST for its FLAMETHROWER.":
     "Η ΣΒΟΥΡΑ είναι ΓΡΟΘΙΑ. Στον αέρα, η ΣΒΟΥΡΑ είναι ένα μεγάλο ΚΑΡΦΩΜΑ. Η ΟΡΜΗ ανάβει τους πίσω πυραύλους: ΩΘΗΣΗ! Και κράτα πατημένη τη ΒΟΛΗ για το ΦΛΟΓΟΒΟΛΟ της.",
-  "No hearts in a mech: it has STRENGTH. Hits wear it down, and it comes back slowly. If it runs out, the mech overheats and you all hop out until it cools.":
-    "Μια ρομποστολή δεν έχει καρδιές: έχει ΔΥΝΑΜΗ. Τα χτυπήματα τη λιγοστεύουν, κι αυτή γεμίζει ξανά σιγά σιγά. Αν τελειώσει, η ρομποστολή υπερθερμαίνεται και πηδάτε όλοι έξω μέχρι να κρυώσει.",
+  "No hearts in a mech: it has STRENGTH. Hits wear it down, and it does NOT come back by itself: only a checkpoint mends it. If it runs out, it’s back to the last checkpoint!":
+    "Μια ρομποστολή δεν έχει καρδιές: έχει ΔΥΝΑΜΗ. Τα χτυπήματα τη λιγοστεύουν, και ΔΕΝ γεμίζει μόνη της: μόνο ένα σημείο ελέγχου τη φτιάχνει. Αν τελειώσει, γυρνάτε στο τελευταίο σημείο ελέγχου!",
   "It’s slow, but SO strong. And the action button lets us GET OUT, and CLIMB back IN.":
     "Είναι αργή, αλλά ΤΟΣΟ δυνατή. Και με το κουμπί δράσης μπορούμε να ΒΓΟΥΜΕ ΕΞΩ και να ΜΠΟΥΜΕ ΠΑΛΙ ΜΕΣΑ.",
   "Comfy up here! You steer, Jason. I’ll do the cheering.": "Βολικά εδώ πάνω! Εσύ οδηγείς, Ιάσονα. Εγώ θα επευφημώ.",
@@ -185,15 +185,13 @@ export const EL_FORGE: Record<string, string> = {
     "με το κουμπί δράσης ο Ιάσονας και η Αταλάντη βγαίνουν έξω σε στέρεο έδαφος. Η ρομποστολή περιμένει γονατιστή: πήγαινε κοντά της και πάτα ΜΠΕΣ ΜΕΣΑ.",
   // Getting out, climbing back in, and the mech's STRENGTH.
   "CLIMB IN": "ΜΠΕΣ ΜΕΣΑ",
-  "TOO HOT": "ΚΑΙΕΙ ΑΚΟΜΑ",
   "Climb back into the bronze mech": "Μπες πάλι μέσα στη χάλκινη ρομποστολή",
   "Out we hop! The mech waits here for us. Walk up to it and press CLIMB IN to get back aboard.":
     "Πηδάμε έξω! Η ρομποστολή θα μας περιμένει εδώ. Πήγαινε κοντά της και πάτα ΜΠΕΣ ΜΕΣΑ για να ανέβεις ξανά.",
-  "Still too hot! When the ring over the mech is full, climb back in.": "Καίει ακόμα! Όταν γεμίσει ο κύκλος πάνω από τη ρομποστολή, μπες πάλι μέσα.",
-  "The mech has cooled down! Walk up to it and CLIMB IN.": "Η ρομποστολή κρύωσε! Πήγαινε κοντά της και πάτα ΜΠΕΣ ΜΕΣΑ.",
-  "Out of STRENGTH! The mech is overheating: everybody out until it cools down!": "Τέλος η ΔΥΝΑΜΗ! Η ρομποστολή υπερθερμαίνεται: όλοι έξω μέχρι να κρυώσει!",
-  "The mech’s STRENGTH is low! Keep away from hits for a bit and it comes back.":
-    "Η ΔΥΝΑΜΗ της ρομποστολής είναι λίγη! Απόφυγε τα χτυπήματα για λίγο και θα γεμίσει ξανά.",
+  "The mech’s STRENGTH is low! It doesn’t mend by itself: only a checkpoint fixes it. Careful!":
+    "Η ΔΥΝΑΜΗ της ρομποστολής είναι λίγη! Δεν γεμίζει μόνη της: μόνο ένα σημείο ελέγχου τη φτιάχνει. Προσοχή!",
+  "The mech is far too big for the skiff! Press GET OUT and leave it here: it guards the forge now.":
+    "Η ρομποστολή είναι πολύ μεγάλη για το σκάφος! Πάτα ΒΓΕΣ ΕΞΩ και άφησέ τη εδώ: τώρα φυλάει το σιδηρουργείο.",
   "The flamethrower is too hot! Let go of FLAME for a moment and the gauge fills up again.":
     "Το φλογοβόλο ζεστάθηκε πολύ! Άφησε τη ΦΩΤΙΑ για λίγο και ο δείκτης θα γεμίσει ξανά.",
 };
