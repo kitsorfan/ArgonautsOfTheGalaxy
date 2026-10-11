@@ -107,8 +107,30 @@ export function newSave(): SaveData {
   };
 }
 
+/** A bolt count as it must be stored: a whole number, never below zero (anything broken counts as 0). */
+export function cleanBolts(n: unknown): number {
+  const v = typeof n === 'number' ? n : Number(n);
+  return Number.isFinite(v) ? Math.max(0, Math.round(v)) : 0;
+}
+
+/** Gives (or, with a negative n, takes) bolts; the pocket always stays a whole number, never below zero. */
+export function addBolts(save: SaveData, n: number) {
+  save.bolts = cleanBolts(cleanBolts(save.bolts) + Math.round(n || 0));
+}
+
+/** Pays a price in bolts. Returns false (and takes nothing) if Jason can't afford it. */
+export function spendBolts(save: SaveData, price: number): boolean {
+  const have = cleanBolts(save.bolts);
+  const cost = cleanBolts(price);
+  if (have < cost) return false;
+  save.bolts = have - cost;
+  return true;
+}
+
 /** Brings a save from an older version of the game up to date: fields added since get their defaults. */
 export function migrateSave(s: SaveData): SaveData {
+  // Repair a bolt count that went wrong (a fraction, below zero, or missing).
+  s.bolts = cleanBolts(s.bolts);
   // LUX's old shield module became the force pulse.
   s.abilities = s.abilities.map((a) => ((a as string) === 'shield' ? 'pulse' : a));
   s.upgrades ??= {};
@@ -158,6 +180,7 @@ export function loadSave(): SaveData | null {
 }
 
 export function writeSave(s: SaveData) {
+  s.bolts = cleanBolts(s.bolts);
   const raw = JSON.stringify(s);
   try {
     localStorage.setItem(KEY, raw);

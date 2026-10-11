@@ -6,12 +6,18 @@ import { glowSprite } from '../entities/models';
  * The Argo: Captain Argus's old shuttle, rebuilt for the voyage to Colchis. A sleek white-and-gold ship
  * shaped like an old Greek galley: a ram's head on the prow, five oar-like solar fins along each side
  * that "row" as it flies, one big sail-like solar panel on a mast, a curling stern post and two
- * engines. It points along -Z (forward), up is +Y, and it is about 7 units long.
+ * engines. It points along -Z (forward), up is +Y, and it is about 7 units long. The root sits at the
+ * hull's centre, unless it is built `centred` (see makeArgo).
  */
 export interface ArgoModel {
   root: THREE.Group;
-  /** Tilts with the steering (the flight banks it). */
+  /** Tilts with the steering (the flight banks it), about the root. */
   body: THREE.Group;
+  /**
+   * How far the middle of the whole ship as you see it (hull, oars, mast and sail) is above the hull's
+   * centre, in model units (before the root is scaled). The tall sail puts it well above the hull.
+   */
+  centre: number;
   /** A bubble of gold light while boosting. */
   shield: THREE.Mesh;
   /** Animates the oars, the sail and the engines; `thrust` 0..1 (1 = boosting). */
@@ -60,7 +66,12 @@ function sailTexture(): THREE.CanvasTexture {
 
 const tube = (pts: THREE.Vector3[], r: number, mat: THREE.Material) => new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 24, r, 8, false), mat);
 
-export function makeArgo(): ArgoModel {
+/**
+ * Builds the Argo. `centred` hangs it from the middle of what you see instead of from the hull's centre:
+ * the flight steers the ship by its root, and rings, bolts and rocks are tested against that point, so
+ * a ring counts when the ship looks centred in it (and the ship banks about that point too).
+ */
+export function makeArgo(centred = false): ArgoModel {
   const root = new THREE.Group();
   const body = new THREE.Group();
   root.add(body);
@@ -175,10 +186,26 @@ export function makeArgo(): ArgoModel {
   shield.visible = false;
   root.add(shield);
 
+  // The middle of the ship as you see it: the box around its meshes (not the glow sprites), oars at rest.
+  const box = new THREE.Box3();
+  body.updateMatrixWorld(true);
+  body.traverse((o) => {
+    if ((o as THREE.Mesh).isMesh) box.union(new THREE.Box3().setFromObject(o));
+  });
+  const centre = box.getCenter(new THREE.Vector3()).y;
+  if (centred) {
+    const frame = new THREE.Group();
+    frame.add(...body.children);
+    frame.position.y = -centre;
+    body.add(frame);
+    shield.position.y -= centre;
+  }
+
   return {
     root,
     body,
     shield,
+    centre,
     update(t: number, thrust: number) {
       for (const o of oars) {
         // A slow rowing stroke, rippling from the prow to the stern.

@@ -6,7 +6,7 @@ import { CELL, PLAYER, PULSE } from '../core/constants';
 import { tr } from '../core/i18n';
 import type { Input } from '../core/input';
 import { damp } from '../core/math';
-import type { Quality, SaveData } from '../core/save';
+import { addBolts, type Quality, type SaveData } from '../core/save';
 import type { Director, Rig } from '../cinema/director';
 import * as fleeceScenes from '../cinema/fleeceScenes';
 import type { GoldenKing } from '../entities/ch3/goldenKing';
@@ -103,6 +103,8 @@ export interface WorldHooks {
   prize(reward: string): void;
   /** A gold banner for rewards (bolts, hearts, quests). */
   reward(text: string): void;
+  /** A pulsing warning banner that stays up until it is cleared with null (MEDUSA's glare). */
+  warn?(text: string | null): void;
   /** The first time Jason meets a kind of enemy (or an elite), show what it is and what it's up to. */
   threat(kind: BadgeKind | 'elite'): void;
   /** Jason tried to dash with no energy left. */
@@ -772,7 +774,7 @@ export class World {
     if (kind === 'canister' && !s.canisters.includes(id)) s.canisters.push(id);
     if (kind === 'colonist' && !s.colonists.includes(id)) {
       s.colonists.push(id);
-      s.bolts += COLONIST_BOLTS;
+      addBolts(s, COLONIST_BOLTS);
       const ch = chapterOf(this.def.id);
       const args = { n: COLONIST_BOLTS, saved: inChapter(s.colonists, ch), total: chapterTotals(ch).colonists };
       // In chapter 3 it is stolen things that get won back, counted per level.
@@ -1208,7 +1210,7 @@ export class World {
     this.player.heal(99);
     this.player.gainEnergy(99);
     this.player.rechargeArmor();
-    // The bronze mech is mended too (and cooled down, if it is waiting parked somewhere).
+    // The bronze mech is mended too (the only place it is), even if it is waiting parked somewhere.
     this.player.mech?.refill();
     this.hooks.toast('Checkpoint saved!', 'bolt');
     this.hooks.checkpoint();

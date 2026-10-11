@@ -1,7 +1,7 @@
 import { GRAVITY, MECH, STEP_H } from '../src/core/constants';
 import { newSave } from '../src/core/save';
 import { HEROES, joinedRoster, parkedFlag } from '../src/entities/heroes/heroes';
-import { coolProgress, drain, freshPower, hitCost, overheat, spent, stepPower, type MechPower } from '../src/entities/heroes/mechPower';
+import { drain, freshPower, hitCost, spent } from '../src/entities/heroes/mechPower';
 import { ANVIL_TUNING, TALOS_TUNING } from '../src/entities/forge/tuning';
 import { ROBOT_TUNING } from '../src/entities/robots';
 import { WEAPONS, damageOf, stepFuel, type Tank } from '../src/entities/weapons';
@@ -164,11 +164,6 @@ describe('the bronze mech', () => {
 });
 
 describe('the mech’s STRENGTH (instead of hearts)', () => {
-  const run = (s: MechPower, seconds: number) => {
-    for (let t = 0; t < seconds; t += 0.05) s = stepPower(s, 0.05);
-    return s;
-  };
-
   it('loses only a small slice to a hit that would cost a hero a whole heart', () => {
     expect(hitCost(1, false)).toBeLessThanOrEqual(MECH.strength * 0.15);
     expect(hitCost(1, true)).toBeGreaterThan(hitCost(1, false));
@@ -182,30 +177,11 @@ describe('the mech’s STRENGTH (instead of hearts)', () => {
     expect(s.strength).toBe(0);
   });
 
-  it('comes back slowly once the hits stop', () => {
+  it('never mends by itself, like hearts: only a checkpoint (a fresh refill) brings it back', () => {
+    for (const k of ['regen', 'regenDelay', 'cool']) expect(MECH).not.toHaveProperty(k);
     const hurt = drain(drain(freshPower(), 1), 1);
-    expect(run(hurt, MECH.regenDelay - 0.2).strength).toBe(hurt.strength);
-    const later = run(hurt, MECH.regenDelay + 1);
-    expect(later.strength).toBeGreaterThan(hurt.strength);
-    expect(later.strength).toBeLessThan(MECH.strength);
-    expect(run(hurt, MECH.regenDelay + 60).strength).toBe(MECH.strength);
-  });
-
-  it('overheats at 0: it cools down (filling back up) before anyone can climb back in', () => {
-    let s = overheat(drain(freshPower(), 99));
-    expect(spent(s)).toBe(true);
-    expect(s.cool).toBe(MECH.cool);
-    expect(coolProgress(s)).toBe(0);
-    s = run(s, MECH.cool / 2);
-    expect(coolProgress(s)).toBeCloseTo(0.5, 1);
-    expect(s.strength).toBeCloseTo(MECH.strength / 2, -1);
-    s = run(s, MECH.cool / 2 + 0.2);
-    expect(s.cool).toBe(0);
-    expect(coolProgress(s)).toBe(1);
-    expect(s.strength).toBe(MECH.strength);
-    // Long enough to notice, short enough not to bore anyone.
-    expect(MECH.cool).toBeGreaterThanOrEqual(6);
-    expect(MECH.cool).toBeLessThanOrEqual(15);
+    expect(hurt).toEqual({ strength: MECH.strength - 2 * MECH.hitCost });
+    expect(freshPower().strength).toBe(MECH.strength);
   });
 });
 

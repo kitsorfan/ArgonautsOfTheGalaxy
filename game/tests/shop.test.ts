@@ -1,9 +1,9 @@
 import { ATALANTA, MAX_HEARTS, MAX_HEARTS_MK2, PLAYER } from '../src/core/constants';
-import { migrateSave, newSave, type SaveData, type UpgradeId } from '../src/core/save';
+import { addBolts, cleanBolts, migrateSave, newSave, spendBolts, type SaveData, type UpgradeId } from '../src/core/save';
 import { atalantaStats } from '../src/entities/heroes/atalantaStats';
 import { OUTFITS } from '../src/entities/outfits';
 import { difficultyFor } from '../src/game/difficulty';
-import { givePrize, shardMilestone } from '../src/game/quests';
+import { givePrize, payQuests, shardMilestone } from '../src/game/quests';
 import {
   ATALANTA_UPGRADES,
   UPGRADES,
@@ -12,6 +12,7 @@ import {
   buyAtalantaUpgrade,
   buyOutfit,
   buyUpgrade,
+  buyWeapon,
   heartCap,
   shopChapter,
   shopStock,
@@ -325,5 +326,68 @@ describe('saves with chapter 3’s shop', () => {
     expect(s.wearing).toEqual({ atalanta: 'ranger' });
     const t = migrateSave({ ...newSave(), outfits: [], wearing: { jason: 'bronze' } });
     expect(t.wearing).toEqual({});
+  });
+});
+
+describe('bolts are always a whole number, never below zero', () => {
+  it('a broken count in a loaded save gets repaired', () => {
+    const load = (bolts: unknown) => migrateSave(JSON.parse(JSON.stringify({ ...newSave(), bolts })) as SaveData).bolts;
+    expect(load(41.6)).toBe(42);
+    expect(load(12.35)).toBe(12);
+    expect(load(-30)).toBe(0);
+    expect(load(-0.4)).toBe(0);
+    expect(load(NaN)).toBe(0); // JSON turns NaN into null
+    expect(load(undefined)).toBe(0);
+    expect(load('75')).toBe(75);
+    expect(load('lots')).toBe(0);
+    expect(load(250)).toBe(250);
+  });
+
+  it('buying never goes below zero, even from a broken count', () => {
+    const price = shopStock(newSave()).upgrades[0].price ?? 0;
+    for (const bolts of [0, price - 1, price - 0.6, NaN, -5]) {
+      const s = newSave();
+      s.bolts = bolts;
+      expect(buyUpgrade(s, UPGRADES[0].id)).toBe(false);
+      expect(s.upgrades).toEqual({});
+    }
+    const s = newSave();
+    s.bolts = price + 0.4;
+    expect(buyUpgrade(s, UPGRADES[0].id)).toBe(true);
+    expect(s.bolts).toBe(0);
+    const gaia = maxedShip(true);
+    gaia.bolts = NaN;
+    expect(buyWeapon(gaia, 'spread', CHAPTER_DECKS[2][0])).toBe(false);
+    expect(spendBolts(gaia, 10)).toBe(false);
+    gaia.bolts = 7;
+    expect(spendBolts(gaia, 10)).toBe(false);
+    expect(gaia.bolts).toBe(7);
+  });
+
+  it('a reward or a snatch scaled by a fractional tier stays whole', () => {
+    const s = maxedShip(true);
+    s.upgrades.blaster = 3;
+    const tier = difficultyFor(15, s).tier;
+    expect(Number.isInteger(tier)).toBe(false);
+    s.bolts = 100;
+    addBolts(s, 5 * (1 + tier * 0.1));
+    expect(Number.isInteger(s.bolts)).toBe(true);
+    addBolts(s, -(5 + tier));
+    expect(Number.isInteger(s.bolts)).toBe(true);
+    addBolts(s, -1000);
+    expect(s.bolts).toBe(0);
+    addBolts(s, NaN);
+    expect(s.bolts).toBe(0);
+  });
+
+  it('prizes and quest pay keep a broken count whole', () => {
+    const s = newSave();
+    s.bolts = 10.5;
+    givePrize('bolts', s);
+    expect(s.bolts).toBe(311);
+    payQuests(LEVEL_ORDER[0], s);
+    expect(Number.isInteger(s.bolts)).toBe(true);
+    expect(cleanBolts(-3.2)).toBe(0);
+    expect(cleanBolts(Infinity)).toBe(0);
   });
 });

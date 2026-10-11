@@ -17,7 +17,6 @@ import { BrennusMoves } from './heroes/brennus';
 import { Follower } from './heroes/follower';
 import { HEROES, heroDev, heroRoster, joinedRoster, nextHero, parkedFlag, switchBlock, type SwitchBlock, type TrailMove } from './heroes/heroes';
 import { MechMoves } from './heroes/mech';
-import { spent } from './heroes/mechPower';
 import { makeMirrorShield, stoneSkin, type MirrorShieldModel } from './labyrinth/stone';
 import { JasonFx } from './moveFx';
 import { FlameJet, burnCone } from './flame';
@@ -377,25 +376,20 @@ export class Player {
 
   /**
    * GET OUT: Jason and Atalanta climb out beside the mech and play on foot (switching, their own hearts),
-   * and the empty mech stays parked, kneeling, where they left it. `overheated`: it ran out of STRENGTH
-   * and throws them out wherever it stands (if that isn't solid ground, it stumbles back to the last safe
-   * spot first), and must cool down before they can climb back in.
+   * and the empty mech stays parked, kneeling, where they left it.
    */
-  leaveMech(overheated: boolean): boolean {
+  leaveMech(): boolean {
     const mech = this.mech;
     if (!mech || this.hero !== 'mech') return false;
     const w = this.world;
     const b = this.body;
-    const solid = this.onSolidFloor();
-    const at = solid ? new THREE.Vector3(b.x, b.y, b.z) : this.safe.clone();
-    const room = this.exitSpots(at.x, at.y, at.z, this.facing);
-    if (!overheated && (!room || !solid || mech.busy || this.down || w.cutscene)) {
+    const at = new THREE.Vector3(b.x, b.y, b.z);
+    const spots = this.exitSpots(at.x, at.y, at.z, this.facing);
+    if (!spots || !this.onSolidFloor() || mech.busy || this.down || w.cutscene) {
       audio.play('empty');
       return false;
     }
-    // Thrown out with no room around: they tumble out right where it kneels, and walk off.
-    const spots = room ?? [at, at];
-    mech.park(at, this.facing, overheated);
+    mech.park(at, this.facing);
     w.setFlag(parkedFlag('mech'));
     const hero = this.roster[0];
     this.hero = hero;
@@ -406,24 +400,17 @@ export class Player {
     this.showHero();
     this.followers[0]?.place(theirs.x, theirs.y, theirs.z, this.facing);
     this.swapCd = 0.6;
-    this.invuln = overheated ? 1.6 : 0.4;
+    this.invuln = 0.4;
     this.squash = 0.25;
     this.refreshGear();
     w.refreshCompanions();
-    w.particles.emit(at.x, at.y + 2, at.z, { count: 26, color: overheated ? '#d8d8d8' : '#ffd8a0', speed: 4, life: 0.6, size: 0.6, up: 2, gravity: overheated ? -2 : 3 });
-    if (overheated) {
-      audio.play('vent', 0.8);
-      audio.play('pound', 1.2);
-      w.shake(0.5);
-      haptic('heavy');
-    } else {
-      audio.play('door', 1.3);
-      audio.play('land', 1.1);
-      haptic('light');
-      if (!w.hasFlag('mechhint')) {
-        w.setFlag('mechhint');
-        w.hooks.toast('Out we hop! The mech waits here for us. Walk up to it and press CLIMB IN to get back aboard.', 'bolt');
-      }
+    w.particles.emit(at.x, at.y + 2, at.z, { count: 26, color: '#ffd8a0', speed: 4, life: 0.6, size: 0.6, up: 2, gravity: 3 });
+    audio.play('door', 1.3);
+    audio.play('land', 1.1);
+    haptic('light');
+    if (!w.hasFlag('mechhint')) {
+      w.setFlag('mechhint');
+      w.hooks.toast('Out we hop! The mech waits here for us. Walk up to it and press CLIMB IN to get back aboard.', 'bolt');
     }
     w.hooks.hud();
     return true;
@@ -443,7 +430,7 @@ export class Player {
 
   /**
    * Back at a checkpoint (knocked out, or "back to last checkpoint"): once the mech has joined, everyone
-   * starts again aboard it, cooled down and at full STRENGTH, wherever it was left.
+   * starts again aboard it, at full STRENGTH, wherever it was left.
    */
   backAboard() {
     if (!this.mech) return;
@@ -1286,11 +1273,6 @@ export class Player {
       return;
     }
     if (this.mech && this.hero === 'mech') {
-      // Out of STRENGTH: as soon as it stands on the ground, it kneels and everyone hops out.
-      if (spent(this.mech.power) && this.mech.canBail) {
-        this.leaveMech(true);
-        return;
-      }
       this.mech.update(dt, input);
       return;
     }

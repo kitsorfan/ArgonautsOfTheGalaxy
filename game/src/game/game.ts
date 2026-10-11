@@ -17,7 +17,7 @@ import { lang, setLang, tr } from '../core/i18n';
 import { Input } from '../core/input';
 import { heroCourse } from '../entities/heroes/course';
 import { heroDev, parseHeroes } from '../entities/heroes/heroes';
-import { clearSave, loadSave, newSave, writeSave, type SaveData, type Settings } from '../core/save';
+import { cleanBolts, clearSave, loadSave, newSave, writeSave, type SaveData, type Settings } from '../core/save';
 import { CHAPTER_DECKS, GAME_FINALE, LEVELS, LEVEL_ORDER, catchUpChapters, chapterIndex, chapterOf, chapterSize, chapterTotals, comingSoon, inChapter, isFinale, nextChapterStart, type Chapter } from '../levels';
 import type { DeckId, EndingKind, Line } from '../world/levelTypes';
 import { THEMES } from '../world/themes';
@@ -202,7 +202,7 @@ export class Game {
     // hands over outfits and puts them on, and &shop opens PANDORA's shop once the deck is up
     // (&shop=weapons|atalanta|outfits on that tab, &try=<outfit> in the fitting room).
     const bolts = Number(dev.get('bolts'));
-    if (bolts > 0) this.save.bolts = bolts;
+    if (bolts > 0) this.save.bolts = cleanBolts(bolts);
     const hearts = Number(dev.get('hearts'));
     if (hearts > 0) this.save.maxHearts = hearts;
     const arms = dev.get('weapons');
@@ -551,6 +551,7 @@ export class Game {
     // Shared helpers (cached geometry, glow textures) are simply uploaded again when the next deck uses them.
     disposeScene(this.world.scene);
     this.world = null;
+    this.ui.warn(null);
     this.ui.voice = (who) => who;
     this.queue = [];
     this.renderer.renderLists.dispose();
@@ -814,6 +815,8 @@ export class Game {
         this.input.reset();
         this.ui.showControls(false);
         const deck = this.world?.def.id ?? 'cryo';
+        // Bolts spent here don't count against the ones collected on this level.
+        const before = this.save.bolts;
         this.ui.shop(this.save, deck, {
           buyUpgrade: (id) => this.bought(buyUpgrade(this.save, id, deck), id === 'heart'),
           buyWeapon: (id) => this.bought(buyWeapon(this.save, id, deck)),
@@ -825,6 +828,7 @@ export class Game {
           wear: (id) => this.dressed(wearOutfit(this.save, id)),
           takeOff: (hero) => this.dressed(takeOffOutfit(this.save, hero)),
           close: () => {
+            this.boltsAtStart -= before - this.save.bolts;
             this.ui.close();
             this.state = 'play';
             this.ui.showControls(true);
@@ -897,6 +901,7 @@ export class Game {
         this.refreshHud();
       },
       reward: (text) => this.ui.reward(text),
+      warn: (text) => this.ui.warn(text),
       threat: (kind) => {
         const info = INTEL[kind];
         const icon = enemyIconUrl(kind === 'elite' ? 'brute' : kind, kind === 'elite');
@@ -968,7 +973,7 @@ export class Game {
       {
         deck: d.name,
         time: `${m}:${String(s).padStart(2, '0')}`,
-        bolts: this.save.bolts - this.boltsAtStart,
+        bolts: cleanBolts(this.save.bolts - this.boltsAtStart),
         shards: d.shardIds.length ? `${d.shardIds.filter((x) => this.save.shards.includes(`${d.id}.${x}`)).length} / ${d.shardIds.length}` : '',
         colonists: colonistsHere ? `${d.colonistIds?.filter((c) => this.save.colonists.includes(`${d.id}.${c}`)).length} / ${colonistsHere}` : '',
         next: nextId ? LEVELS[nextId].name : null,
@@ -1038,7 +1043,7 @@ export class Game {
           [
             [lootLabels(ch).finds, `${inChapter(this.save.shards, ch)} / ${plannedFinds(ch, totals.shards)}`],
             [lootLabels(ch).rescues, `${inChapter(this.save.colonists, ch)} / ${totals.colonists}`],
-            [tr('Bolts in pocket'), String(this.save.bolts)],
+            [tr('Bolts in pocket'), String(cleanBolts(this.save.bolts))],
             [tr('Play time'), tr('{h}h {m}m', { h: hours, m: mins })],
           ],
           () => this.toTitle(),

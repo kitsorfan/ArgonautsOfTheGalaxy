@@ -1500,10 +1500,15 @@ export class Exit extends Entity implements Interactable {
 
   /** On Gaia Nova the exit is a hover skiff rather than a lift. */
   private planet = false;
+  /** LUX has said that the bronze mech stays behind. */
+  private mechHinted = false;
 
   label() {
     if (!this.world.canExit() || this.used) return null;
-    return this.planet ? 'TAKE OFF' : 'RIDE LIFT';
+    // The bronze mech is far too big for the skiff: the heroes climb out and leave it behind.
+    if (this.world.player.aboard) return null;
+    // Not TAKE OFF: in Greek that is the outfit shop’s button for taking clothes off.
+    return this.planet ? 'BOARD' : 'RIDE LIFT';
   }
 
   interact() {
@@ -1514,6 +1519,11 @@ export class Exit extends Entity implements Interactable {
 
   update(dt: number) {
     const open = this.world.canExit();
+    const b = this.world.player.body;
+    if (open && !this.mechHinted && this.world.player.aboard && Math.hypot(b.x - this.spot.x, b.z - this.spot.z) < 9) {
+      this.mechHinted = true;
+      this.world.hooks.toast('The mech is far too big for the skiff! Press GET OUT and leave it here: it guards the forge now.', 'bolt');
+    }
     this.ringMat.color.set(open ? '#3dff8a' : '#ff5e6a');
     this.ringMat.emissive.set(open ? '#3dff8a' : '#ff5e6a');
     this.ring.rotation.z += dt * (open ? 2 : 0.3);

@@ -13,12 +13,14 @@ export { labWorld, reflectFlat, traceBeam, type BeamCatcher, type BeamMirror, ty
 
 const tmpA = new THREE.Vector3();
 const tmpB = new THREE.Vector3();
-const CORE_GEO =new THREE.CylinderGeometry(0.07, 0.07, 1, 6, 1, true).rotateX(Math.PI / 2).translate(0, 0, 0.5);
+const CORE_GEO = new THREE.CylinderGeometry(0.07, 0.07, 1, 6, 1, true).rotateX(Math.PI / 2).translate(0, 0, 0.5);
 const HALO_GEO = new THREE.CylinderGeometry(0.22, 0.22, 1, 8, 1, true).rotateX(Math.PI / 2).translate(0, 0, 0.5);
 
 /** A glowing beam drawn along a trace's corners (up to 11 legs), with a splash of light where it stops. */
 export class BeamFx {
   readonly group = new THREE.Group();
+  /** How solid the whole beam looks (1: a real beam; less for MEDUSA's faint aiming line). */
+  alpha = 1;
   private cores: THREE.Mesh[] = [];
   private halos: THREE.Mesh[] = [];
   private coreMat: THREE.MeshBasicMaterial;
@@ -59,7 +61,9 @@ export class BeamFx {
       }
     }
     this.halos.forEach((h) => h.scale.setX(1 + pulse * 0.6).setY(1 + pulse * 0.6));
-    this.haloMat.opacity = 0.3 + pulse * 0.25;
+    this.coreMat.opacity = 0.95 * this.alpha;
+    this.haloMat.opacity = (0.3 + pulse * 0.25) * this.alpha;
+    (this.splash.material as THREE.SpriteMaterial).opacity = this.alpha;
     const last = pts[pts.length - 1];
     this.splash.visible = pts.length > 1;
     if (last) this.splash.position.set(last.x, last.y, last.z);

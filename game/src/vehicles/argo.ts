@@ -39,6 +39,8 @@ interface Laser {
 }
 
 const LASER_SPEED = 120;
+/** The drawn Argo's size (a little smaller than life, so the corridor ahead stays in view over the sail). */
+const SCALE = 0.72;
 /** The dove's flying speed, where it waits in front of its pair, and how close the rocks come before a feather goes. */
 const DOVE = { speed: 48, wait: 26, snip: 4.2 } as const;
 
@@ -89,6 +91,12 @@ export class ArgoFlight implements Vehicle {
   private doveRun: { state: 'ahead' | 'go' | 'away'; s: number; row: Clash[]; u: number } | null = null;
   /** Moves the drawn Argo away from its flight position (the ending cutscene sails it through the gate). */
   readonly offset = new THREE.Vector3();
+  /**
+   * Height of the hull's centre relative to the flight position (negative: below it). The flight
+   * position is the middle of the whole drawn ship, sail and all, so rings and bolts count where the
+   * ship looks centred; the camera and the engines are placed from the hull.
+   */
+  readonly keel: number;
   /** Distance of the last checkpoint reached (where a lost section restarts). */
   private cpS = 0;
   private wrecked = false;
@@ -122,9 +130,9 @@ export class ArgoFlight implements Vehicle {
     scene.add(this.belt.group);
     this.view = new CourseView(things);
     scene.add(this.view.group);
-    this.model = makeArgo();
-    // A little smaller than life, so the corridor ahead stays in view over the sail.
-    this.model.root.scale.setScalar(0.72);
+    this.model = makeArgo(true);
+    this.model.root.scale.setScalar(SCALE);
+    this.keel = -this.model.centre * SCALE;
     scene.add(this.model.root);
     this.dove = makeDove();
     // Bigger than life, so it can be followed all the way to the rocks without a cutscene.
@@ -223,9 +231,11 @@ export class ArgoFlight implements Vehicle {
     rocket: (c) => {
       const f = this.flight;
       const mesh = makeRocket();
-      mesh.position.set(f.x, f.y - 0.3, -1.5);
+      // Out from under the hull.
+      const y0 = f.y + this.keel - 0.3;
+      mesh.position.set(f.x, y0, -1.5);
       this.world.scene.add(mesh);
-      this.rocketViews.push({ c, mesh, x0: f.x, y0: f.y - 0.3 });
+      this.rocketViews.push({ c, mesh, x0: f.x, y0 });
       audio.play('fireball', 0.8);
       haptic('medium');
       this.world.hooks.hud();
@@ -343,7 +353,7 @@ export class ArgoFlight implements Vehicle {
 
   /* ---------------- guns ---------------- */
 
-  /** Twin lasers from the oar tips; they bend a little toward a drone roughly ahead (aim assist). */
+  /** Twin lasers either side of the ram's head, level with the middle of the ship; they bend a little toward a drone roughly ahead (aim assist). */
   private fire() {
     const f = this.flight;
     this.fireCd = 0.17;
@@ -531,7 +541,7 @@ export class ArgoFlight implements Vehicle {
     // The engines' trail: thin while the Argo idles, long and gold at full speed.
     if (dt > 0 && Math.random() < 0.2 + 0.6 * (f.v / FLIGHT.top)) {
       const hot = f.v > FLIGHT.top * 0.85;
-      for (const side of [-1, 1]) this.world.particles.emit(f.x + side * 0.36, f.y - 0.1, 2.6, { count: 1, color: hot ? '#ffd166' : '#7fe6ff', speed: 0.3, life: 0.3, size: 0.35, gravity: 0, vel: [0, 0, 18 + f.v * 0.5] });
+      for (const side of [-1, 1]) this.world.particles.emit(f.x + side * 0.36, f.y + this.keel - 0.1, 2.6, { count: 1, color: hot ? '#ffd166' : '#7fe6ff', speed: 0.3, life: 0.3, size: 0.35, gravity: 0, vel: [0, 0, 18 + f.v * 0.5] });
     }
     // Dust shakes off the Clashing Rocks while they rumble, and the slam is loud.
     for (const c of this.view.visibleClashes) {
@@ -556,8 +566,9 @@ export class ArgoFlight implements Vehicle {
 
   cameraPose(out: Rig, dt: number): Rig {
     const f = this.flight;
-    const want = tmp.set(f.x * 0.55, f.y * 0.5 + 4.6, 12.5);
-    const look = tmp2.set(f.x * 0.8, f.y * 0.7 + 0.4, -22);
+    // Framed on the hull (as it always was), so the ship sits in the same spot on screen.
+    const want = tmp.set(f.x * 0.55, f.y * 0.5 + this.keel + 4.6, 12.5);
+    const look = tmp2.set(f.x * 0.8, f.y * 0.7 + this.keel + 0.4, -22);
     if (!this.camReady || dt === 0) {
       this.camPos.copy(want);
       this.camLook.copy(look);

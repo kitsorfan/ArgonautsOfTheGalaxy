@@ -222,17 +222,12 @@ export const MECH = {
   flameRefill: 3,
   /**
    * STRENGTH, instead of hearts: a hit that costs a hero a heart costs the mech only `hitCost` (lava costs
-   * `hazardCost`). It comes back at `regen` a second once `regenDelay` seconds pass without a hit. At 0 the
-   * mech overheats: it kneels, the heroes hop out, and it can't be boarded for `cool` seconds while it
-   * cools down (and fills back up).
+   * `hazardCost`). It never comes back by itself, only at checkpoints; at 0 the heroes are knocked out.
    */
   strength: 100,
   hitCost: 10,
   hazardCost: 15,
   invuln: 0.7,
-  regenDelay: 4,
-  regen: 5,
-  cool: 10,
   /** How close a hero must stand to the parked mech to climb back in. */
   boardRange: 3.4,
 } as const;

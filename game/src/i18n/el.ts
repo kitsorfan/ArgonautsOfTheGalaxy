@@ -629,7 +629,7 @@ export const EL: Record<string, string> = {
   "A GARDEN FOR EVERYONE": "ΕΝΑΣ ΚΗΠΟΣ ΓΙΑ ΟΛΟΥΣ",
   "GAIA NOVA IS FREE!": "Η ΓΑΙΑ ΝΟΒΑ ΕΙΝΑΙ ΕΛΕΥΘΕΡΗ!",
   "Chapter 2: Gaia Nova": "Κεφάλαιο 2: Γαία Νόβα",
-  "TAKE OFF": "ΑΠΟΓΕΙΩΣΗ",
+  "BOARD": "ΑΝΕΒΑ",
   "on Gaia Nova, look toward a glowing ring and press the LUX button to zip straight over to it, across gaps and up cliffs.": "στη Γαία Νόβα, κοίτα προς έναν κρίκο που λάμπει και πάτα το κουμπί του ΛΟΥΞ για να πεταχτείς κατευθείαν ως εκεί, πάνω από κενά και πάνω σε γκρεμούς.",
   // The story of the first expedition (forty years ago) and why GaScu ran from Gaia Nova.
   "GaScu’s roots have reached the Bridge controls. It’s as if it would rather fly into a star than go where we’re going.": "Οι ρίζες της Γάκου έφτασαν στα χειριστήρια της Γέφυρας. Λες και προτιμά να πέσει σε ένα αστέρι παρά να πάει εκεί που πηγαίνουμε.",

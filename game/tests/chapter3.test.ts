@@ -1,3 +1,5 @@
+import * as THREE from 'three';
+
 import { newSave } from '../src/core/save';
 import { deckQuests, payQuests } from '../src/game/quests';
 import { FLYOVER, TRANSITIONS } from '../src/game/story';
@@ -17,10 +19,14 @@ import {
   nextChapterStart,
 } from '../src/levels';
 import { CLASH, FLIGHT, ROW_GAP, clashRows, clashState, goNow, inCorridor, laneAt, type Clash, type FlightCourse } from '../src/vehicles/course';
+import { makeArgo } from '../src/vehicles/argoModel';
 import { Flight, type FlightEvents } from '../src/vehicles/flight';
 import { flightGoals, flightTotals, recordFlight } from '../src/vehicles/quests';
 import { parseLevel } from '../src/world/grid';
 import type { DeckId } from '../src/world/levelTypes';
+
+// three is ESM-only, which Jest's module loader can't read; Node's own require can, so load it with that.
+jest.mock('three', () => process.getBuiltinModule('node:module').createRequire(__filename)('three'));
 
 // newSave() reads navigator for its quality default; give Jest a stand-in.
 beforeAll(() => {
@@ -350,5 +356,58 @@ describe('The Clashing Rocks', () => {
     expect(f.fireRocket({ noRocket: (w) => why.push(w) })).toBe(false);
     expect(why).toEqual(['range']);
     expect(f.rockets).toBe(FLIGHT.rockets);
+  });
+});
+
+describe('the Argo as you see it', () => {
+  // The model paints canvas textures (the sail, the glows): give Jest a stand-in canvas.
+  beforeAll(() => {
+    const g = globalThis as { document?: unknown };
+    g.document ??= { createElement: () => ({ getContext: () => new Proxy({}, { get: (_t, k) => () => (String(k).endsWith('Gradient') ? { addColorStop() {} } : undefined) }) }) };
+  });
+
+  /** The box around the ship's visible meshes, in the root's space. */
+  function drawnBox(root: THREE.Object3D): THREE.Box3 {
+    root.updateMatrixWorld(true);
+    const box = new THREE.Box3();
+    root.traverseVisible((o) => {
+      if ((o as THREE.Mesh).isMesh) box.union(new THREE.Box3().setFromObject(o));
+    });
+    // Back into the root's own space (it may be scaled).
+    return box.applyMatrix4(root.matrixWorld.clone().invert());
+  }
+
+  it('is flown by the middle of the whole ship, not by the hull under its tall sail', () => {
+    const plain = makeArgo();
+    // Cutscenes keep the hull at the root; the sail lifts the middle of the ship well above it.
+    expect(plain.centre).toBeGreaterThan(1);
+    expect(drawnBox(plain.root).getCenter(new THREE.Vector3()).y).toBeCloseTo(plain.centre, 5);
+    const flown = makeArgo(true);
+    flown.root.scale.setScalar(0.72);
+    const mid = drawnBox(flown.root).getCenter(new THREE.Vector3());
+    expect(Math.abs(mid.x)).toBeLessThan(0.01);
+    expect(Math.abs(mid.y)).toBeLessThan(0.01);
+  });
+
+  it('flies through a ring, and picks up a bolt, when the middle of the drawn ship goes through it', () => {
+    const ring = { kind: 'ring', s: 40, x: 2, y: 1.5 } as const;
+    const bolt = { kind: 'bolt', s: 60, x: -1, y: -2 } as const;
+    const course: FlightCourse = { things: [ring, bolt, { kind: 'gate', s: 200 }], guide: [[0, 0, 0]], belt: 0 };
+    const f = new Flight(course);
+    const got: string[] = [];
+    const ev: FlightEvents = { ring: () => got.push('ring'), bolt: () => got.push('bolt') };
+    // The flight draws the centred model at (x, y): put the ship's middle right on each one in turn.
+    const model = makeArgo(true);
+    model.root.scale.setScalar(0.72);
+    for (const at of [ring, bolt]) {
+      while (f.s < at.s + 0.5) {
+        [f.x, f.y] = [at.x, at.y];
+        model.root.position.set(f.x, f.y, 0);
+        const mid = drawnBox(model.root).applyMatrix4(model.root.matrixWorld).getCenter(new THREE.Vector3());
+        expect(Math.hypot(mid.x - at.x, mid.y - at.y)).toBeLessThan(0.01);
+        f.step(1 / 60, { steerX: 0, steerY: 0 }, ev);
+      }
+    }
+    expect(got).toEqual(['ring', 'bolt']);
   });
 });
