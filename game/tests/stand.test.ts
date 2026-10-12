@@ -73,6 +73,7 @@ function fakeWorld(pillars: [number, number][] = []) {
     cutscene: false,
     vehicle: null,
     difficulty: { tier: 0, hp: 1, speed: 1, rate: 1, aggro: 15 },
+    save: { upgrades: {} },
     player: {
       body: makeBody(at(15), 0, at(15), 0.42, 1.7),
       hearts: 5,

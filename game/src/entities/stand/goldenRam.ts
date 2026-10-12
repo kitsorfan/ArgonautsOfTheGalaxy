@@ -6,7 +6,7 @@ import { damp, dampAngle } from '../../core/math';
 import type { World } from '../../game/world';
 import { Grid } from '../../world/grid';
 import { makeBody, moveBody, type Body } from '../../world/physics';
-import { Boss } from '../bossBase';
+import { Boss, bossHp } from '../bossBase';
 import type { HitKind, Target } from '../entity';
 import { Shockwave } from '../hazards';
 import { makeRam, type RamParts } from './ramModels';
@@ -77,7 +77,7 @@ export class GoldenRam extends Boss implements Target {
   private downT = 0;
 
   constructor(world: World, id: string, cx: number, cz: number, h: number) {
-    super(world, id, cx, cz, h, RAM_TUNING.hp);
+    super(world, id, cx, cz, h, bossHp(world, RAM_TUNING.hp));
     this.home = this.center.clone();
     this.body = makeBody(this.center.x, h, this.center.z, 2, 4.5);
     // The stone pillars round the arena that it can be shoved into.

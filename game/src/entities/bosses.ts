@@ -10,7 +10,7 @@ import { makeBody, moveBody, type Body, type Box } from '../world/physics';
 import { Enemy } from './enemies';
 import { Entity, type HitKind, type Interactable, type Target } from './entity';
 import { makeGooBlob } from './aliens';
-import { Boss } from './bossBase';
+import { Boss, bossHp } from './bossBase';
 import { Boreas } from './gaia/boreas';
 import { Colossus } from './gaia/colossus';
 import { Driller } from './gaia/driller';
@@ -54,7 +54,7 @@ class Warden extends Boss implements Target {
   private hatch: THREE.Mesh;
 
   constructor(world: World, id: string, cx: number, cz: number, h: number) {
-    super(world, id, cx, cz, h, 16);
+    super(world, id, cx, cz, h, bossHp(world, 20));
     const steel = mat('#8a98ad', { metal: 0.6, rough: 0.35 });
     const dark = mat('#2a3242', { rough: 0.5 });
     const ice = mat('#dff6ff', { emissive: '#7fe6ff', ei: 0.5, rough: 0.1 });
@@ -196,7 +196,7 @@ class Bulb extends Entity implements Target {
   readonly aim = new THREE.Vector3();
   radius = 0.8;
   aimable = true;
-  hp = 5;
+  hp: number;
   shielded = false;
   readonly g = new THREE.Group();
   private m: THREE.MeshStandardMaterial;
@@ -208,6 +208,7 @@ class Bulb extends Entity implements Target {
     private angle: number,
   ) {
     super(world, id);
+    this.hp = queen.bulbHp;
     this.m = ownMat('#ffd166', { emissive: '#ffb020', ei: 1.2, rough: 0.3 });
     this.g.add(mesh(sphere(0.7, 18), this.m));
     this.g.add(glowSprite('#ffd166', 2.6, 0.5));
@@ -221,8 +222,9 @@ class Bulb extends Entity implements Target {
       audio.play('zap', 2);
       return true;
     }
+    // Only the bulb's own health reaches the Queen: a big hit can't burst through to the next one.
+    this.queen.damage(Math.min(dmg, this.hp));
     this.hp -= dmg;
-    this.queen.damage(dmg);
     this.g.scale.setScalar(1.25);
     audio.play('hit');
     if (this.hp <= 0) {
@@ -259,9 +261,13 @@ class Queen extends Boss {
   private summoned = 0;
   private cx: number;
   private cz: number;
+  /** Health of each of her three bulbs (together, all of hers). */
+  readonly bulbHp: number;
 
   constructor(world: World, id: string, cx: number, cz: number, h: number) {
-    super(world, id, cx, cz, h, 15);
+    const bulbHp = bossHp(world, 6);
+    super(world, id, cx, cz, h, 3 * bulbHp);
+    this.bulbHp = bulbHp;
     this.cx = cx;
     this.cz = cz;
     const stem = mat('#3fae4a', { rough: 0.5 });
@@ -300,7 +306,7 @@ class Queen extends Boss {
     this.stateT = 2;
     for (const b of this.bulbs) {
       if (!b.alive) continue;
-      b.hp = 5;
+      b.hp = this.bulbHp;
     }
   }
 
@@ -422,7 +428,7 @@ class Golem extends Boss implements Target {
   private yaw = 0;
 
   constructor(world: World, id: string, cx: number, cz: number, h: number) {
-    super(world, id, cx, cz, h, 14);
+    super(world, id, cx, cz, h, bossHp(world, 18));
     this.body = makeBody(this.center.x, h, this.center.z, 1.5, 3);
     this.skin = ownMat('#4a3228', { emissive: '#ff5e1a', ei: 0.9, rough: 0.8 });
     const m = this.model;
@@ -835,7 +841,7 @@ class Wardog extends Boss implements Target {
   private yaw = 0;
 
   constructor(world: World, id: string, cx: number, cz: number, h: number) {
-    super(world, id, cx, cz, h, 16);
+    super(world, id, cx, cz, h, bossHp(world, 24));
     const steel = mat('#5a6272', { metal: 0.6, rough: 0.35 });
     const red = mat('#ff3040', { emissive: '#ff3040', ei: 1.5 });
     const m = this.model;
@@ -983,7 +989,7 @@ class Pod extends Entity implements Target {
   readonly aim = new THREE.Vector3();
   radius = 0.9;
   aimable = true;
-  hp = 4;
+  hp: number;
   private m: THREE.MeshStandardMaterial;
 
   constructor(
@@ -995,6 +1001,7 @@ class Pod extends Entity implements Target {
     private heart: Heart,
   ) {
     super(world, id);
+    this.hp = heart.podHp;
     this.aim.set(x, y + 1.3, z);
     this.m = ownMat('#8a2f75', { emissive: '#ff5fc8', ei: 0.6 });
     const pod = mesh(sphere(0.9, 18), this.m, x, y + 1.3, z);
@@ -1012,8 +1019,9 @@ class Pod extends Entity implements Target {
 
   hit(dmg: number): boolean {
     if (!this.alive || !this.heart.started || this.heart.calm) return false;
+    // Only the pod's own health reaches the Heart: a big hit can't burst through to the core's share.
+    this.heart.damage(Math.min(dmg, this.hp));
     this.hp -= dmg;
-    this.heart.damage(dmg);
     this.m.emissiveIntensity = 2.5;
     audio.play('hit');
     if (this.hp <= 0) {
@@ -1053,9 +1061,16 @@ export class Heart extends Boss implements Target, Interactable {
   private cz: number;
   private summoned = 0;
   private speakTries = 0;
+  /** Health of each of the four pods, and of the core once they're gone. */
+  readonly podHp: number;
+  private readonly coreHp: number;
 
   constructor(world: World, id: string, cx: number, cz: number, h: number) {
-    super(world, id, cx, cz, h, 4 * 4 + 16);
+    const podHp = bossHp(world, 4);
+    const coreHp = bossHp(world, 16);
+    super(world, id, cx, cz, h, 4 * podHp + coreHp);
+    this.podHp = podHp;
+    this.coreHp = coreHp;
     // The pods first (half the bar), then the core.
     this.phaseMarks = [0.5];
     this.cx = cx;
@@ -1161,7 +1176,7 @@ export class Heart extends Boss implements Target, Interactable {
   }
 
   reset() {
-    this.hp = Math.max(this.hp, this.phase === 2 ? 16 : this.maxHp);
+    this.hp = Math.max(this.hp, this.phase === 2 ? this.coreHp : this.maxHp);
     this.state = 'idle';
     this.stateT = 2.5;
     this.calm = false;
@@ -1286,8 +1301,8 @@ export class Reborn extends Boss implements Target, Interactable {
   private cz: number;
 
   constructor(world: World, id: string, cx: number, cz: number, h: number) {
-    // The last fight should be a long one: tougher still for every level of Blaster Power.
-    super(world, id, cx, cz, h, 80 + 16 * (world.save.upgrades.blaster ?? 0));
+    // The last fight should be a long one.
+    super(world, id, cx, cz, h, bossHp(world, 80));
     this.phaseMarks = [0.66, 0.33];
     this.cx = cx;
     this.cz = cz;

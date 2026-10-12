@@ -5,7 +5,7 @@ import { haptic } from '../../core/bridge';
 import { damp, dampAngle } from '../../core/math';
 import type { World } from '../../game/world';
 import { Grid } from '../../world/grid';
-import { Boss } from '../bossBase';
+import { Boss, bossHp } from '../bossBase';
 import { armLux, type RogueParts } from '../companionModels';
 import type { Enemy } from '../enemies';
 import type { HitKind, Target } from '../entity';
@@ -68,7 +68,7 @@ export class RogueLux extends Boss implements Target {
   freeing = false;
 
   constructor(world: World, id: string, cx: number, cz: number, h: number) {
-    super(world, id, cx, cz, h, HP);
+    super(world, id, cx, cz, h, bossHp(world, HP));
     this.model = makeBolt();
     this.parts = armLux(this.model);
     this.model.root.scale.setScalar(ROGUE_SCALE);

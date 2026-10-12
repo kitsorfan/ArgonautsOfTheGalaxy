@@ -9,6 +9,18 @@ import { Entity, type Target } from './entity';
 
 const tmp = new THREE.Vector3();
 
+/** How much tougher a boss gets for each level of Blaster Power (each level adds a whole shot's damage). */
+export const BOSS_TOUGHNESS_PER_POWER = 0.6;
+
+/**
+ * A boss's health for this save. Every level of Blaster Power makes each shot hit as hard again, and
+ * auto-aim puts nearly every shot on the weak spot the moment it opens, so a boss with fixed health fell
+ * in a handful of hits. Its health grows too, a bit slower than the damage: upgrades still help.
+ */
+export function bossHp(world: World, base: number): number {
+  return Math.round(base * (1 + BOSS_TOUGHNESS_PER_POWER * (world.save.upgrades.blaster ?? 0)));
+}
+
 /* ---------------- base ---------------- */
 
 export abstract class Boss extends Entity {

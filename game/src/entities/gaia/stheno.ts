@@ -7,7 +7,7 @@ import { tr } from '../../core/i18n';
 import { damp } from '../../core/math';
 import type { World } from '../../game/world';
 import { Grid } from '../../world/grid';
-import { Boss } from '../bossBase';
+import { Boss, bossHp } from '../bossBase';
 import { Entity, type HitKind, type Target } from '../entity';
 import { Strike } from '../hazards';
 import { boxG, cone, cyl, glowSprite, mat, mesh, ownMat, sphere, torus } from '../models';
@@ -20,7 +20,7 @@ import { boxG, cone, cyl, glowSprite, mat, mesh, ownMat, sphere, torus } from '.
  * and its armoured core opens for the last few hits.
  */
 
-/** Hit points of each engine pod; all three together are 24 of STHENO's 40. */
+/** Hit points of each engine pod; all three together are 24 of STHENO's 40 (both grow with Blaster Power). */
 const ENGINE_HP = 8;
 const HP = 40;
 /** How far out over the drop STHENO hovers (world units from the edge of the pass). */
@@ -37,7 +37,7 @@ class Engine extends Entity implements Target {
   readonly aim = new THREE.Vector3();
   radius = 1;
   aimable = true;
-  hp = ENGINE_HP;
+  hp: number;
   down = false;
   private flash = 0;
 
@@ -51,6 +51,7 @@ class Engine extends Entity implements Target {
     private glow: THREE.Sprite,
   ) {
     super(world, id);
+    this.hp = ship.engineHp;
     world.addTarget(this);
   }
 
@@ -85,7 +86,7 @@ class Engine extends Entity implements Target {
 
   revive() {
     if (this.down) this.world.addTarget(this);
-    this.hp = ENGINE_HP;
+    this.hp = this.ship.engineHp;
     this.down = false;
     this.aimable = true;
     this.pod.scale.set(1, 1, 1);
@@ -154,8 +155,13 @@ export class Stheno extends Boss implements Target {
   private sweepDir = 1;
   private sweepWarn = 0;
 
+  /** Health of each engine pod. */
+  readonly engineHp: number;
+
   constructor(world: World, id: string, cx: number, cz: number, h: number) {
-    super(world, id, cx, cz, h, HP);
+    const engineHp = bossHp(world, ENGINE_HP);
+    super(world, id, cx, cz, h, 3 * engineHp + bossHp(world, HP - 3 * ENGINE_HP));
+    this.engineHp = engineHp;
     // Measure the arena: west to the drop, east to the wreck, north and south to the walls.
     const g = world.grid;
     const walk = (x: number, z: number) => {
