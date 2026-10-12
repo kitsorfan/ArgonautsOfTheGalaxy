@@ -590,7 +590,7 @@ export const EL: Record<string, string> = {
   "THE COLOSSUS": "Ο ΚΟΛΟΣΣΟΣ",
   "General Brennus": "Στρατηγός Βρέννος",
   "Weeks later, the pods opened one by one above a green-and-blue world: <b>Gaia Nova</b>.": "Εβδομάδες αργότερα, οι θάλαμοι άνοιξαν ένας ένας πάνω από έναν πράσινο και γαλάζιο κόσμο: τη <b>Γαία Νόβα</b>.",
-  "The Colossus crashed down into the crater, and Mount Atlantas let out one last, tired puff of smoke.": "Ο Κολοσσός σωριάστηκε στον κρατήρα, και το Όρος Ατλάντας έβγαλε μια τελευταία, κουρασμένη τζούρα καπνού.",
+  "The Colossus crashed down into the crater, and Mount Atlantas let out one last, tired puff of smoke.": "Ο Κολοσσός σωριάστηκε στον κρατήρα, και το Όρος Ατλάντας ξεφύσηξε μια τελευταία, κουρασμένη ανάσα καπνού.",
   "Celestia’s vines slipped free of the machines. All over Gaia Nova, the Thorn Legion switched off and went quiet.": "Τα κλήματα της Σελέστιας γλίστρησαν έξω από τις μηχανές. Σε όλη τη Γαία Νόβα, η Λεγεώνα των Αγκαθιών έσβησε και σώπασε.",
   "General Brennus was taken up to the {ship} to explain himself to Captain Argus. It was going to be a VERY long talk.": "Τον Στρατηγό Βρέννο τον πήγαν πάνω στη {ship} για να δώσει εξηγήσεις στον Κυβερνήτη Άργο. Θα ήταν μια ΠΟΛΥ μεγάλη κουβέντα.",
   "And at last, the colonists stepped out onto <b>Gaia Nova</b>: a brand new home that belonged to everyone.": "Και επιτέλους, οι άποικοι πάτησαν στη <b>Γαία Νόβα</b>: ένα ολοκαίνουριο σπίτι που ανήκε σε όλους.",
