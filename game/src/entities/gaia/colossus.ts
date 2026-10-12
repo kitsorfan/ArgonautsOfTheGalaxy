@@ -7,7 +7,7 @@ import { damp, dampAngle, lerp } from '../../core/math';
 import type { World } from '../../game/world';
 import { inChapter } from '../../levels';
 import type { Box } from '../../world/physics';
-import { Boss } from '../bossBase';
+import { Boss, bossHp } from '../bossBase';
 import type { Enemy } from '../enemies';
 import { Entity, type HitKind, type Interactable, type Target } from '../entity';
 import { Shockwave, Strike } from '../hazards';
@@ -234,8 +234,8 @@ export class Colossus extends Boss implements Target, Interactable {
   private readonly t2: number;
 
   constructor(world: World, id: string, cx: number, cz: number, h: number) {
-    // The final boss of chapter 2 is a long fight: tougher still for every level of Blaster Power.
-    super(world, id, cx, cz, h, 110 + 20 * (world.save.upgrades.blaster ?? 0));
+    // The final boss of chapter 2 is a long fight.
+    super(world, id, cx, cz, h, bossHp(world, 110));
     this.cx = cx;
     this.cz = cz;
     this.t1 = Math.round((this.maxHp * 2) / 3);

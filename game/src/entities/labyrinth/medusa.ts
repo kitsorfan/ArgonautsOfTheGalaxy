@@ -5,7 +5,7 @@ import { haptic } from '../../core/bridge';
 import { damp } from '../../core/math';
 import type { World } from '../../game/world';
 import { Grid } from '../../world/grid';
-import { Boss } from '../bossBase';
+import { Boss, bossHp } from '../bossBase';
 import type { Enemy } from '../enemies';
 import { Entity, type HitKind, type Target } from '../entity';
 import { InstancedParts } from '../instanced';
@@ -162,7 +162,7 @@ export class Medusa extends Boss implements Target, BeamCatcher {
   private origin = new THREE.Vector3();
 
   constructor(world: World, id: string, cx: number, cz: number, h: number) {
-    super(world, id, cx, cz, h, HP + 5 * (world.save.upgrades.blaster ?? 0));
+    super(world, id, cx, cz, h, bossHp(world, HP));
     this.floorY = h;
     this.m.root.position.set(this.center.x, h, this.center.z);
     this.crown = new InstancedParts(this.m.snakes.map((s) => s.group));
@@ -245,7 +245,7 @@ export class Medusa extends Boss implements Target, BeamCatcher {
       this.untie();
       return true;
     }
-    return this.hit(dmg * 2, 'shot');
+    return this.hit(dmg * 1.5, 'shot');
   }
 
   hit(dmg: number, kind: HitKind): boolean {

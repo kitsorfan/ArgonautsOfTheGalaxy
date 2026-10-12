@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { CELL } from '../src/core/constants';
 import { migrateSave, newSave, type SaveData } from '../src/core/save';
 import { healthColor, showsNumber } from '../src/entities/badges';
-import { Boss } from '../src/entities/bossBase';
+import { Boss, bossHp } from '../src/entities/bossBase';
 import { makeEnemy } from '../src/entities/enemies';
 import type { Entity, HitKind } from '../src/entities/entity';
 import { inCone } from '../src/entities/flame';
@@ -110,6 +110,17 @@ describe('weapon stats', () => {
     expect(clipOf('blaster', { clip: 2 })).toBe(10);
     expect(chargedDamageOf('blaster')).toBe(4);
     expect(burnDps({ blaster: 1 })).toBeCloseTo(2 * burnDps());
+  });
+
+  it('makes bosses tougher with Blaster Power, but slower than the damage grows', () => {
+    const hpAt = (blaster: number) => bossHp({ save: { upgrades: { blaster } } } as unknown as World, 30);
+    expect(hpAt(0)).toBe(30);
+    for (const u of [1, 2, 3]) {
+      const shots = hpAt(u) / damageOf('blaster', { blaster: u });
+      // Fewer shots than with no upgrade (it's worth buying), but never less than half as many.
+      expect(shots).toBeLessThan(hpAt(u - 1) / damageOf('blaster', { blaster: u - 1 }));
+      expect(shots).toBeGreaterThanOrEqual(30 / 2);
+    }
   });
 });
 

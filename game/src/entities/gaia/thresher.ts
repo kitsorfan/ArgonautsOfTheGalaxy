@@ -6,7 +6,7 @@ import { damp, dampAngle } from '../../core/math';
 import type { World } from '../../game/world';
 import { Grid } from '../../world/grid';
 import { makeBody, moveBody, type Body } from '../../world/physics';
-import { Boss } from '../bossBase';
+import { Boss, bossHp } from '../bossBase';
 import type { HitKind, Target } from '../entity';
 import { Shockwave, Strike } from '../hazards';
 import { blobShadow, boxG, cyl, glowSprite, mat, mesh, ownMat, sphere, torus } from '../models';
@@ -47,7 +47,7 @@ export class Thresher extends Boss implements Target {
   private home: THREE.Vector3;
 
   constructor(world: World, id: string, cx: number, cz: number, h: number) {
-    super(world, id, cx, cz, h, 30);
+    super(world, id, cx, cz, h, bossHp(world, 30));
     this.home = this.center.clone();
     this.body = makeBody(this.center.x, h, this.center.z, 1.6, 2.6);
     const m = this.model;

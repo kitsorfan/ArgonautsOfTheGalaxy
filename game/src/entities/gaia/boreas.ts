@@ -5,7 +5,7 @@ import { CELL } from '../../core/constants';
 import { damp, dampAngle } from '../../core/math';
 import type { World } from '../../game/world';
 import type { Box } from '../../world/physics';
-import { Boss } from '../bossBase';
+import { Boss, bossHp } from '../bossBase';
 import type { Enemy } from '../enemies';
 import { Entity, type HitKind, type Target } from '../entity';
 import { Shockwave } from '../hazards';
@@ -120,7 +120,7 @@ export class Boreas extends Boss implements Target {
   private rz = 0;
 
   constructor(world: World, id: string, cx: number, cz: number, h: number) {
-    super(world, id, cx, cz, h, 36);
+    super(world, id, cx, cz, h, bossHp(world, 36));
     this.pos.copy(this.center);
     const armour = mat('#eef4fb', { metal: 0.3, rough: 0.4 });
     const joint = mat('#3a4658', { metal: 0.5, rough: 0.45 });

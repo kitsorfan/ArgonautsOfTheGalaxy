@@ -5,7 +5,7 @@ import { haptic } from '../../core/bridge';
 import { damp, dampAngle } from '../../core/math';
 import type { World } from '../../game/world';
 import { Grid } from '../../world/grid';
-import { Boss } from '../bossBase';
+import { Boss, bossHp } from '../bossBase';
 import { Entity, type HitKind, type Target } from '../entity';
 import { Shockwave, Strike } from '../hazards';
 import { blobShadow, cone, glowSprite, mat, mesh, ownMat, sphere, torus } from '../models';
@@ -15,7 +15,7 @@ import { blobShadow, cone, glowSprite, mat, mesh, ownMat, sphere, torus } from '
  * body sits in the middle of the pool, its glowing heart hidden behind a shell of thorny petals,
  * and three long necks reach out over the planks. Each head can bite (it rears back first), spit
  * arcing pollen globs, or rise up and slam down (a laser ring to hop over). Knock all three heads
- * down and the shell opens for a few seconds: the heart takes double damage. Then the heads grow
+ * down and the shell opens for a few seconds: the heart takes extra damage. Then the heads grow
  * back (weaker each time). Below half health, roots burst out of the floor around Jason too.
  */
 
@@ -24,6 +24,8 @@ const HP = 42;
 /** Health of each head the first time, and after they grow back. */
 const HEAD_HP = 8;
 const REGROW_HP = 3;
+/** The open heart takes this much more from every hit (not double: it fell in one window). */
+const HEART_BONUS = 1.5;
 /** Seconds the heart stays open once all three heads are down. */
 const OPEN_TIME = 4.5;
 /** How far from the middle a bite or a slam can reach (world units). */
@@ -369,7 +371,7 @@ export class Hydra extends Boss implements Target {
   private readonly goals = [new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()];
 
   constructor(world: World, id: string, cx: number, cz: number, h: number) {
-    super(world, id, cx, cz, h, HP);
+    super(world, id, cx, cz, h, bossHp(world, HP));
     this.cx = cx;
     this.cz = cz;
     const m = this.model;
@@ -498,7 +500,7 @@ export class Hydra extends Boss implements Target {
       audio.play('zap', 1.7);
       return true;
     }
-    this.damage((kind === 'zap' ? Math.min(1, dmg) : dmg) * 2);
+    this.damage((kind === 'zap' ? Math.min(1, dmg) : dmg) * HEART_BONUS);
     this.core.emissiveIntensity = 4;
     this.world.flash(this.aim.x, this.aim.y, this.aim.z, PINK, 40, 0.2);
     audio.play('hit');

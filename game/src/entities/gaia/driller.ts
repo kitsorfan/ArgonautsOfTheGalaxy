@@ -5,7 +5,7 @@ import { haptic } from '../../core/bridge';
 import { damp } from '../../core/math';
 import type { World } from '../../game/world';
 import { Grid } from '../../world/grid';
-import { Boss } from '../bossBase';
+import { Boss, bossHp } from '../bossBase';
 import type { HitKind, Target } from '../entity';
 import { Shockwave } from '../hazards';
 import { boxG, cone, cyl, glowSprite, mat, mesh, ownMat, sphere, torus } from '../models';
@@ -89,7 +89,7 @@ export class Driller extends Boss implements Target {
   private sink = 0;
 
   constructor(world: World, id: string, cx: number, cz: number, h: number) {
-    super(world, id, cx, cz, h, 34);
+    super(world, id, cx, cz, h, bossHp(world, 34));
     const rust = mat('#b0552e', { metal: 0.35, rough: 0.55 });
     const armour = mat('#8a7458', { metal: 0.5, rough: 0.45 });
     const steel = mat('#3e3840', { metal: 0.7, rough: 0.35 });

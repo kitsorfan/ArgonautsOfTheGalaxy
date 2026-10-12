@@ -6,7 +6,7 @@ import { damp, dampAngle } from '../../core/math';
 import type { World } from '../../game/world';
 import { Grid } from '../../world/grid';
 import { makeBody, moveBody, type Body } from '../../world/physics';
-import { Boss } from '../bossBase';
+import { Boss, bossHp } from '../bossBase';
 import type { HitKind, Interactable, Target } from '../entity';
 import { Shockwave, Strike } from '../hazards';
 import { blobShadow, boxG, cone, cyl, glowSprite, mat, mesh, ownMat, sphere, torus } from '../models';
@@ -59,7 +59,7 @@ export class Excavator extends Boss implements Target, Interactable {
   private commanded = false;
 
   constructor(world: World, id: string, cx: number, cz: number, h: number) {
-    super(world, id, cx, cz, h, 24);
+    super(world, id, cx, cz, h, bossHp(world, 24));
     this.home = this.center.clone();
     this.body = makeBody(this.center.x, h, this.center.z, 2, 3);
     // The rock pillars it can crash into: solid boulders near the arena.

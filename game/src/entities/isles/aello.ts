@@ -7,7 +7,7 @@ import { damp } from '../../core/math';
 import { addBolts } from '../../core/save';
 import type { World } from '../../game/world';
 import { Grid } from '../../world/grid';
-import { Boss } from '../bossBase';
+import { Boss, bossHp } from '../bossBase';
 import type { Enemy } from '../enemies';
 import type { HitKind, Target } from '../entity';
 import { Shockwave, Strike } from '../hazards';
@@ -104,7 +104,7 @@ export class Aello extends Boss implements Target {
   private helpers: Enemy[] = [];
 
   constructor(world: World, id: string, cx: number, cz: number, h: number) {
-    super(world, id, cx, cz, h, HP + 6 * (world.save.upgrades.blaster ?? 0));
+    super(world, id, cx, cz, h, bossHp(world, HP));
     this.floorY = h;
     this.pos.set(this.center.x, h + 1.9, this.center.z);
     const body = this.m.body;
