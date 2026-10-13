@@ -1168,20 +1168,27 @@ export class UI {
   }
 
   title(opts: { canContinue: boolean; continueText: string; hasDecks: boolean; onContinue: () => void; onNew: () => void; onDecks: () => void; onSettings: () => void }) {
+    // With a save to lose, New Game moves out of the way to a small corner button, so a stray tap in
+    // the middle of the screen lands on Continue instead.
     const el = this.open(`<div class="overlay title-screen" style="position:absolute">
       <div class="title-logo"><div class="name logo">${upper(tr(GAME_NAME))}</div><div class="tag">${tr('Three chapters. Three heroes. One very nervous robot.')}</div></div>
       <div class="title-menu">
-        ${opts.canContinue ? `<button class="menu-btn primary cont">▶ ${tr('Continue')} <small>${tr(opts.continueText)}</small></button>` : ''}
-        <button class="menu-btn ${opts.canContinue ? '' : 'primary'} new">${opts.canContinue ? tr('New Game') : `▶ ${tr('New Game')}`}</button>
+        ${opts.canContinue ? `<button class="menu-btn primary cont">▶ ${tr('Continue')} <small>${tr(opts.continueText)}</small></button>` : `<button class="menu-btn primary new">▶ ${tr('New Game')}</button>`}
         ${opts.hasDecks ? `<button class="menu-btn decks">${tr('Replay a level')}</button>` : ''}
         <button class="menu-btn settings">${tr('Settings')}</button>
       </div>
+      ${opts.canContinue ? `<button class="menu-btn title-new new">${tr('New Game')}</button>` : ''}
     </div>`, false);
     el.style.padding = '0';
-    this.button(el, '.cont', opts.onContinue);
-    this.button(el, '.new', opts.onNew);
-    this.button(el, '.decks', opts.onDecks);
-    this.button(el, '.settings', opts.onSettings);
+    // The tap that opened this screen (or a quick second one) must not press whatever is under it.
+    const opened = performance.now();
+    const armed = (fn: () => void) => () => {
+      if (performance.now() - opened > 500) fn();
+    };
+    this.button(el, '.cont', armed(opts.onContinue));
+    this.button(el, '.new', armed(opts.onNew));
+    this.button(el, '.decks', armed(opts.onDecks));
+    this.button(el, '.settings', armed(opts.onSettings));
   }
 
   /**
@@ -1250,7 +1257,11 @@ export class UI {
           go();
         });
       }
-    } else el.addEventListener('pointerdown', go);
+    } else {
+      // A click, not pointerdown: on pointerdown the title opened under the finger, and the same tap's
+      // click then pressed the button that had appeared there.
+      el.addEventListener('click', go);
+    }
     window.addEventListener('keydown', key);
   }
 

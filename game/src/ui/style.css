@@ -888,6 +888,21 @@ canvas#game {
   margin-bottom: 1vh;
 }
 
+/* New Game with a save to lose: small, quiet and tucked in the bottom-left corner, away from a stray tap. */
+.title-new {
+  position: absolute;
+  left: calc(14px + var(--safe-l));
+  bottom: calc(12px + var(--safe-b));
+  width: auto;
+  margin: 0;
+  padding: 8px 14px;
+  font-size: 14px;
+  border-radius: 12px;
+  border-color: rgba(255, 94, 106, 0.45);
+  background: rgba(20, 34, 70, 0.75);
+  color: var(--dim);
+}
+
 .tap-start {
   font-size: 22px;
   font-weight: 600;
