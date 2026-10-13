@@ -222,9 +222,13 @@ export const MECH = {
   flameRefill: 3,
   /**
    * STRENGTH, instead of hearts: a hit that costs a hero a heart costs the mech only `hitCost` (lava costs
-   * `hazardCost`). It never comes back by itself, only at checkpoints; at 0 the heroes are knocked out.
+   * `hazardCost`). It never comes back by itself: a checkpoint mends it fully, and a bronze gear (what a
+   * heart pickup becomes while the heroes ride it) mends `gearMend`. At 0 the heroes are knocked out.
    */
   strength: 100,
+  gearMend: 25,
+  /** Aboard, an enemy that can drop a heart drops a gear at least this often. */
+  gearChance: 0.2,
   hitCost: 10,
   hazardCost: 15,
   invuln: 0.7,

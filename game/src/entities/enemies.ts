@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 import { audio } from '../core/audio';
-import { CELL, PULSE } from '../core/constants';
+import { CELL, MECH, PULSE } from '../core/constants';
 import { damp, dampAngle } from '../core/math';
 import type { World } from '../game/world';
 import { Grid } from '../world/grid';
@@ -219,7 +219,9 @@ export abstract class Enemy extends Entity implements Target {
     this.world.particles.emit(this.aim.x, this.aim.y, this.aim.z, { count: 26, color: c, speed: 7, life: 0.7, size: 0.6, up: 2 });
     this.world.particles.emit(this.aim.x, this.aim.y, this.aim.z, { count: 10, color: '#ffffff', speed: 4, life: 0.4, size: 0.4 });
     this.world.dropBolts(this.aim, this.bolts);
-    if (Math.random() < this.heartChance) this.world.dropHeart(this.aim);
+    // Aboard the mech the drop is a bronze gear (see HeartPickup), a little more often than a heart.
+    const chance = this.world.player.aboard && this.heartChance > 0 ? Math.max(this.heartChance, MECH.gearChance) : this.heartChance;
+    if (Math.random() < chance) this.world.dropHeart(this.aim);
     else if (Math.random() < 0.2) this.world.dropEnergy(this.aim);
     this.world.enemyDied(this);
     this.remove();

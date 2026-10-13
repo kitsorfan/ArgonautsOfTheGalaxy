@@ -290,6 +290,16 @@ export class Game {
       const at = dev.get('at')?.split(',').map(Number);
       // On a vehicle level, &at=<distance> flies ahead along the course instead.
       if (at && at.length === 1) setTimeout(() => this.world?.vehicle?.skipTo?.(at[0]), 3400);
+      // &drop drops a heart pickup once the deck is up, a few steps from the hero toward the camera
+      // (aboard the mech, a gear).
+      if (dev.has('drop'))
+        setTimeout(() => {
+          const w = this.world;
+          if (!w) return;
+          const p = w.player.body;
+          const to = new THREE.Vector3(w.camera.position.x - p.x, 0, w.camera.position.z - p.z).setLength(3.5);
+          w.dropHeart(new THREE.Vector3(p.x + to.x, p.y + 1, p.z + to.z));
+        }, 3800);
       if (at && at.length === 2) {
         setTimeout(() => {
           const w = this.world;

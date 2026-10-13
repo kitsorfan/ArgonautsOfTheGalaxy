@@ -56,8 +56,8 @@ export const EL_FORGE: Record<string, string> = {
     "Η ρομποστολή ξύπνησε! Ο Ιάσονας την οδηγεί, η Αταλάντη κάθεται στον ώμο της, κι ο ΛΟΥΞ με την ΙΡΙΔΑ πετάνε δίπλα.",
   "SPIN is PUNCH. In the air, SPIN is a big SLAM. DASH fires the back jets: THRUST! And hold BLAST for its FLAMETHROWER.":
     "Η ΣΒΟΥΡΑ είναι ΓΡΟΘΙΑ. Στον αέρα, η ΣΒΟΥΡΑ είναι ένα μεγάλο ΚΑΡΦΩΜΑ. Η ΟΡΜΗ ανάβει τους πίσω πυραύλους: ΩΘΗΣΗ! Και κράτα πατημένη τη ΒΟΛΗ για το ΦΛΟΓΟΒΟΛΟ της.",
-  "No hearts in a mech: it has STRENGTH. Hits wear it down, and it does NOT come back by itself: only a checkpoint mends it. If it runs out, it’s back to the last checkpoint!":
-    "Μια ρομποστολή δεν έχει καρδιές: έχει ΔΥΝΑΜΗ. Τα χτυπήματα τη λιγοστεύουν, και ΔΕΝ γεμίζει μόνη της: μόνο ένα σημείο ελέγχου τη φτιάχνει. Αν τελειώσει, γυρνάτε στο τελευταίο σημείο ελέγχου!",
+  "No hearts in a mech: it has STRENGTH. Hits wear it down, and it does NOT come back by itself. Grab the bronze gears robots drop, or reach a checkpoint. If it runs out, it’s back to the last checkpoint!":
+    "Μια ρομποστολή δεν έχει καρδιές: έχει ΔΥΝΑΜΗ. Τα χτυπήματα τη λιγοστεύουν, και ΔΕΝ γεμίζει μόνη της. Μάζεψε τα χάλκινα γρανάζια που ρίχνουν τα ρομπότ, ή φτάσε σε ένα σημείο ελέγχου. Αν τελειώσει, γυρνάτε στο τελευταίο σημείο ελέγχου!",
   "It’s slow, but SO strong. And the action button lets us GET OUT, and CLIMB back IN.":
     "Είναι αργή, αλλά ΤΟΣΟ δυνατή. Και με το κουμπί δράσης μπορούμε να ΒΓΟΥΜΕ ΕΞΩ και να ΜΠΟΥΜΕ ΠΑΛΙ ΜΕΣΑ.",
   "Comfy up here! You steer, Jason. I’ll do the cheering.": "Βολικά εδώ πάνω! Εσύ οδηγείς, Ιάσονα. Εγώ θα επευφημώ.",
@@ -177,8 +177,8 @@ export const EL_FORGE: Record<string, string> = {
   "Climb back into the bronze mech": "Μπες πάλι μέσα στη χάλκινη ρομποστολή",
   "Out we hop! The mech waits here for us. Walk up to it and press CLIMB IN to get back aboard.":
     "Πηδάμε έξω! Η ρομποστολή θα μας περιμένει εδώ. Πήγαινε κοντά της και πάτα ΜΠΕΣ ΜΕΣΑ για να ανέβεις ξανά.",
-  "The mech’s STRENGTH is low! It doesn’t mend by itself: only a checkpoint fixes it. Careful!":
-    "Η ΔΥΝΑΜΗ της ρομποστολής είναι λίγη! Δεν γεμίζει μόνη της: μόνο ένα σημείο ελέγχου τη φτιάχνει. Προσοχή!",
+  "The mech’s STRENGTH is low! Grab the bronze gears enemies drop, or reach a checkpoint. Careful!":
+    "Η ΔΥΝΑΜΗ της ρομποστολής είναι λίγη! Μάζεψε τα χάλκινα γρανάζια που ρίχνουν οι εχθροί, ή φτάσε σε ένα σημείο ελέγχου. Προσοχή!",
   "The mech is far too big for the skiff! Press GET OUT and leave it here: it guards the forge now.":
     "Η ρομποστολή είναι πολύ μεγάλη για το σκάφος! Πάτα ΒΓΕΣ ΕΞΩ και άφησέ τη εδώ: τώρα φυλάει το σιδηρουργείο.",
   "The flamethrower is too hot! Let go of FLAME for a moment and the gauge fills up again.":
