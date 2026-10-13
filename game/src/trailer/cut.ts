@@ -18,10 +18,10 @@ export const BAR = (4 * 60) / BPM;
 /**
  * The trailer's music: "Sons of the Storm" (assets/music/epic.mp3). It runs at a steady 130 beats a
  * minute, its bass landing on the first beat of every bar 12 ms after the top of the file's bar grid.
- * The trailer starts on its 16th bar: eleven quiet bars to tell the story over, then the drums come in
- * (the file's bar 27, the trailer's 11) and there is a big hit every four bars after that (20, 24, 28).
+ * The trailer starts on its 15th bar: twelve quiet bars to tell the story over, then the drums come in
+ * (the file's bar 27, the trailer's 12) and there is a big hit every four bars after that (21, 25, 29).
  */
-export const MUSIC = { file: 'epic', bpm: BPM, from: Number((0.012 + 16 * BAR).toFixed(3)) } as const;
+export const MUSIC = { file: 'epic', bpm: BPM, from: Number((0.012 + 15 * BAR).toFixed(3)) } as const;
 
 /** The frame a bar line falls on, to the nearest one. */
 export const barFrame = (bar: number) => Math.round(bar * BAR * FPS);

@@ -12,11 +12,11 @@ import type { DeckSet, StageKind, Take } from './stage';
 /**
  * The trailer, shot by shot, and the words that go with it.
  *
- * Everything is measured in bars of the music (see cut.ts). The first eleven bars are quiet, and tell
+ * Everything is measured in bars of the music (see cut.ts). The first twelve bars are quiet, and tell
  * the story a chapter at a time (the colony ship, LUX and a hologram for the puzzles and the story,
- * Gaia Nova, the Argo). The drums come in on bar 11 with the logo, over the Argo threading the
- * Clashing Rocks, and from there it is a boss a bar, with the biggest three on the music's big hits
- * (20, 24 and 28), until the end card asks whether you will make it.
+ * Gaia Nova and its Hydra, the Argo). The drums come in on bar 12 with the logo, over the Argo threading
+ * the Clashing Rocks, and from there it is a boss a bar, with the biggest three on the music's big hits
+ * (21, 25 and 29), until the end card asks whether you will make it.
  *
  * A shot sets its level or stage up the way it wants it, from a clean slate, and then either flies its
  * own camera or leaves the lens to the game.
@@ -233,6 +233,21 @@ const FILM: Shot[] = [
     subject: (k) => ({ ...k.planet.shuttle.position, facing: 0 }),
     camera: (t, s) => ({ position: [s.x - 15 + t * 4, s.y + 6 + t * 2, s.z + 19 - t * 4], target: [s.x + 7, s.y - 5, s.z - 2], fov: 46 }),
   },
+  {
+    // A short look at the jungle region: the Hydra rears up over its pond as Jason opens fire.
+    id: 'hydra',
+    bars: 1,
+    set: { deck: 'jungle' },
+    lead: 1.5,
+    setup: (k) => {
+      place(k.world, 48.6, 41, [51, 31]);
+      k.world.boss?.engage();
+    },
+    act: (time, k) => {
+      if (every(time, 0.4)) k.tap('shoot');
+    },
+    camera: orbit({ center: [50, 1, 34], radius: [19, 15.5], height: [9, 6], from: -0.6, to: -0.38, aim: [1.6, 2.4], fov: 44 }),
+  },
   /* ---- Chapter 3: the Argonauts ---- */
   {
     // The Argo rows out past the ringed giant.
@@ -423,9 +438,9 @@ export const CARDS: Card[] = [
     text: { en: 'Solve puzzles. Uncover the story.', el: 'Λύσε γρίφους. Ανακάλυψε την ιστορία.' },
   },
   { id: 'ch2', kind: 'caption', from: 6.2, to: 7.85, kicker: { en: 'CHAPTER 2 · GAIA NOVA', el: 'ΚΕΦΑΛΑΙΟ 2 · ΓΑΙΑ ΝΟΒΑ' }, text: { en: 'Explore a wild new world.', el: 'Εξερεύνησε έναν άγριο νέο κόσμο.' } },
-  { id: 'ch3', kind: 'caption', from: 8.2, to: 9.85, kicker: { en: 'CHAPTER 3 · THE ARGONAUTS', el: 'ΚΕΦΑΛΑΙΟ 3 · ΟΙ ΑΡΓΟΝΑΥΤΕΣ' }, text: { en: 'Sail for the Golden Fleece.', el: 'Σάλπαρε για το Χρυσόμαλλο Δέρας.' } },
-  { id: 'title', kind: 'title', from: 11, to: 12.9 },
-  { id: 'chapters', kind: 'caption', from: 13.05, to: 14.92, text: { en: 'Three chapters.', el: 'Τρία κεφάλαια.' } },
-  { id: 'heroes', kind: 'caption', from: 15.05, to: 16.92, text: { en: 'Three heroes.', el: 'Τρεις ήρωες.' } },
-  { id: 'end', kind: 'end', from: 30.1, to: 33, text: { en: 'Will you make it?', el: 'Θα τα καταφέρεις;' }, kicker: { en: 'COMING SOON TO ANDROID', el: 'ΣΥΝΤΟΜΑ ΣΤΟ ANDROID' } },
+  { id: 'ch3', kind: 'caption', from: 9.2, to: 10.85, kicker: { en: 'CHAPTER 3 · THE ARGONAUTS', el: 'ΚΕΦΑΛΑΙΟ 3 · ΟΙ ΑΡΓΟΝΑΥΤΕΣ' }, text: { en: 'Sail for the Golden Fleece.', el: 'Σάλπαρε για το Χρυσόμαλλο Δέρας.' } },
+  { id: 'title', kind: 'title', from: 12, to: 13.9 },
+  { id: 'chapters', kind: 'caption', from: 14.05, to: 15.92, text: { en: 'Three chapters.', el: 'Τρία κεφάλαια.' } },
+  { id: 'heroes', kind: 'caption', from: 16.05, to: 17.92, text: { en: 'Three heroes.', el: 'Τρεις ήρωες.' } },
+  { id: 'end', kind: 'end', from: 31.1, to: 34, text: { en: 'Will you make it?', el: 'Θα τα καταφέρεις;' }, kicker: { en: 'COMING SOON TO ANDROID', el: 'ΣΥΝΤΟΜΑ ΣΤΟ ANDROID' } },
 ];

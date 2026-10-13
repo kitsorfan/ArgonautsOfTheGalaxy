@@ -41,12 +41,11 @@ function face(card: Card): string {
   if (card.kind === 'end') {
     const song = MUSIC_CREDITS[MUSIC.file];
     const music = lang() === 'el' ? 'Μουσική' : 'Music';
-    const by = lang() === 'el' ? 'Ένα παιχνίδι του' : 'A game by';
     return `<div class="tr-end">
       ${logo()}
       ${card.text ? `<p class="tr-ask">${esc(say(card.text))}</p>` : ''}
       ${kicker ? `<p class="tr-pill">${esc(say(card.kicker))}</p>` : ''}
-      <p class="tr-by">${by} <b>${esc(CREATOR.name)}</b></p>
+      ${lang() === 'el' ? '' : `<p class="tr-by">A game by <b>${esc(CREATOR.name)}</b></p>`}
       <p class="tr-credit">${music}: “${esc(song.title)}” · ${esc(song.artist)} · ${esc(song.license)}</p>
     </div>`;
   }
