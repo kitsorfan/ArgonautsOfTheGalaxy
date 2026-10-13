@@ -53,13 +53,13 @@ const CSS = `
 #ui .btn.rocket .slots { position:absolute; top:-12px; display:flex; gap:4px; }
 #ui .btn.rocket .slots i { width:10px; height:10px; border-radius:50%; background:rgba(0,0,0,.45); border:1px solid rgba(255,255,255,.4); }
 #ui .btn.rocket .slots i.full { background:#ff7a5a; box-shadow:0 0 6px #ff7a5a; }
-#ui .vhud .vtrack { position:absolute; left:50%; transform:translateX(-50%); top:calc(54px + var(--safe-t, 0px));
+#ui .vtrack { position:relative; flex:none; margin:10px 14px 2px;
   width:min(360px, 46vw); height:8px; border-radius:4px; background:rgba(10,14,40,.55); border:1px solid rgba(255,255,255,.25); }
-#ui .vhud .vtrack .fill { position:absolute; left:0; top:0; bottom:0; border-radius:4px; background:linear-gradient(90deg,#5ee0ff,#ffd166); }
-#ui .vhud .vtrack .mark { position:absolute; top:-3px; width:4px; height:14px; margin-left:-2px; border-radius:2px; background:#bff4ff; }
-#ui .vhud .vtrack .ship { position:absolute; top:-9px; margin-left:-11px; width:22px; height:22px; border-radius:50%;
+#ui .vtrack .fill { position:absolute; left:0; top:0; bottom:0; border-radius:4px; background:linear-gradient(90deg,#5ee0ff,#ffd166); }
+#ui .vtrack .mark { position:absolute; top:-3px; width:4px; height:14px; margin-left:-2px; border-radius:2px; background:#bff4ff; }
+#ui .vtrack .ship { position:absolute; top:-9px; margin-left:-11px; width:22px; height:22px; border-radius:50%;
   background:#fff; border:2px solid #ffd166; box-shadow:0 0 8px #ffd166; font-size:12px; line-height:18px; text-align:center; }
-#ui .vhud .vtrack .goal { position:absolute; right:-14px; top:-10px; width:24px; height:24px; border-radius:50%;
+#ui .vtrack .goal { position:absolute; right:-14px; top:-10px; width:24px; height:24px; border-radius:50%;
   background:radial-gradient(circle,#c8ff9a,#3a8a40); border:2px solid #ffd166; }
 #ui .vhud .vcount { position:absolute; top:calc(62px + var(--safe-t, 0px)); right:calc(14px + var(--safe-r, 0px)); display:flex; gap:6px;
   align-items:center; padding:4px 12px; border-radius:999px; background:rgba(10,14,40,.6); border:1px solid rgba(255,209,102,.5);
@@ -94,6 +94,8 @@ const BOOST_ICON = `<svg viewBox="0 0 24 24"><path d="M3 15l7-3-7-3M9 17l8-5-8-5
 
 export class VehicleHudView {
   private el: HTMLElement;
+  /** The course bar: under the objective in the top column, so a long objective pushes it down. */
+  private track: HTMLElement;
   private btn: HTMLElement;
   private rocketBtn: HTMLElement;
   private lever: HTMLElement;
@@ -115,12 +117,17 @@ export class VehicleHudView {
     }
     this.el = document.createElement('div');
     this.el.className = 'vhud hidden';
-    this.el.innerHTML = `<div class="vtrack"><div class="fill"></div><div class="marks"></div><div class="goal"></div><div class="ship">✦</div></div>
-      <div class="vcount">${RING_ICON}<b>0</b></div><div class="vprompt off"></div>
+    this.el.innerHTML = `<div class="vcount">${RING_ICON}<b>0</b></div><div class="vprompt off"></div>
       <div class="vsong hidden"><i class="target"></i><div class="notes"></div><div class="got"></div></div>`;
     this.song = this.el.querySelector('.vsong') as HTMLElement;
     const hud = root.querySelector('.hud-left')?.parentElement ?? root;
     hud.append(this.el);
+    this.track = document.createElement('div');
+    this.track.className = 'vtrack hidden';
+    this.track.innerHTML = '<div class="fill"></div><div class="marks"></div><div class="goal"></div><div class="ship">✦</div>';
+    const objective = root.querySelector('.hud-top .objective');
+    if (objective) objective.after(this.track);
+    else this.el.append(this.track);
     // BOOST sits with the other buttons (so it hides with them during cutscenes) and presses DASH.
     this.buttons = root.querySelector('.buttons');
     this.btn = document.createElement('div');
@@ -205,6 +212,7 @@ export class VehicleHudView {
   /** Switches the vehicle HUD on (for a kind of vehicle) or off. */
   show(kind: VehicleKind | null) {
     this.el.classList.toggle('hidden', !kind);
+    this.track.classList.toggle('hidden', !kind);
     this.buttons?.classList.toggle('vehicle', !!kind);
     this.buttons?.classList.toggle('has-lever', kind === 'argo');
     if (kind === 'argo') {
@@ -257,7 +265,7 @@ export class VehicleHudView {
       if (!this.dragging) this.placeKnob(at);
       (this.lever.querySelector('.speed') as HTMLElement).style.height = `${Math.round(speed * 100)}%`;
     }
-    (this.el.querySelector('.vtrack') as HTMLElement).style.display = h.track === false ? 'none' : '';
+    this.track.style.display = h.track === false ? 'none' : '';
     this.drawSong(h.song ?? null);
     const key = `${Math.round(h.boost * 30)}|${h.boostSlots}|${h.boosting}|${h.counter?.join(',')}|${Math.round(h.progress * 400)}|${h.marks.length}|${h.rockets?.join(',')}`;
     if (key !== this.last) {
@@ -283,9 +291,9 @@ export class VehicleHudView {
       const count = this.el.querySelector('.vcount') as HTMLElement;
       count.style.display = h.counter ? '' : 'none';
       if (h.counter) (count.querySelector('b') as HTMLElement).textContent = `${h.counter[1]} / ${h.counter[2]}`;
-      (this.el.querySelector('.vtrack .fill') as HTMLElement).style.width = `${h.progress * 100}%`;
-      (this.el.querySelector('.vtrack .ship') as HTMLElement).style.left = `${h.progress * 100}%`;
-      const marks = this.el.querySelector('.vtrack .marks') as HTMLElement;
+      (this.track.querySelector('.fill') as HTMLElement).style.width = `${h.progress * 100}%`;
+      (this.track.querySelector('.ship') as HTMLElement).style.left = `${h.progress * 100}%`;
+      const marks = this.track.querySelector('.marks') as HTMLElement;
       if (marks.childElementCount !== h.marks.length) marks.innerHTML = h.marks.map((m) => `<i class="mark" style="left:${m * 100}%"></i>`).join('');
     }
     const pk = `${h.prompt}|${h.urgent}`;
