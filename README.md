@@ -4,7 +4,7 @@
 
 **Version 1.0.0** · made by **Kitsos Orfanopoulos** ([kitsorfan@protonmail.com](mailto:kitsorfan@protonmail.com) · [www.kitsorfan.com](https://www.kitsorfan.com)) · [release notes](#release-notes)
 
-![The title screen (from before the game was renamed Argonauts of the Galaxy): Jason waving in front of the colony ship Syracusia, overgrown with pink GaScu vines](docs/store/en/feature-graphic.jpg)
+![The title screen: ARGONAUTS OF THE GALAXY over Jason waving in front of the colony ship Syracusia, overgrown with pink GaScu vines, with LUX flying by](docs/screenshots/title.jpg)
 
 *In Greek: Αργοναύτες του Γαλαξία*
 
@@ -22,9 +22,10 @@ It's made for players around 10 and up: bright and forgiving, with three chapter
 
 | | |
 | --- | --- |
-| ![Jason and LUX fighting the Magma Golem inside a ring of fire](docs/store/en/01-boss-fight.jpg) | ![The Magma Golem's entrance, with its name card](docs/store/en/02-magma-golem.jpg) |
-| ![Exploring the overgrown Hydroponics deck](docs/store/en/03-hydroponics.jpg) | ![CERBERUS, the chief security robot, behind its shield](docs/store/en/05-wardog.jpg) |
-| ![A Horned Brute and a Spore Crawler next to the lava in the Engine Core](docs/store/en/06-engine-core.jpg) | ![The prologue: the GaScu seed takes root on the ship's hull](docs/store/en/07-prologue.jpg) |
+| ![Chapter 1: Jason and LUX face the Magma Golem in the Engine Core](docs/screenshots/01-magma-golem.jpg) | ![Chapter 2: BOREAS on the frozen lake of Gaia Nova, with its red slam circle](docs/screenshots/02-boreas.jpg) |
+| ![Chapter 3: the Argo flies through the glittering belt to the Clashing Rocks](docs/screenshots/03-argo-flight.jpg) | ![Chapter 3: Atalanta and LUX against MEDUSA in her labyrinth](docs/screenshots/04-medusa.jpg) |
+| ![Chapter 3: the submarine Dolphin dives into the Sirens' Sea](docs/screenshots/05-submarine.jpg) | ![Chapter 3: General Brennus, with his shield and cannon, against the Golden Ram](docs/screenshots/06-golden-ram.jpg) |
+| ![A graphic-novel story picture: Brennus, Atalanta, Jason and LUX face Aeëtes, the Golden King, in the Golden Fleece](docs/screenshots/07-golden-king-panel.jpg) | ![PANDORA's shop: outfits for Jason and Atalanta](docs/screenshots/08-shop.jpg) |
 
 ## Highlights
 
