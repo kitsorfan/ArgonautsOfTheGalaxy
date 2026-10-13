@@ -30,15 +30,15 @@ export interface Upgrade {
 
 export const UPGRADES: Upgrade[] = [
   { id: 'heart', name: 'Heart Plating', desc: '+1 max heart', prices: [150, 300, 500], mk2: [550, 800] },
-  { id: 'blaster', name: 'Blaster Power', desc: '+1 damage for blasts, spins, pounds and dashes (fireballs +2)', prices: [250, 600], mk2: [900] },
-  { id: 'clip', name: 'Bigger Clip', desc: 'Bigger clips for every weapon (and a bigger fuel tank)', prices: [160, 380], mk2: [480] },
-  { id: 'rapid', name: 'Quick Reload', desc: 'Shoot, reload and refuel faster', prices: [200, 450], mk2: [600] },
-  { id: 'boltZap', name: 'LUX Zapper', desc: 'LUX’s zap hurts instead of just stunning, and his force pulse hits harder', prices: [180, 420], mk2: [550] },
-  { id: 'magnet', name: 'Bolt Magnet', desc: 'Pull in bolts from farther away', prices: [120, 300], mk2: [350] },
-  { id: 'armor', name: 'Armor Plating', desc: 'Blocks one hit. Comes back at checkpoints, or after a while.', prices: [], mk2: [450, 800] },
-  { id: 'dashCell', name: 'Dash Cell', desc: '+1 dash before your energy runs out', prices: [], mk2: [350, 650] },
-  { id: 'spinCharge', name: 'Spin Charge', desc: '+1 spin in a row before the recharge', prices: [], mk2: [450] },
-  { id: 'grapple', name: 'Grapple Range', desc: 'Zip to grapple rings from farther away, and faster', prices: [], mk2: [400] },
+  { id: 'blaster', name: 'Blaster Power', desc: '+1 damage for every attack', prices: [250, 600], mk2: [900] },
+  { id: 'clip', name: 'Bigger Clip', desc: 'Bigger clips and fuel tank', prices: [160, 380], mk2: [480] },
+  { id: 'rapid', name: 'Quick Reload', desc: 'Faster shots and reloads', prices: [200, 450], mk2: [600] },
+  { id: 'boltZap', name: 'LUX Zapper', desc: 'LUX’s zap and pulse hit harder', prices: [180, 420], mk2: [550] },
+  { id: 'magnet', name: 'Bolt Magnet', desc: 'Pulls in bolts from farther', prices: [120, 300], mk2: [350] },
+  { id: 'armor', name: 'Armor Plating', desc: 'Blocks one hit, then recharges', prices: [], mk2: [450, 800] },
+  { id: 'dashCell', name: 'Dash Cell', desc: '+1 dash cell', prices: [], mk2: [350, 650] },
+  { id: 'spinCharge', name: 'Spin Charge', desc: '+1 spin in a row', prices: [], mk2: [450] },
+  { id: 'grapple', name: 'Grapple Range', desc: 'Longer, faster grapple', prices: [], mk2: [400] },
 ];
 
 const upgrade = (id: UpgradeId) => UPGRADES.find((u) => u.id === id) as Upgrade;
@@ -52,12 +52,12 @@ export interface AtalantaUpgrade {
 }
 
 export const ATALANTA_UPGRADES: AtalantaUpgrade[] = [
-  { id: 'bow', name: 'Hunter’s Bow', desc: 'Stronger arrows: quick ones +½ damage, power arrows +1, each level', prices: [300, 550, 800] },
-  { id: 'draw', name: 'Quick Draw', desc: 'Charge the power arrow faster, and shoot again sooner', prices: [300, 550] },
-  { id: 'sandals', name: 'Wind Sandals', desc: 'Sprint sooner and faster, for longer running jumps', prices: [250, 450] },
-  { id: 'gloves', name: 'Climber’s Gloves', desc: 'Hold on to cliffs longer, and climb faster', prices: [200, 400] },
-  { id: 'kick', name: 'Iron Kick', desc: '+1 damage for her spinning kick, which reaches wider', prices: [300, 500] },
-  { id: 'triple', name: 'Triple Arrow', desc: 'Every power arrow flies with two more beside it', prices: [900] },
+  { id: 'bow', name: 'Hunter’s Bow', desc: 'Stronger arrows', prices: [300, 550, 800] },
+  { id: 'draw', name: 'Quick Draw', desc: 'Faster power arrows', prices: [300, 550] },
+  { id: 'sandals', name: 'Wind Sandals', desc: 'Faster sprint, longer jumps', prices: [250, 450] },
+  { id: 'gloves', name: 'Climber’s Gloves', desc: 'Climb faster, hold on longer', prices: [200, 400] },
+  { id: 'kick', name: 'Iron Kick', desc: 'Stronger, wider kick', prices: [300, 500] },
+  { id: 'triple', name: 'Triple Arrow', desc: 'Power arrows fly in threes', prices: [900] },
 ];
 
 /** The level where Atalanta joins the team: her shop tab opens there. */

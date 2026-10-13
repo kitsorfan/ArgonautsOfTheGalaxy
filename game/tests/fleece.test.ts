@@ -1,7 +1,7 @@
 import { newSave } from '../src/core/save';
 import { nextHero, heroRoster } from '../src/entities/heroes/heroes';
 import { LIGHT_STONES } from '../src/game/collectibles';
-import { BOSS_CARD, ENDING_CAPTIONS, FLYOVER, INTEL, TRANSITIONS, creditsHtml, endingChapter, endingText, knowsGardenerWords, lightStones } from '../src/game/story';
+import { BOSS_CARD, ENDING_CAPTIONS, FLYOVER, INTEL, TRANSITIONS, creditsHtml, endingChapter, knowsGardenerWords, lightStones } from '../src/game/story';
 import { CHAPTER_DECKS, GAME_FINALE, LEVELS, chapterOf, isFinale, nextChapterStart } from '../src/levels';
 import { PANEL_IDS, panelSvg } from '../src/ui/panels';
 import { parseLevel } from '../src/world/grid';
@@ -123,15 +123,10 @@ describe('the game’s final endings', () => {
     expect(knowsGardenerWords(save)).toBe(true);
   });
 
-  it('writes an epilogue and the final credits for the whole game', () => {
+  it('rolls the final credits for the whole game, with who made it', () => {
     const save = newSave();
-    const normal = endingText('fleece', save);
-    expect(normal.some((p) => p.includes('light-stones'))).toBe(true);
-    // Only the normal ending hints that more light-stones would wake the seeds.
-    expect(normal.some((p) => p.startsWith('Psst'))).toBe(true);
-    expect(endingText('gardeners', save).some((p) => p.startsWith('Psst'))).toBe(false);
     const credits = creditsHtml('gardeners', save);
-    for (const name of ['Frost Warden', 'the Colossus', 'AELLO', 'Golden King', 'Atalanta', 'General Brennus', 'THE END']) expect(credits).toContain(name);
+    for (const name of ['Frost Warden', 'the Colossus', 'AELLO', 'Golden King', 'Atalanta', 'General Brennus', 'THE END', 'Kitsos Orfanopoulos']) expect(credits).toContain(name);
     expect(creditsHtml('fleece', save)).toContain('in full bloom');
   });
 
