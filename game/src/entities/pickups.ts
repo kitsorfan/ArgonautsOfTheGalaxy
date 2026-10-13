@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { audio } from '../core/audio';
 import { haptic } from '../core/bridge';
 import { addBolts } from '../core/save';
-import { CELL, PLAYER } from '../core/constants';
+import { CELL, MECH, PLAYER } from '../core/constants';
 import { findKind } from '../game/collectibles';
 import { heartCap } from '../game/shop';
 import type { World } from '../game/world';
@@ -11,7 +11,7 @@ import { chapterOf } from '../levels';
 import { Grid } from '../world/grid';
 import type { Ability } from '../world/levelTypes';
 import { Entity } from './entity';
-import { blobShadow, cone, cyl, glowSprite, mat, mesh, ownMat, sphere, torus } from './models';
+import { blobShadow, boxG, cone, cyl, glowSprite, mat, mesh, ownMat, sphere, torus } from './models';
 
 interface BoltItem {
   x: number;
@@ -158,10 +158,19 @@ abstract class Floater extends Entity {
   }
 }
 
+/**
+ * A heart: one heart back. While the heroes ride the bronze mech, which has STRENGTH instead of hearts,
+ * it shows as a bronze gear instead and mends a slice of the mech's STRENGTH.
+ */
 export class HeartPickup extends Floater {
+  private heart = new THREE.Group();
+  private gear = new THREE.Group();
+
   constructor(world: World, id: string, cx: number, cz: number, h: number, private persistId?: string) {
     super(world, id, cx, cz, h, 0.9);
     this.build();
+    this.buildGear();
+    this.showAs(world.player.aboard);
   }
 
   static at(world: World, pos: THREE.Vector3) {
@@ -179,11 +188,60 @@ export class HeartPickup extends Floater {
     c.rotation.z = Math.PI;
     g.add(c);
     g.scale.setScalar(1.25);
-    this.obj.add(g, glowSprite('#ff4d6d', 1.6, 0.45));
+    this.heart.add(g, glowSprite('#ff4d6d', 1.6, 0.45));
+    this.obj.add(this.heart);
+  }
+
+  /** A chunky bronze cog with a teal Gardener light in its hub, standing on edge so it rolls round as it spins. */
+  private buildGear() {
+    const bronze = mat('#c8862e', { emissive: '#7a4a12', ei: 0.35, rough: 0.35, metal: 0.6 });
+    const g = new THREE.Group();
+    const ring = mesh(torus(0.34, 0.11), bronze, 0, 0, 0);
+    g.add(ring);
+    for (let i = 0; i < 8; i++) {
+      const a = (i / 8) * Math.PI * 2;
+      const tooth = mesh(boxG(0.16, 0.17, 0.18), bronze, Math.cos(a) * 0.48, Math.sin(a) * 0.48, 0);
+      tooth.rotation.z = a;
+      g.add(tooth);
+    }
+    const hub = mesh(cyl(0.13, 0.13, 0.2, 14), mat('#5eead4', { emissive: '#2dd4bf', ei: 1.4 }), 0, 0, 0, false);
+    hub.rotation.x = Math.PI / 2;
+    g.add(hub);
+    g.scale.setScalar(1.2);
+    this.gear.add(g, glowSprite('#ffc46b', 1.7, 0.45));
+    this.obj.add(this.gear);
+  }
+
+  private showAs(gear: boolean) {
+    this.heart.visible = !gear;
+    this.gear.visible = gear;
+  }
+
+  update(dt: number) {
+    const mech = this.world.player.aboard ? this.world.player.mech : null;
+    this.showAs(!!mech);
+    // The mech is far wider than a hero: it picks things up from further out.
+    this.radius = mech ? Math.max(1.1, mech.radius + 0.6) : 1.1;
+    super.update(dt);
   }
 
   protected collect() {
     const w = this.world;
+    const mech = w.player.aboard ? w.player.mech : null;
+    if (mech) {
+      if (mech.mendGear()) {
+        audio.play('heart');
+        haptic('light');
+      } else {
+        addBolts(w.save, 5);
+        audio.play('bolt');
+      }
+      w.particles.emit(this.obj.position.x, this.obj.position.y, this.obj.position.z, { count: 16, color: '#ffc46b', speed: 4, life: 0.5, size: 0.5 });
+      if (this.persistId) w.markTaken(this.persistId);
+      w.hooks.hud();
+      this.remove();
+      return;
+    }
     if (w.player.hearts >= w.save.maxHearts) {
       addBolts(w.save, 5);
       audio.play('bolt');

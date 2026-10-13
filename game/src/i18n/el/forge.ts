@@ -13,7 +13,7 @@ export const EL_FORGE: Record<string, string> = {
   "PUNCH the bronze gate open": "Άνοιξε τη χάλκινη πύλη με μια ΓΡΟΘΙΑ",
   "Cross the lava fields and SLAM through the cracked floor": "Πέρνα τα χωράφια της λάβας και ΚΑΡΦΩΣΟΥ μέσα από το ραγισμένο πάτωμα",
   "SLAM both red switches to open the arena gate": "ΚΑΡΦΩΣΟΥ και στους δύο κόκκινους διακόπτες για να ανοίξει η πύλη της αρένας",
-  "Free TALOS: pull the plug in his heel": "Ελευθέρωσε τον ΤΑΛΩ: τράβα το βούλωμα από τη φτέρνα του",
+  "Free TALOS: pull the plug in his heel": "Ελευθέρωσε τον ΤΑΛΩ: τράβα το πώμα από τη φτέρνα του",
   "Walk through the labyrinth gate into Colchis": "Πέρνα την πύλη του λαβυρίνθου και μπες στην Κολχίδα",
   // Arriving.
   "This island is made of bronze-coloured rock, and it is warm. Very warm. The volcano is still awake.":
@@ -35,7 +35,7 @@ export const EL_FORGE: Record<string, string> = {
   "“TALOS, our bronze friend, walks the shore three times a day and keeps the island safe. His heart is golden light, flowing in his veins.”":
     "«Ο ΤΑΛΩΣ, ο χάλκινος φίλος μας, περπατάει στην ακτή τρεις φορές τη μέρα και κρατάει το νησί ασφαλές. Η καρδιά του είναι χρυσό φως που κυλάει στις φλέβες του.»",
   "“If ever he must rest, pull the plug in his heel. The light will flow out softly, and he will sit down and sleep.”":
-    "«Αν ποτέ χρειαστεί να ξεκουραστεί, τράβα το βούλωμα από τη φτέρνα του. Το φως θα κυλήσει έξω απαλά, κι εκείνος θα καθίσει και θα κοιμηθεί.»",
+    "«Αν ποτέ χρειαστεί να ξεκουραστεί, τράβα το πώμα από τη φτέρνα του. Το φως θα κυλήσει έξω απαλά, κι εκείνος θα καθίσει και θα κοιμηθεί.»",
   "So it doesn’t hurt him: it’s his off-switch! Be gentle with him, Jason. None of this is his fault.":
     "Άρα δεν τον πονάει: είναι ο διακόπτης του για να σβήνει! Να είσαι ευγενικός μαζί του, Ιάσονα. Τίποτα από αυτά δεν είναι δικό του φταίξιμο.",
   // On the ledge, and the mech.
@@ -56,8 +56,8 @@ export const EL_FORGE: Record<string, string> = {
     "Η ρομποστολή ξύπνησε! Ο Ιάσονας την οδηγεί, η Αταλάντη κάθεται στον ώμο της, κι ο ΛΟΥΞ με την ΙΡΙΔΑ πετάνε δίπλα.",
   "SPIN is PUNCH. In the air, SPIN is a big SLAM. DASH fires the back jets: THRUST! And hold BLAST for its FLAMETHROWER.":
     "Η ΣΒΟΥΡΑ είναι ΓΡΟΘΙΑ. Στον αέρα, η ΣΒΟΥΡΑ είναι ένα μεγάλο ΚΑΡΦΩΜΑ. Η ΟΡΜΗ ανάβει τους πίσω πυραύλους: ΩΘΗΣΗ! Και κράτα πατημένη τη ΒΟΛΗ για το ΦΛΟΓΟΒΟΛΟ της.",
-  "No hearts in a mech: it has STRENGTH. Hits wear it down, and it does NOT come back by itself: only a checkpoint mends it. If it runs out, it’s back to the last checkpoint!":
-    "Μια ρομποστολή δεν έχει καρδιές: έχει ΔΥΝΑΜΗ. Τα χτυπήματα τη λιγοστεύουν, και ΔΕΝ γεμίζει μόνη της: μόνο ένα σημείο ελέγχου τη φτιάχνει. Αν τελειώσει, γυρνάτε στο τελευταίο σημείο ελέγχου!",
+  "No hearts in a mech: it has STRENGTH. Hits wear it down, and it does NOT come back by itself. Grab the bronze gears robots drop, or reach a checkpoint. If it runs out, it’s back to the last checkpoint!":
+    "Μια ρομποστολή δεν έχει καρδιές: έχει ΔΥΝΑΜΗ. Τα χτυπήματα τη λιγοστεύουν, και ΔΕΝ γεμίζει μόνη της. Μάζεψε τα χάλκινα γρανάζια που ρίχνουν τα ρομπότ, ή φτάσε σε ένα σημείο ελέγχου. Αν τελειώσει, γυρνάτε στο τελευταίο σημείο ελέγχου!",
   "It’s slow, but SO strong. And the action button lets us GET OUT, and CLIMB back IN.":
     "Είναι αργή, αλλά ΤΟΣΟ δυνατή. Και με το κουμπί δράσης μπορούμε να ΒΓΟΥΜΕ ΕΞΩ και να ΜΠΟΥΜΕ ΠΑΛΙ ΜΕΣΑ.",
   "Comfy up here! You steer, Jason. I’ll do the cheering.": "Βολικά εδώ πάνω! Εσύ οδηγείς, Ιάσονα. Εγώ θα επευφημώ.",
@@ -88,7 +88,7 @@ export const EL_FORGE: Record<string, string> = {
   "TALOS! Intruders in a bronze bucket! Stomp them flat!": "ΤΑΛΩ! Εισβολείς μέσα σε έναν χάλκινο κουβά! Κάν’ τους πίτα!",
   "He is so BIG. Jason, he is SO big.": "Είναι τόσο ΜΕΓΑΛΟΣ. Ιάσονα, είναι ΤΟΣΟ μεγάλος.",
   "His eye glows red: that is Aeëtes’s control. Remember the carving. The plug in his heel.":
-    "Το μάτι του λάμπει κόκκινο: αυτός είναι ο έλεγχος του Αιήτη. Θυμήσου το σκάλισμα. Το βούλωμα στη φτέρνα του.",
+    "Το μάτι του λάμπει κόκκινο: αυτός είναι ο έλεγχος του Αιήτη. Θυμήσου το σκάλισμα. Το πώμα στη φτέρνα του.",
   "When he stomps, his foot gets stuck. We PUNCH the armour off his ankle... and pull!":
     "Όταν πατάει δυνατά, το πόδι του κολλάει. Του βγάζουμε την πανοπλία από τον αστράγαλο με ΓΡΟΘΙΕΣ... και τραβάμε!",
   "Easy, big guy. We’re here to help you.": "Ήρεμα, μεγάλε. Ήρθαμε να σε βοηθήσουμε.",
@@ -98,11 +98,11 @@ export const EL_FORGE: Record<string, string> = {
   "Too thick! Get close and PUNCH his ankle (the SPIN button), or hold the FLAMETHROWER on it.":
     "Πολύ χοντρή πανοπλία! Πλησίασε και δώσε ΓΡΟΘΙΑ στον αστράγαλό του (το κουμπί ΣΒΟΥΡΑ), ή κράτα το ΦΛΟΓΟΒΟΛΟ πάνω του.",
   "Only the mech is strong enough to fight Talos! Climb back in!": "Μόνο η ρομποστολή είναι αρκετά δυνατή για να τα βάλει με τον Τάλω! Μπείτε πάλι μέσα!",
-  "He’s down on one knee! Walk round behind him and PULL the plug in his heel!": "Γονάτισε! Πήγαινε από πίσω του και ΤΡΑΒΑ το βούλωμα από τη φτέρνα του!",
+  "He’s down on one knee! Walk round behind him and PULL the plug in his heel!": "Γονάτισε! Πήγαινε από πίσω του και ΤΡΑΒΑ το πώμα από τη φτέρνα του!",
   "He’s back up, and the armour is back on! Next time, pull the plug while he kneels.":
-    "Σηκώθηκε ξανά, κι η πανοπλία ξαναμπήκε στη θέση της! Την άλλη φορά, τράβα το βούλωμα όσο είναι γονατιστός.",
+    "Σηκώθηκε ξανά, κι η πανοπλία ξαναμπήκε στη θέση της! Την άλλη φορά, τράβα το πώμα όσο είναι γονατιστός.",
   "The plug moved! It’s stuck tight, though. Knock his armour off again and pull some more!":
-    "Το βούλωμα κουνήθηκε! Είναι όμως πολύ σφιχτό. Ρίξε του ξανά την πανοπλία και τράβα κι άλλο!",
+    "Το πώμα κουνήθηκε! Είναι όμως πολύ σφιχτό. Ρίξε του ξανά την πανοπλία και τράβα κι άλλο!",
   "Almost out! One more pull!": "Σχεδόν βγήκε! Ένα τράβηγμα ακόμα!",
   "Aeëtes is sending anvil drones! Roast them with the FLAMETHROWER, or PUNCH them when they swoop down.":
     "Ο Αιήτης στέλνει Ρομπότ-Αμόνια! Ψήσ’ τα με το ΦΛΟΓΟΒΟΛΟ, ή δώσ’ τους ΓΡΟΘΙΑ όταν κατεβαίνουν χαμηλά.",
@@ -145,7 +145,7 @@ export const EL_FORGE: Record<string, string> = {
   "Two red switches, one on each side of the yard. SLAM them both and the arena gate opens.":
     "Δύο κόκκινοι διακόπτες, ένας σε κάθε μεριά της αυλής. Κάνε ΚΑΡΦΩΜΑ και στους δύο κι η πύλη της αρένας θα ανοίξει.",
   "TALOS walks his rounds in there, and only the mech is strong enough to fight him! When he stomps, his foot gets stuck: PUNCH the armour off his ankle (or hold the FLAMETHROWER on it). Then pull the plug in his heel.":
-    "Εκεί μέσα κάνει τον γύρο του ο ΤΑΛΩΣ, και μόνο η ρομποστολή είναι αρκετά δυνατή για να τα βάλει μαζί του! Όταν πατάει δυνατά, το πόδι του κολλάει: βγάλε του την πανοπλία από τον αστράγαλο με ΓΡΟΘΙΕΣ (ή κράτα το ΦΛΟΓΟΒΟΛΟ πάνω του). Μετά τράβα το βούλωμα από τη φτέρνα του.",
+    "Εκεί μέσα κάνει τον γύρο του ο ΤΑΛΩΣ, και μόνο η ρομποστολή είναι αρκετά δυνατή για να τα βάλει μαζί του! Όταν πατάει δυνατά, το πόδι του κολλάει: βγάλε του την πανοπλία από τον αστράγαλο με ΓΡΟΘΙΕΣ (ή κράτα το ΦΛΟΓΟΒΟΛΟ πάνω του). Μετά τράβα το πώμα από τη φτέρνα του.",
   // Props.
   "Bronze is tough! PUNCH it (the SPIN button).": "Ο χαλκός είναι σκληρός! Δώσ’ του μια ΓΡΟΘΙΑ (το κουμπί ΣΒΟΥΡΑ).",
   "Solid bronze, a hand thick. Nothing on foot can open this.": "Συμπαγής χαλκός, χοντρός μια παλάμη. Κανείς με τα πόδια δεν μπορεί να τον ανοίξει.",
@@ -177,8 +177,8 @@ export const EL_FORGE: Record<string, string> = {
   "Climb back into the bronze mech": "Μπες πάλι μέσα στη χάλκινη ρομποστολή",
   "Out we hop! The mech waits here for us. Walk up to it and press CLIMB IN to get back aboard.":
     "Πηδάμε έξω! Η ρομποστολή θα μας περιμένει εδώ. Πήγαινε κοντά της και πάτα ΜΠΕΣ ΜΕΣΑ για να ανέβεις ξανά.",
-  "The mech’s STRENGTH is low! It doesn’t mend by itself: only a checkpoint fixes it. Careful!":
-    "Η ΔΥΝΑΜΗ της ρομποστολής είναι λίγη! Δεν γεμίζει μόνη της: μόνο ένα σημείο ελέγχου τη φτιάχνει. Προσοχή!",
+  "The mech’s STRENGTH is low! Grab the bronze gears enemies drop, or reach a checkpoint. Careful!":
+    "Η ΔΥΝΑΜΗ της ρομποστολής είναι λίγη! Μάζεψε τα χάλκινα γρανάζια που ρίχνουν οι εχθροί, ή φτάσε σε ένα σημείο ελέγχου. Προσοχή!",
   "The mech is far too big for the skiff! Press GET OUT and leave it here: it guards the forge now.":
     "Η ρομποστολή είναι πολύ μεγάλη για το σκάφος! Πάτα ΒΓΕΣ ΕΞΩ και άφησέ τη εδώ: τώρα φυλάει το σιδηρουργείο.",
   "The flamethrower is too hot! Let go of FLAME for a moment and the gauge fills up again.":

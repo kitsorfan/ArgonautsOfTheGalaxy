@@ -1375,7 +1375,7 @@ export class UI {
           ['#e0a040', tr('PUNCH'), tr('Breaks bronze gates. In mid-air: SLAM cracked floors.')],
           ['#ffb04a', tr('THRUST'), tr('Jets you forward, once per jump, over lava.')],
           ['#ff7a1a', tr('FLAME'), tr('Hold to burn. Let go to refill.')],
-          ['#ffd166', tr('STRENGTH'), tr('Hits wear it down; only checkpoints mend it. Only the mech can fight TALOS.')],
+          ['#ffd166', tr('STRENGTH'), tr('Hits wear it down; bronze gears and checkpoints mend it. Only the mech can fight TALOS.')],
           ['#5ff0d0', tr('GET OUT'), tr('The action button climbs out. Walk back to climb in.')],
         ],
       },

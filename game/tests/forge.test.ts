@@ -1,7 +1,7 @@
 import { GRAVITY, MECH, STEP_H } from '../src/core/constants';
 import { newSave } from '../src/core/save';
 import { HEROES, joinedRoster, parkedFlag } from '../src/entities/heroes/heroes';
-import { drain, freshPower, hitCost, spent } from '../src/entities/heroes/mechPower';
+import { drain, freshPower, hitCost, mend, spent } from '../src/entities/heroes/mechPower';
 import { ANVIL_TUNING, TALOS_TUNING } from '../src/entities/forge/tuning';
 import { ROBOT_TUNING } from '../src/entities/robots';
 import { WEAPONS, damageOf, stepFuel, type Tank } from '../src/entities/weapons';
@@ -177,11 +177,20 @@ describe('the mech’s STRENGTH (instead of hearts)', () => {
     expect(s.strength).toBe(0);
   });
 
-  it('never mends by itself, like hearts: only a checkpoint (a fresh refill) brings it back', () => {
+  it('never mends by itself, like hearts: only bronze gears and checkpoints bring it back', () => {
     for (const k of ['regen', 'regenDelay', 'cool']) expect(MECH).not.toHaveProperty(k);
     const hurt = drain(drain(freshPower(), 1), 1);
     expect(hurt).toEqual({ strength: MECH.strength - 2 * MECH.hitCost });
     expect(freshPower().strength).toBe(MECH.strength);
+  });
+
+  it('gets a quarter back from a bronze gear, never more than full', () => {
+    expect(MECH.gearMend).toBe(MECH.strength / 4);
+    const low = { strength: 10 };
+    expect(mend(low)).toEqual({ strength: 10 + MECH.gearMend });
+    expect(mend({ strength: MECH.strength - 5 })).toEqual({ strength: MECH.strength });
+    // Robots drop gears often enough to matter (at least one time in five).
+    expect(MECH.gearChance).toBeGreaterThanOrEqual(0.2);
   });
 });
 

@@ -17,26 +17,26 @@ export const EL_MENUS: Record<string, string> = {
 
   // The shop: short descriptions.
   "+1 damage for every attack": "+1 ζημιά σε κάθε επίθεση",
-  "Bigger clips and fuel tank": "Μεγαλύτεροι γεμιστήρες και ντεπόζιτο",
+  "Bigger clips and fuel tank": "Πιο πολλές βολές και καύσιμα",
   "Faster shots and reloads": "Πιο γρήγορες βολές και γεμίσματα",
-  "LUX’s zap and pulse hit harder": "Το τσίμπημα και ο παλμός του ΛΟΥΞ χτυπάνε πιο δυνατά",
+  "LUX’s zap and pulse hit harder": "Πιο δυνατό τσίμπημα και παλμός του ΛΟΥΞ",
   "Pulls in bolts from farther": "Τραβάει βίδες από πιο μακριά",
-  "Blocks one hit, then recharges": "Σταματάει ένα χτύπημα και ξαναφορτίζει",
+  "Blocks one hit, then recharges": "Αντέχει ένα χτύπημα, ξαναγεμίζει",
   "+1 dash cell": "+1 κυψέλη ορμής",
   "+1 spin in a row": "+1 σβούρα στη σειρά",
   "Longer, faster grapple": "Πιο μακρύς και γρήγορος γάντζος",
   "Stronger arrows": "Πιο δυνατά βέλη",
   "Faster power arrows": "Πιο γρήγορα δυνατά βέλη",
   "Faster sprint, longer jumps": "Πιο γρήγορο σπριντ, πιο μακριά άλματα",
-  "Climb faster, hold on longer": "Σκαρφαλώνεις πιο γρήγορα και κρατιέσαι πιο πολύ",
+  "Climb faster, hold on longer": "Σκαρφαλώνεις γρηγορότερα και πιο γερά",
   "Stronger, wider kick": "Πιο δυνατή και φαρδιά κλοτσιά",
   "Power arrows fly in threes": "Τα δυνατά βέλη πετάνε τρία τρία",
-  "Hold for a big fireball.": "Κράτα για μεγάλη βολίδα φωτιάς.",
+  "Hold for a big fireball.": "Κράτα: βολίδα φωτιάς!",
   "Best up close.": "Το καλύτερο από κοντά.",
-  "Slows. Charged, it freezes!": "Φρενάρει. Με φόρτιση, παγώνει!",
-  "Chains to more enemies.": "Πηδάει και σε άλλους εχθρούς.",
+  "Slows. Charged, it freezes!": "Φρενάρει ή παγώνει!",
+  "Chains to more enemies.": "Πηδάει και σε άλλους.",
   "Never misses.": "Δεν αστοχεί ποτέ.",
-  "Burns enemies and brambles.": "Καίει εχθρούς και αγκάθια.",
+  "Burns enemies and brambles.": "Καίει και τα αγκάθια.",
 
   // How to play: one page per hero.
   "Brennus": "Βρέννος",
@@ -62,7 +62,7 @@ export const EL_MENUS: Record<string, string> = {
   "Breaks bronze gates. In mid-air: SLAM cracked floors.": "Σπάει χάλκινες πύλες. Στον αέρα: ΚΑΡΦΩΣΟΥ σε ραγισμένα πατώματα.",
   "Jets you forward, once per jump, over lava.": "Σε πετάει μπροστά, μία φορά σε κάθε άλμα, πάνω από τη λάβα.",
   "Hold to burn. Let go to refill.": "Κράτα για φωτιά. Άφησε για να ξαναγεμίσει.",
-  "Hits wear it down; only checkpoints mend it. Only the mech can fight TALOS.":
-    "Τα χτυπήματα τη λιώνουν· μόνο τα σημεία ελέγχου τη φτιάχνουν. Μόνο η ρομποστολή μπορεί να παλέψει τον ΤΑΛΩ.",
+  "Hits wear it down; bronze gears and checkpoints mend it. Only the mech can fight TALOS.":
+    "Τα χτυπήματα τη λιώνουν· τη φτιάχνουν τα χάλκινα γρανάζια και τα σημεία ελέγχου. Μόνο η ρομποστολή μπορεί να παλέψει τον ΤΑΛΩ.",
   "The action button climbs out. Walk back to climb in.": "Το κουμπί δράσης σε βγάζει έξω. Πήγαινε πίσω για να ξανανέβεις.",
 };

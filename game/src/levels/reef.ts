@@ -83,8 +83,8 @@ export const reef: LevelDef = {
      66666666h66665555555:555555{55
  99  66666666666665555[55555555555j
  T9  6666L666666665555555555555o555
- 99  6666666k666665555t555555555555       9P
-     X666666666666555555555]55t5555       A9
+ 99  6666666k666665555t55555555555^     $P
+     X666666666666555555555]55t5555     A9
      6666H666666665x555555555555555
      66666666666p6555oo55555555555W
      66z6666666666555555}555oo#####
@@ -149,9 +149,12 @@ export const reef: LevelDef = {
     Z: { type: 'marker', id: 'lighthouse' },
     k: { type: 'marker', id: 'lamp' },
     u: { type: 'marker', id: 'rock' },
+    $: { type: 'marker', id: 'stack' },
     Q: { type: 'trigger', id: 'tides', dialogue: 'tides', w: 11, d: 2 },
     R: { type: 'trigger', id: 'isleflag', event: 'flag:isle', w: 21, d: 3 },
     S: { type: 'trigger', id: 'plaza', event: 'flag:plaza', dialogue: 'lighthouse', w: 17, d: 2 },
+    // The plaza's east edge, facing the sea stack: LUX points out the grapple ring.
+    '^': { type: 'trigger', id: 'hook', dialogue: 'hook', w: 3, d: 11 },
     i: { type: 'trigger', id: 'lit', dialogue: 'lit', w: 5, d: 2, when: { all: [{ flag: 'tL' }, { flag: 'swL' }] } },
     F: { type: 'trigger', id: 'rockstory', event: 'story:rock', w: 15, d: 2 },
     // The tide's gadgets, and the heroes' puzzles: a bullseye for Atalanta, a switch on a sea stack for Jason.
@@ -217,7 +220,8 @@ export const reef: LevelDef = {
   objectives: [
     { until: { flag: 'isle' }, text: 'Cross the sand at low tide (watch the tide gauge!)', at: 'isle' },
     { until: { flag: 'plaza' }, text: 'Cross the sandbars to the old lighthouse', at: 'lighthouse' },
-    { until: { all: [{ flag: 'tL' }, { flag: 'swL' }] }, text: 'Light the lamp: a POWER ARROW for Atalanta, a red switch for Jason', at: 'lamp' },
+    { until: { flag: 'swL' }, text: 'Jason: GRAPPLE to the ring on the east rock, then pound its red switch', at: 'stack' },
+    { until: { flag: 'tL' }, text: 'Atalanta: hit the lamp’s sun-mirror with a POWER ARROW', at: 'lamp' },
     { until: { clear: 'guards' }, text: 'Cross the causeway and chase Scylla’s crew off the rock', at: 'rock' },
     { until: { boss: true }, text: 'Switch off SCYLLA: jam her arms, then pound her plates', at: 'boss' },
     { until: { flag: 'never' }, text: 'Sail the Argo on to Talos’s island', at: 'exit' },
@@ -241,6 +245,9 @@ export const reef: LevelDef = {
       { who: 'halcyon', text: 'The gate to the causeway runs on the lighthouse’s power. Light the lamp, and it should open.' },
       { who: 'jason', text: 'There’s a red switch on that tall rock to the east. I can grapple over to it!' },
       { who: 'atalanta', text: 'And the sun-mirror is a bullseye. One power arrow, coming right up.' },
+    ],
+    hook: [
+      { who: 'bolt', text: 'See the glowing ring on that tall rock? Jason, turn to face it, and when GRAPPLE lights up, press it!' },
     ],
     lit: [
       { who: 'bolt', text: 'The lamp is on! The gate is opening! I love lighthouses. They’re like me, but taller.' },

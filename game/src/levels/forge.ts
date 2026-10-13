@@ -250,7 +250,7 @@ export const forge: LevelDef = {
     'joined:mech': [
       { who: 'halcyon', text: 'The mech is awake! Jason pilots it, Atalanta rides on its shoulder, and LUX and IRIS fly alongside.' },
       { who: 'halcyon', text: 'SPIN is PUNCH. In the air, SPIN is a big SLAM. DASH fires the back jets: THRUST! And hold BLAST for its FLAMETHROWER.' },
-      { who: 'halcyon', text: 'No hearts in a mech: it has STRENGTH. Hits wear it down, and it does NOT come back by itself: only a checkpoint mends it. If it runs out, it’s back to the last checkpoint!' },
+      { who: 'halcyon', text: 'No hearts in a mech: it has STRENGTH. Hits wear it down, and it does NOT come back by itself. Grab the bronze gears robots drop, or reach a checkpoint. If it runs out, it’s back to the last checkpoint!' },
       { who: 'jason', text: 'It’s slow, but SO strong. And the action button lets us GET OUT, and CLIMB back IN.' },
       { who: 'atalanta', text: 'Comfy up here! You steer, Jason. I’ll do the cheering.' },
     ],

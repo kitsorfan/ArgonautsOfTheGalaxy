@@ -6,8 +6,9 @@
  *
  * - Big, heavy and slow (one strong hydraulic jump, no double jump, glide or grapple), but far stronger
  *   than anyone on foot: its punches, slam and flames flatten robots, and only it can fight TALOS.
- * - No hearts aboard: hits drain its STRENGTH (see `mechPower.ts`), which only a checkpoint mends. At 0
- *   the heroes are knocked out, as with no hearts left. Their own hearts are untouched while they ride.
+ * - No hearts aboard: hits drain its STRENGTH (see `mechPower.ts`). Checkpoints mend it fully, and the
+ *   heart pickups turn into bronze gears that mend a slice. At 0 the heroes are knocked out, as with no
+ *   hearts left. Their own hearts are untouched while they ride.
  * - GET OUT (the action button, on solid ground with room beside it): Jason and Atalanta climb out and
  *   play on foot; the empty mech stays parked, kneeling. CLIMB IN (the action button, close to it) puts
  *   everyone back aboard.
@@ -34,7 +35,7 @@ import type { HeroModel } from '../models';
 import type { Player } from '../player';
 import { FLAME, stepFuel, type Tank } from '../weapons';
 import { MECH_COLORS, makeMech, type MechModel } from './mechModel';
-import { drain, freshPower, spent, type MechPower } from './mechPower';
+import { drain, freshPower, mend, spent, type MechPower } from './mechPower';
 
 const tmp = new THREE.Vector3();
 
@@ -204,7 +205,15 @@ export class MechMoves implements Interactable {
     this.parked = null;
   }
 
-  /** Full STRENGTH and a full tank (checkpoints, starting again at one): the only way it is mended. */
+  /** A bronze gear picked up aboard: a slice of STRENGTH back. False when it is already at full STRENGTH. */
+  mendGear(): boolean {
+    if (this.power.strength >= MECH.strength) return false;
+    this.power = mend(this.power);
+    this.world.hooks.hud();
+    return true;
+  }
+
+  /** Full STRENGTH and a full tank (checkpoints, starting again at one). */
   refill() {
     this.power = freshPower();
     this.tank = { fuel: MECH.flameFuel, dry: false, rest: 0 };
@@ -239,7 +248,7 @@ export class MechMoves implements Interactable {
       p.down = true;
       w.playerDown();
     } else if (this.power.strength < MECH.strength * 0.3 && was >= MECH.strength * 0.3) {
-      w.hooks.toast('The mech’s STRENGTH is low! It doesn’t mend by itself: only a checkpoint fixes it. Careful!', 'bolt');
+      w.hooks.toast('The mech’s STRENGTH is low! Grab the bronze gears enemies drop, or reach a checkpoint. Careful!', 'bolt');
     }
   }
 
