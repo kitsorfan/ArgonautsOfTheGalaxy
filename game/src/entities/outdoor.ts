@@ -72,9 +72,13 @@ export class Anchor extends Entity implements Interactable {
     this.range = this.world.player.grappleRange * CELL;
     const has = this.hooked;
     const focused = this.world.focus === this;
-    this.ring.rotation.y += dt * (focused ? 4 : 1);
-    this.ringMat.emissiveIntensity = damp(this.ringMat.emissiveIntensity, !has ? 0.3 : focused ? 3 + Math.sin(this.t * 8) * 0.6 : 1.2, 8, dt);
-    this.glow.material.opacity = damp(this.glow.material.opacity, focused ? 0.7 : has ? 0.25 : 0, 6, dt);
+    // Within reach (but not yet faced) it pulses, so Jason can tell from afar that this ring is one to turn to.
+    const b = this.world.player.body;
+    const near = has && Math.hypot(b.x - this.spot.x, b.z - this.spot.z) <= this.range && Math.abs(b.y - this.spot.y) <= this.reachY;
+    this.ring.rotation.y += dt * (focused ? 4 : near ? 2 : 1);
+    const lit = !has ? 0.3 : focused ? 3 + Math.sin(this.t * 8) * 0.6 : near ? 2 + Math.sin(this.t * 4) * 0.8 : 1.2;
+    this.ringMat.emissiveIntensity = damp(this.ringMat.emissiveIntensity, lit, 8, dt);
+    this.glow.material.opacity = damp(this.glow.material.opacity, focused ? 0.7 : near ? 0.5 + Math.sin(this.t * 4) * 0.15 : has ? 0.25 : 0, 6, dt);
   }
 }
 
