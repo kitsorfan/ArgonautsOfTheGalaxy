@@ -2990,6 +2990,25 @@ canvas#game {
   }
 }
 
+/* A small phone (about 640 x 360): the four tabs drop their icons so the Greek names fit beside the
+   bolt counter, and the outfit names shrink a little so they stay on one line. */
+@media (max-width: 700px) and (max-height: 460px) {
+  .shop-tabs button svg {
+    display: none;
+  }
+  .shop-grid .shop-item.outfit .info b {
+    font-size: 12px;
+  }
+}
+
+/* Short screens: weapon cards in two wide columns, so the stat bars, the button and the gold line fit
+   side by side (three narrow ones squeezed them together). Six weapons still fit in three rows. */
+@media (max-height: 460px) {
+  .shop-panel .shop-grid.weapons {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 /* Mk II levels (sold on Gaia Nova) show as cyan stars after the gold ones. */
 .shop-item .stars .mk2 {
   color: #7fe6ff;
@@ -3516,7 +3535,7 @@ canvas#game {
 }
 
 .shop-panel .shop-grid {
-  grid-template-columns: repeat(auto-fill, minmax(196px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(226px, 1fr));
   min-height: 0;
   overflow: auto;
   touch-action: pan-y;
@@ -3566,11 +3585,18 @@ canvas#game {
   }
   .shop-grid .shop-item .info b {
     font-size: 13px;
-    line-height: 1.2;
+    line-height: 1.1;
   }
+  .shop-item .stars {
+    font-size: 10px;
+    line-height: 1;
+  }
+  /* Two small lines, so a whole description fits (they're written to be short). */
   .shop-grid .shop-item .info i,
   .shop-grid .shop-item.outfit .info i {
-    -webkit-line-clamp: 1;
+    -webkit-line-clamp: 2;
+    font-size: 10.5px;
+    line-height: 1.15;
   }
   .shop-grid .shop-item.outfit .icon {
     width: 28px;
