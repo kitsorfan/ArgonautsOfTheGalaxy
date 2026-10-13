@@ -92,7 +92,6 @@ export const EL_COMPANIONS: Record<string, string> = {
   "WRIST HACK": "ΧΑΚΑΡΙΣΜΑ ΚΑΡΠΟΥ",
   "IRIS": "ΙΡΙΔΑ",
   "LUX?!": "ΛΟΥΞ;!",
-  "IRIS paints rainbows on the greenhouse windows every morning. She has made a new friend: Atalanta, the fastest runner in the colony.": "Η ΙΡΙΔΑ ζωγραφίζει ουράνια τόξα στα τζάμια του θερμοκηπίου κάθε πρωί. Έκανε και μια καινούργια φίλη: την Αταλάντη, την πιο γρήγορη δρομέα της αποικίας.",
   "IRIS, a droid who speaks in rainbows": "ΙΡΙΔΑ, ένα ρομπότ που μιλάει με ουράνια τόξα",
   "Thresher · Dune Driller · Boreas · Shadow LUX (not really)": "Θεριστής · Τρυπάνι των Αμμόλοφων · Βοριάς · Σκοτεινός ΛΟΥΞ (όχι στ’ αλήθεια)",
 };

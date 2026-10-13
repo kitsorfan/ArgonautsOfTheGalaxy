@@ -1,4 +1,4 @@
-import { GAME_NAME } from '../core/brand';
+import { CREATOR, GAME_NAME } from '../core/brand';
 import { tr, upper } from '../core/i18n';
 import { MUSIC_CREDITS } from '../core/music';
 import type { SaveData } from '../core/save';
@@ -391,43 +391,6 @@ export const ENDING_CAPTIONS: Record<EndingKind, string[]> = {
 /** Which chapter an ending belongs to. */
 export const endingChapter = (kind: EndingKind): Chapter => (kind === 'saved' || kind === 'friends' ? 1 : kind === 'freed' || kind === 'redeemed' ? 2 : 3);
 
-/** The short epilogue on the final stats card. */
-export function endingText(kind: EndingKind, save: SaveData): string[] {
-  if (endingChapter(kind) === 3) return endingText3(kind, save);
-  if (endingChapter(kind) === 2) return endingText2(kind, save);
-  const n = inChapter(save.colonists, 1);
-  const rosa = save.colonists.includes('security.c1');
-  const captain = save.colonists.includes('bridge.c1');
-  const out: string[] = [];
-  out.push(
-    kind === 'friends'
-      ? tr('GaScu became the ship’s gardener. Every deck is full of flowers now, and they glow a little brighter whenever LUX flies by.')
-      : tr('LUX kept the little GaScu seed in a flower pot on the Bridge, and whispered to it every night. It always glowed back.'),
-  );
-  if (captain) out.push(tr('Captain Argus promoted Jason to Chief Engineer on the spot. LUX got a medal. He wears it every day.'));
-  if (rosa) out.push(tr('Aunt Rosa tells everyone the story of the day her Jason saved the ship. Twice a day. Sometimes three times.'));
-  out.push(n ? tr('You rescued {n} of {total} colonists from their cocoons.', { n, total: chapterTotals(1).colonists }) : tr('The colonists woke up and cheered for the engineer who saved the day.'));
-  if (kind === 'saved' && inChapter(save.shards, 1) < chapterTotals(1).shards) out.push(tr('Psst... GaScu still has secrets. Find all 18 memory shards and LUX might learn to talk to it.'));
-  return out;
-}
-
-function endingText2(kind: EndingKind, save: SaveData): string[] {
-  const n = inChapter(save.colonists, 2);
-  const hypatia = save.colonists.includes('volcano.c1');
-  const out: string[] = [];
-  out.push(
-    kind === 'redeemed'
-      ? tr('Brennus planted his grandmother’s tomato seeds in the colony’s very first garden. He gave every single plant a name.')
-      : tr('Celestia planted itself in the middle of the Whispering Plains. By spring, the whole valley was in flower.'),
-  );
-  if (hypatia) out.push(tr('Dr. Hypatia named a brand new flower after LUX. It glows in the dark, of course.'));
-  out.push(tr('Captain Argus made Jason the colony’s first Chief Explorer. LUX got a second medal. He wears both.'));
-  out.push(tr('IRIS paints rainbows on the greenhouse windows every morning. She has made a new friend: Atalanta, the fastest runner in the colony.'));
-  out.push(n ? tr('You freed {n} of {total} scientists from Brennus’s camps.', { n, total: chapterTotals(2).colonists }) : tr('The scientists found their own way home, and told everyone about the boy and his robot.'));
-  if (kind === 'freed' && inChapter(save.shards, 2) < chapterTotals(2).shards) out.push(tr('Psst... Brennus’s journal still has missing pages. Find all 18 and you might reach the man inside the machine.'));
-  return out;
-}
-
 /** How many Gardener light-stones chapter 3 hides in all (every planned level's), and how many the save has. */
 export function lightStones(save: Pick<SaveData, 'shards'>): { n: number; total: number } {
   return { n: inChapter(save.shards, 3), total: plannedFinds(3, chapterTotals(3).shards) };
@@ -437,23 +400,6 @@ export function lightStones(save: Pick<SaveData, 'shards'>): { n: number; total:
 export function knowsGardenerWords(save: Pick<SaveData, 'shards'>): boolean {
   const { n, total } = lightStones(save);
   return n >= total;
-}
-
-function endingText3(kind: EndingKind, save: SaveData): string[] {
-  const { n, total } = lightStones(save);
-  const out: string[] = [];
-  out.push(
-    kind === 'gardeners'
-      ? tr('Celestia and her hundred little sisters glow together every night. LUX and IRIS teach the colony’s children Gardener words.')
-      : tr('Celestia blooms in the middle of the colony garden. Every evening she glows a little goodnight to everyone.'),
-  );
-  out.push(tr('Aeëtes got tangled in his own gold vines. Now he plants trees for the colony, and grumbles. He has planted four thousand so far.'));
-  out.push(tr('Captain Argus made General Brennus the colony’s Chief Gardener. His Green Legion robots water the new forests every morning.'));
-  out.push(tr('Atalanta still races everyone to the Argo, every single day. She still wins.'));
-  out.push(tr('Jason and LUX got the colony’s brand new medal, the Golden Fleece Star. LUX polishes his every morning.'));
-  out.push(tr('You found {n} of {total} Gardener light-stones.', { n, total }));
-  if (kind === 'fleece' && n < total) out.push(tr('Psst... the Gardeners left more light-stones than that. Find every one, and LUX and IRIS might wake the seeds inside the Fleece.'));
-  return out;
 }
 
 /** The soundtrack's recordings, each once: title, artist and license (names stay untranslated). */
@@ -473,10 +419,11 @@ function colonistNames(save: SaveData, ch: Chapter): string[] {
 }
 
 /**
- * The final credits of the whole game (after chapter 3): everyone from all three chapters, every boss,
- * the things won back on the voyage, the light-stones found, and THE END.
+ * The end credits, rolled once, after the game's final ending (chapter 3; the other chapters end on a card):
+ * who made it, everyone from all three chapters, every boss, the things won back on the voyage, the
+ * light-stones found, the music, and THE END.
  */
-function finalCredits(kind: EndingKind, save: SaveData): string {
+export function creditsHtml(kind: EndingKind, save: SaveData): string {
   const p = (s: string) => `<p>${tr(s)}</p>`;
   const head = (s: string) => `<h3>${tr(s)}</h3>`;
   const won = colonistNames(save, 3);
@@ -484,6 +431,8 @@ function finalCredits(kind: EndingKind, save: SaveData): string {
   return [
     `<h1>${upper(tr(GAME_NAME))}</h1>`,
     `<h2>${tr('THE ARGONAUTS')}</h2>`,
+    head('A GAME BY'),
+    `<p class="creator">${CREATOR.name}</p>`,
     head('STARRING'),
     p('Jason, junior engineer'),
     p('LUX, a very brave little drone'),
@@ -517,62 +466,9 @@ function finalCredits(kind: EndingKind, save: SaveData): string {
     head('GARDENER LIGHT-STONES'),
     `<p>${tr('{n} of {total}', { n, total })}</p>`,
     musicCredits(),
+    head('CREATED BY'),
+    `<p class="creator">${CREATOR.name}</p>`,
     `<h2>${tr('THE END')}</h2>`,
-    `<p class="end">${tr('Thank you for playing!')}</p>`,
-  ].join('');
-}
-
-export function creditsHtml(kind: EndingKind, save: SaveData): string {
-  const p = (s: string) => `<p>${tr(s)}</p>`;
-  const head = (s: string) => `<h3>${tr(s)}</h3>`;
-  if (endingChapter(kind) === 3) return finalCredits(kind, save);
-  if (endingChapter(kind) === 2) {
-    const rescued = colonistNames(save, 2);
-    return [
-      `<h1>${upper(tr(GAME_NAME))}</h1>`,
-      `<h2>${upper(tr('Gaia Nova'))}</h2>`,
-      head('STARRING'),
-      p('Jason, junior engineer'),
-      p('LUX, a very brave little drone'),
-      p('IRIS, a droid who speaks in rainbows'),
-      head('WITH'),
-      p('HALCYON, the ship computer'),
-      p('Captain Argus'),
-      p('Dr. Hypatia, chief scientist'),
-      p('PANDORA, the travelling shop'),
-      p('Celestia, home at last'),
-      kind === 'redeemed' ? p('General Brennus, a gardener at last') : p('General Brennus, a very grumpy old general'),
-      head('THE THORN LEGION'),
-      p('Thresher · Dune Driller · Boreas · Shadow LUX (not really)'),
-      p('Stheno · the Thorn Hydra · the Colossus'),
-      head('SCIENTISTS YOU FREED'),
-      ...(rescued.length ? rescued.map(p) : [p('Everyone made it home safe and sound!')]),
-      head('JOURNAL PAGES'),
-      `<p>${tr('{n} of 18', { n: inChapter(save.shards, 2) })}</p>`,
-      musicCredits(),
-      `<p class="end">${tr('Thank you for playing!')}</p>`,
-    ].join('');
-  }
-  const rescued = colonistNames(save, 1);
-  return [
-    `<h1>${upper(tr(GAME_NAME))}</h1>`,
-    head('STARRING'),
-    p('Jason, junior engineer'),
-    p('LUX, a very brave little drone'),
-    head('WITH'),
-    p('HALCYON, the ship computer'),
-    p('Captain Argus'),
-    p('Aunt Rosa, Security Chief'),
-    p('PANDORA, the travelling shop'),
-    kind === 'friends' ? p('GaScu, as our new friend') : p('GaScu, as a sleepy seed'),
-    head('THE GUARDIANS'),
-    p('Frost Warden · Vine Queen · Magma Golem'),
-    p('King Bloblin · CERBERUS · the Heart of GaScu'),
-    head('COLONISTS YOU RESCUED'),
-    ...(rescued.length ? rescued.map(p) : [p('Everyone woke up safe and sound!')]),
-    head('MEMORY SHARDS'),
-    `<p>${tr('{n} of 18', { n: inChapter(save.shards, 1) })}</p>`,
-    musicCredits(),
     `<p class="end">${tr('Thank you for playing!')}</p>`,
   ].join('');
 }

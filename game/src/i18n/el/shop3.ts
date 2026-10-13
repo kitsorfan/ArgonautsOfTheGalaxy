@@ -8,17 +8,11 @@ export const EL_SHOP3: Record<string, string> = {
   "Close": "Κλείσε",
   // Atalanta's upgrades (game/shop.ts).
   "Hunter’s Bow": "Τόξο του Κυνηγού",
-  "Stronger arrows: quick ones +½ damage, power arrows +1, each level": "Πιο δυνατά βέλη: τα γρήγορα +½ ζημιά, τα δυνατά +1, σε κάθε επίπεδο",
   "Quick Draw": "Γρήγορο Τέντωμα",
-  "Charge the power arrow faster, and shoot again sooner": "Γεμίζεις πιο γρήγορα το δυνατό βέλος και ρίχνεις ξανά πιο σύντομα",
   "Wind Sandals": "Σανδάλια του Ανέμου",
-  "Sprint sooner and faster, for longer running jumps": "Σπριντ πιο νωρίς και πιο γρήγορα, για πιο μεγάλα άλματα με φόρα",
   "Climber’s Gloves": "Γάντια Αναρρίχησης",
-  "Hold on to cliffs longer, and climb faster": "Κρατιέσαι πιο πολύ στα βράχια και σκαρφαλώνεις πιο γρήγορα",
   "Iron Kick": "Σιδερένια Κλοτσιά",
-  "+1 damage for her spinning kick, which reaches wider": "+1 ζημιά στην κλοτσιά-σβούρα της, που φτάνει και πιο μακριά",
   "Triple Arrow": "Τριπλό Βέλος",
-  "Every power arrow flies with two more beside it": "Κάθε δυνατό βέλος πετάει μαζί με άλλα δύο δίπλα του",
   // Outfits (entities/outfits.ts).
   "Captain’s Coat": "Παλτό του Κυβερνήτη",
   "A navy coat with tails, gold buttons and gold epaulettes. Very captain-y.": "Μπλε παλτό με ουρές, χρυσά κουμπιά και χρυσές επωμίδες. Σκέτος κυβερνήτης.",

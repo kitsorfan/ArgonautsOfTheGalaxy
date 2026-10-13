@@ -153,6 +153,8 @@ export default function Game() {
         scrollEnabled={false}
         bounces={false}
         overScrollMode="never"
+        // The game lays out its menus for the screen; Android's font size setting would push them off it.
+        textZoom={100}
         setSupportMultipleWindows={false}
         androidLayerType="hardware"
         webviewDebuggingEnabled={__DEV__}

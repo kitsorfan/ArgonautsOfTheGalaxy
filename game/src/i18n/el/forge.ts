@@ -168,21 +168,10 @@ export const EL_FORGE: Record<string, string> = {
   // The mech's buttons and how to play.
   "PUNCH": "ΓΡΟΘΙΑ",
   "THRUST": "ΩΘΗΣΗ",
-  "THE BRONZE MECH": "Η ΧΑΛΚΙΝΗ ΡΟΜΠΟΣΤΟΛΗ",
-  "big bronze fists: they break bronze gates and knock Talos’s ankle armour off. In the air, SPIN is a SLAM that smashes cracked floors.":
-    "μεγάλες χάλκινες γροθιές: σπάνε χάλκινες πύλες και ρίχνουν την πανοπλία από τον αστράγαλο του Τάλω. Στον αέρα, η ΣΒΟΥΡΑ γίνεται ΚΑΡΦΩΜΑ που σπάει τα ραγισμένα πατώματα.",
-  "its back jets push it forward, on the ground or once per jump: JUMP, then THRUST to cross wide lava channels.":
-    "οι πίσω πύραυλοι τη σπρώχνουν μπροστά, στο έδαφος ή μία φορά σε κάθε άλμα: ΑΛΜΑ και μετά ΩΘΗΣΗ για να περάσεις φαρδιά κανάλια λάβας.",
   "Mech: J flamethrower · K punch (in the air: slam) · L thrust · E get out": "Ρομποστολή: J φλογοβόλο · K γροθιά (στον αέρα: κάρφωμα) · L ώθηση · E βγες έξω",
   "FLAME": "ΦΩΤΙΑ",
   "STRENGTH": "ΔΥΝΑΜΗ",
   "GET OUT": "ΒΓΕΣ ΕΞΩ",
-  "hold for a big flamethrower that roasts robots and drones. Its gauge empties as it burns: let go and it fills up again.":
-    "κράτα το για ένα μεγάλο φλογοβόλο που ψήνει ρομπότ και ιπτάμενα ρομπότ. Ο δείκτης του αδειάζει όσο καίει: άφησέ το και γεμίζει ξανά.",
-  "no hearts in the mech: hits wear its STRENGTH down, and it comes back slowly. At zero it overheats and everyone hops out until it cools. Only the mech can fight TALOS.":
-    "η ρομποστολή δεν έχει καρδιές: τα χτυπήματα λιγοστεύουν τη ΔΥΝΑΜΗ της, που γεμίζει ξανά σιγά σιγά. Στο μηδέν υπερθερμαίνεται και όλοι πηδάνε έξω μέχρι να κρυώσει. Μόνο η ρομποστολή μπορεί να τα βάλει με τον ΤΑΛΩ.",
-  "the action button lets Jason and Atalanta climb out on solid ground. The mech waits, kneeling: walk up to it and CLIMB IN.":
-    "με το κουμπί δράσης ο Ιάσονας και η Αταλάντη βγαίνουν έξω σε στέρεο έδαφος. Η ρομποστολή περιμένει γονατιστή: πήγαινε κοντά της και πάτα ΜΠΕΣ ΜΕΣΑ.",
   // Getting out, climbing back in, and the mech's STRENGTH.
   "CLIMB IN": "ΜΠΕΣ ΜΕΣΑ",
   "Climb back into the bronze mech": "Μπες πάλι μέσα στη χάλκινη ρομποστολή",

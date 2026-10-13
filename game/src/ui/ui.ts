@@ -1,6 +1,6 @@
 import { audio } from '../core/audio';
 import { CREATOR, GAME_NAME, SHIP, VERSION } from '../core/brand';
-import { openLink } from '../core/bridge';
+import { inApp, openLink } from '../core/bridge';
 import { RELEASES } from '../game/releaseNotes';
 import { LANGS, lang, tr, upper, type Lang } from '../core/i18n';
 import { resolveAuto } from '../core/graphics';
@@ -1297,8 +1297,7 @@ export class UI {
       <div class="row">
         <div class="col-menu">
           <button class="menu-btn primary resume">▶ ${tr('Resume')}</button>
-          <button class="menu-btn help">${tr('How to play')}</button>
-          <button class="menu-btn settings">${tr('Settings')}</button>
+          <div class="grid2"><button class="menu-btn help">${tr('How to play')}</button><button class="menu-btn settings">${tr('Settings')}</button></div>
           <button class="menu-btn restart">${tr('Back to last checkpoint')}</button>
           <button class="menu-btn danger quit">${tr('Save & quit to title')}</button>
         </div>
@@ -1316,46 +1315,78 @@ export class UI {
     this.button(el, '.quit', opts.onQuit);
   }
 
+  /** The help tab showing (kept between visits). */
+  private helpTab = 0;
+
+  /** How to play: one short page per hero (and the mech), picked with tabs along the top. */
   help(back: () => void) {
-    const item = (color: string, name: string, text: string) => `<div><b style="color:${color}">${name}</b>: ${text}</div>`;
-    const el = this.open(`<div class="panel help-panel"><h2>${tr('HOW TO PLAY')}</h2>
-      <div class="help-grid">
-        ${item('var(--accent)', tr('Move'), tr('drag on the left side. Drag on the right side to turn the camera.'))}
-        ${item('#7dff9a', tr('JUMP'), tr('tap for a hop, hold for a big jump. With the Jet Boots, jump again in mid-air.'))}
-        ${item('#7fe6ff', tr('BLAST'), tr('tap to shoot (it aims for you). HOLD to charge a big FIREBALL, then let go.'))}
-        ${item('#ffd166', tr('SPIN'), tr('a spin attack that also blocks enemy attacks. You get 3 in a row, then a long recharge. In mid-air it becomes a GROUND POUND for red switches.'))}
-        ${item('#b58cff', tr('DASH'), tr('ram through enemies and zoom over gaps. Each dash uses one energy cell: refill at checkpoints and with violet energy cells.'))}
-        ${item('#8ab4ff', tr('PULSE'), tr('LUX’s force pulse hits every enemy around you and shorts out lasers for a few seconds. It takes a long time to recharge.'))}
-        ${item('#7fe6ff', tr('GRAPPLE'), tr('on Gaia Nova, look toward a glowing ring and press the LUX button to zip straight over to it, across gaps and up cliffs.'))}
-        ${item('#ffb020', tr('WEAPONS'), tr('on Gaia Nova, PANDORA sells new weapons. Tap the weapon button next to BLAST (or press X) to switch.'))}
-      </div>
-      <h3 class="help-sub">${tr('ATALANTA')}</h3>
-      <div class="help-grid">
-        ${item('#5fe0c8', tr('SWITCH'), tr('on some levels you can play as Jason or Atalanta. Tap the face button (or press C) to switch; the other hero follows you around.'))}
-        ${item('#7dff9a', tr('SPRINT'), tr('push the stick all the way (or hold a direction) and Atalanta breaks into a sprint for long jumps.'))}
-        ${item('#7dff9a', tr('WALL-JUMP'), tr('jump while touching a wall to kick off it. Run at a glowing teal stripe in mid-air to WALL-RUN along it.'))}
-        ${item('#8ff8e4', tr('BOW'), tr('tap for quick arrows that fly far. HOLD to charge a POWER ARROW: it flies through enemies and hits bullseye targets.'))}
-        ${item('#ffd166', tr('KICK'), tr('a spinning kick that blocks shots, on the ground or in the air.'))}
-        ${item('#b58cff', tr('SLIDE'), tr('slide under low gaps with yellow stripes and trip enemies. Jump out of a slide for a long jump.'))}
-      </div>
-      <h3 class="help-sub">${tr('GENERAL BRENNUS')}</h3>
-      <div class="help-grid">
-        ${item('#ffb04a', tr('CANNON'), tr('tap for a heavy shell that splashes. HOLD for a BIG BLAST that smashes cracked rock. Too many shots and it overheats.'))}
-        ${item('#c9d870', tr('SHIELD'), tr('hold it up to block everything from the front (shots bounce back). Let go to bash.'))}
-        ${item('#ffd166', tr('CHARGE'), tr('a shoulder charge through crates, cracked walls and robots. Jump while charging for a CHARGE-LEAP over wide gaps.'))}
-        ${item('#ff6a5a', tr('COMMAND'), tr('at a Legion command post, give your old robots an order: hold a plate, carry you, or fight on your side.'))}
-      </div>
-      <h3 class="help-sub">${tr('THE BRONZE MECH')}</h3>
-      <div class="help-grid">
-        ${item('#e0a040', tr('PUNCH'), tr('big bronze fists: they break bronze gates and knock Talos’s ankle armour off. In the air, SPIN is a SLAM that smashes cracked floors.'))}
-        ${item('#ffb04a', tr('THRUST'), tr('its back jets push it forward, on the ground or once per jump: JUMP, then THRUST to cross wide lava channels.'))}
-        ${item('#ff7a1a', tr('FLAME'), tr('hold for a big flamethrower that roasts robots and drones. Its gauge empties as it burns: let go and it fills up again.'))}
-        ${item('#ffd166', tr('STRENGTH'), tr('no hearts in the mech: hits wear its STRENGTH down, and it comes back slowly. At zero it overheats and everyone hops out until it cools. Only the mech can fight TALOS.'))}
-        ${item('#5ff0d0', tr('GET OUT'), tr('the action button lets Jason and Atalanta climb out on solid ground. The mech waits, kneeling: walk up to it and CLIMB IN.'))}
-      </div>
-      <p class="keys">${tr('Keyboard: WASD move · Space jump · J blast · K spin/pound · L dash · I pulse · E use · Q/R camera · Esc pause')}<br/>${tr('Atalanta: J bow · K kick · L or Shift slide · C switch hero')}<br/>${tr('Brennus: J cannon · K shield (in the air: stomp) · L charge · E command')}<br/>${tr('Mech: J flamethrower · K punch (in the air: slam) · L thrust · E get out')}</p>
-      <button class="menu-btn primary back">${tr('Got it!')}</button></div>`);
+    const pages: { name: string; keys: string; items: [string, string, string][] }[] = [
+      {
+        name: tr(SPEAKER_NAME.jason),
+        keys: tr('Keyboard: WASD move · Space jump · J blast · K spin/pound · L dash · I pulse · E use · Q/R camera · Esc pause'),
+        items: [
+          ['var(--accent)', tr('Move'), tr('Left side moves. Drag the right side to look around.')],
+          ['#7dff9a', tr('JUMP'), tr('Hold to jump higher. With the Jet Boots, jump again in mid-air.')],
+          ['#7fe6ff', tr('BLAST'), tr('Tap to shoot. Hold for a big FIREBALL.')],
+          ['#ffd166', tr('SPIN'), tr('Blocks attacks, 3 in a row. In mid-air: GROUND POUND.')],
+          ['#b58cff', tr('DASH'), tr('Ram enemies and zoom over gaps. Uses an energy cell.')],
+          ['#8ab4ff', tr('PULSE'), tr('LUX hits every enemy near you and shorts out lasers.')],
+          ['#7fe6ff', tr('GRAPPLE'), tr('Look at a glowing ring and press LUX to zip over.')],
+          ['#ffb020', tr('WEAPONS'), tr('Buy them from PANDORA. Tap the weapon button to switch.')],
+        ],
+      },
+      {
+        name: tr(SPEAKER_NAME.atalanta),
+        keys: tr('Atalanta: J bow · K kick · L or Shift slide · C switch hero'),
+        items: [
+          ['#5fe0c8', tr('SWITCH'), tr('Tap the face button to change hero.')],
+          ['#7dff9a', tr('SPRINT'), tr('Push the stick all the way for long jumps.')],
+          ['#7dff9a', tr('WALL-JUMP'), tr('Jump off walls. Run along glowing teal stripes.')],
+          ['#8ff8e4', tr('BOW'), tr('Tap for arrows. Hold for a POWER ARROW that hits targets.')],
+          ['#ffd166', tr('KICK'), tr('A spinning kick that blocks shots.')],
+          ['#b58cff', tr('SLIDE'), tr('Slide under gaps with yellow stripes.')],
+        ],
+      },
+      {
+        name: tr('Brennus'),
+        keys: tr('Brennus: J cannon · K shield (in the air: stomp) · L charge · E command'),
+        items: [
+          ['#ffb04a', tr('CANNON'), tr('Hold for a BIG BLAST that breaks cracked rock. Mind the heat.')],
+          ['#c9d870', tr('SHIELD'), tr('Hold to block from the front. Let go to bash.')],
+          ['#ffd166', tr('CHARGE'), tr('Smash through walls. Jump while charging to leap gaps.')],
+          ['#ff6a5a', tr('COMMAND'), tr('At a command post, give your robots an order.')],
+        ],
+      },
+      {
+        name: tr('Mech'),
+        keys: tr('Mech: J flamethrower · K punch (in the air: slam) · L thrust · E get out'),
+        items: [
+          ['#e0a040', tr('PUNCH'), tr('Breaks bronze gates. In mid-air: SLAM cracked floors.')],
+          ['#ffb04a', tr('THRUST'), tr('Jets you forward, once per jump, over lava.')],
+          ['#ff7a1a', tr('FLAME'), tr('Hold to burn. Let go to refill.')],
+          ['#ffd166', tr('STRENGTH'), tr('Hits wear it down; only checkpoints mend it. Only the mech can fight TALOS.')],
+          ['#5ff0d0', tr('GET OUT'), tr('The action button climbs out. Walk back to climb in.')],
+        ],
+      },
+    ];
+    const page = pages[this.helpTab] ?? pages[0];
+    const el = this.open(`<div class="panel help-panel">
+      <div class="panel-head"><h2>${tr('HOW TO PLAY')}</h2>
+      <div class="seg help-tabs">${pages.map((p, i) => `<button data-tab="${i}" class="${p === page ? 'on' : ''}">${p.name}</button>`).join('')}</div>
+      <button class="icon-btn back" aria-label="${tr('Got it!')}">${ICON.close}</button></div>
+      <div class="help-grid">${page.items.map(([color, name, text]) => `<div><b style="color:${color}">${name}</b> ${text}</div>`).join('')}</div>
+      ${inApp() ? '' : `<p class="keys">${page.keys}</p>`}
+      <button class="menu-btn primary done">${tr('Got it!')}</button></div>`);
+    for (const b of el.querySelectorAll<HTMLElement>('[data-tab]')) {
+      b.addEventListener('click', () => {
+        if (Number(b.dataset.tab) === this.helpTab) return;
+        this.helpTab = Number(b.dataset.tab);
+        audio.play('select');
+        this.help(back);
+      });
+    }
     this.button(el, '.back', back);
+    this.button(el, '.done', back);
   }
 
   settings(s: Settings, change: (s: Settings) => void, back: () => void, reset?: () => void) {
@@ -1431,15 +1462,15 @@ export class UI {
   /** Settings → About: the game, its version, who made it (with a way to get in touch) and what's new. */
   about(back: () => void) {
     const el = this.open(`<div class="panel about-panel">
-      <div class="panel-head"><h2>${tr('ABOUT')}</h2><button class="icon-btn back" aria-label="${tr('Back')}">${ICON.close}</button></div>
-      <div class="about-top">
-        <div class="about-emblem">${emblemSvg(96)}</div>
+      <div class="panel-head"><div class="about-emblem">${emblemSvg(96)}</div>
         <div><div class="about-name logo">${upper(tr(GAME_NAME))}</div><div class="about-ver">${tr('Version {v}', { v: VERSION })}</div></div>
-      </div>
+        <button class="icon-btn back" aria-label="${tr('Back')}">${ICON.close}</button></div>
       <p class="about-by">${tr('Created by {name}', { name: `<b>${CREATOR.name}</b>` })}</p>
-      <button class="menu-btn mail">${ICON.mail} ${tr('Contact me')} <small>${CREATOR.email}</small></button>
-      <button class="menu-btn site">${ICON.globe} ${tr('My website')} <small>${CREATOR.site}</small></button>
-      <button class="menu-btn notes">${ICON.sparkle} ${tr('What’s new')} <small>${RELEASES[0].version}</small></button>
+      <div class="about-links">
+        <button class="menu-btn mail">${ICON.mail}<span>${tr('Contact me')}<small>${CREATOR.email}</small></span></button>
+        <button class="menu-btn site">${ICON.globe}<span>${tr('My website')}<small>${CREATOR.site}</small></span></button>
+        <button class="menu-btn notes">${ICON.sparkle}<span>${tr('What’s new')}<small>${RELEASES[0].version}</small></span></button>
+      </div>
       <p class="note">${tr('Free and open source (MIT license). The music is openly licensed: every track is credited in the end credits.')}</p>
     </div>`);
     this.button(el, '.back', back);
@@ -1450,13 +1481,11 @@ export class UI {
 
   /** The release notes, newest version first. */
   whatsNew(back: () => void) {
-    const el = this.open(`<div class="panel about-panel">
+    const el = this.open(`<div class="panel about-panel news-panel">
       <div class="panel-head"><h2>${upper(tr('What’s new'))}</h2><button class="icon-btn back" aria-label="${tr('Back')}">${ICON.close}</button></div>
       ${RELEASES.map((r) => `<div class="release"><h3>${tr('Version {v}', { v: r.version })} <small>${r.date}</small></h3><ul>${r.notes.map((n) => `<li>${tr(n.text)}</li>`).join('')}</ul></div>`).join('')}
-      <button class="menu-btn primary done">${tr('Back')}</button>
     </div>`);
     this.button(el, '.back', back);
-    this.button(el, '.done', back);
   }
 
   /** The shop tab showing (kept while the shop is open, and between visits). */
@@ -1499,7 +1528,7 @@ export class UI {
       leaveRoom();
       const stock = shopStock(save, deck);
       // Keep the list where it was scrolled to when a purchase redraws it.
-      const scrolled = this.overlay.querySelector('.shop-panel')?.scrollTop ?? 0;
+      const scrolled = this.overlay.querySelector('.shop-grid')?.scrollTop ?? 0;
       const tabs: [ShopTab, string, string][] = [['upgrades', ICON.star, tr('Upgrades')]];
       if (stock.weapons.length) tabs.push(['weapons', WEAPON_ICON.spread, tr('Weapons')]);
       if (stock.atalanta.length) tabs.push(['atalanta', portrait('atalanta'), tr('Atalanta')]);
@@ -1546,8 +1575,9 @@ export class UI {
           const list = stock.outfits.filter((o) => o.outfit.hero === hero);
           if (!list.length) return '';
           const head = `<div class="shop-sec"><span class="face">${portrait(hero)}</span>${tr(SPEAKER_NAME[hero])}</div>`;
+          // One column per hero.
           return (
-            head +
+            `<div class="outfit-col">${head}` +
             list
               .map((o) => {
                 const id = o.outfit.id;
@@ -1560,7 +1590,8 @@ export class UI {
                 const pic = `<button class="try" data-try="${id}" aria-label="${tr('Try it on')}">${outfitFigure(o.outfit)}</button>`;
                 return card(id, `outfit ${o.worn ? 'on' : ''}`, pic, o.outfit.name, '', o.outfit.desc, btn);
               })
-              .join('')
+              .join('') +
+            '</div>'
           );
         })
         .join('');
@@ -1569,12 +1600,13 @@ export class UI {
         tabs.length > 1
           ? `<div class="shop-tabs seg">${tabs.map(([t, icon, name]) => `<button data-tab="${t}" class="${this.shopTab === t ? 'on' : ''}">${icon}<span>${name}</span></button>`).join('')}</div>`
           : '';
+      // With tabs, the tabs take the title's place in the header row, so the whole stock fits on screen.
       const el = this.open(`<div class="panel shop-panel">
         <div class="panel-head"><div class="portrait">${portrait('vendy')}</div>
-        <div class="shop-title"><h2>${tr('PANDORA’S UPGRADES')}</h2><div class="tagline">${tr('“Bolts in, awesome out!”')}</div></div>
+        ${tabBar || `<div class="shop-title"><h2>${tr('PANDORA’S UPGRADES')}</h2></div>`}
         <div class="counter">${ICON.bolt}<b>${cleanBolts(save.bolts)}</b></div><button class="icon-btn close" aria-label="${tr('Leave shop')}">${ICON.close}</button></div>
-        ${tabBar}<div class="shop-grid ${this.shopTab}">${pages[this.shopTab]}</div></div>`);
-      if (bought) $(el, '.shop-panel').scrollTop = scrolled;
+        <div class="shop-grid ${this.shopTab}">${pages[this.shopTab]}</div></div>`);
+      if (bought) $(el, '.shop-grid').scrollTop = scrolled;
       const on = (sel: string, fn: (b: HTMLElement) => void) => {
         for (const b of el.querySelectorAll<HTMLElement>(sel)) b.addEventListener('click', () => fn(b));
       };
@@ -1646,13 +1678,13 @@ export class UI {
           : `${tr('Ride the lift to {deck}', { deck: tr(r.next) })} ▲`
       : tr('Continue');
     const kicker = r.voyage ? tr('LEVEL COMPLETE') : r.planet ? tr('REGION COMPLETE') : tr('DECK COMPLETE');
-    const el = this.open(`<div class="panel card" style="width:min(520px,88vw)">
+    const el = this.open(`<div class="panel card results-card">
       <div class="deck">${kicker}</div><div class="deckname" style="color:var(--good);font-size:34px">${upper(tr(r.deck))}</div>
-      <div class="stat"><span>${tr('Time')}</span><b>${r.time}</b></div>
+      <div class="result-stats"><div class="stat"><span>${tr('Time')}</span><b>${r.time}</b></div>
       <div class="stat"><span>${tr('Bolts collected')}</span><b>${cleanBolts(r.bolts)}</b></div>
       ${r.shards ? `<div class="stat"><span>${r.labels?.finds ?? (r.planet ? tr('Journal pages') : tr('Memory shards'))}</span><b>${r.shards}</b></div>` : ''}
       ${r.colonists ? `<div class="stat"><span>${r.labels?.rescues ?? (r.planet ? tr('Scientists freed') : tr('Colonists rescued'))}</span><b>${r.colonists}</b></div>` : ''}
-      ${(r.rows ?? []).map(([k, v]) => `<div class="stat"><span>${tr(k)}</span><b>${v}</b></div>`).join('')}
+      ${(r.rows ?? []).map(([k, v]) => `<div class="stat"><span>${tr(k)}</span><b>${v}</b></div>`).join('')}</div>
       ${r.soon ? `<p class="soon-note">${tr('Next: {deck}. Coming soon!', { deck: tr(r.soon) })}</p>` : ''}
       <button class="menu-btn primary next" style="margin-top:14px">${go}</button></div>`);
     this.button(el, '.next', next);
@@ -1687,9 +1719,8 @@ export class UI {
         chapters.length > 1
           ? `<div class="seg chapter-tabs">${chapters.map((c) => `<button data-ch="${c}" class="${c === ch ? 'on' : ''}">${tr('Chapter {n}', { n: c })}</button>`).join('')}</div>`
           : '';
-      const el = this.open(`<div class="panel deck-panel"><h2>${tr('REPLAY A LEVEL')}</h2>${tabs}
-        <h3 class="chapter-head">${titles[ch]}</h3><div class="grid2 deck-grid ${decks.length > 6 ? 'many' : ''}">${decks.map(button).join('')}</div>
-        <button class="menu-btn back" style="margin-top:10px">${tr('Back')}</button></div>`);
+      const el = this.open(`<div class="panel deck-panel"><div class="panel-head"><h2>${tr('REPLAY A LEVEL')}</h2>${tabs}<button class="icon-btn back" aria-label="${tr('Back')}">${ICON.close}</button></div>
+        <h3 class="chapter-head">${titles[ch]}</h3><div class="grid2 deck-grid ${decks.length > 6 ? 'many' : ''}">${decks.map(button).join('')}</div></div>`);
       for (const b of el.querySelectorAll<HTMLElement>('.deck[data-id]')) {
         b.addEventListener('click', () => {
           audio.play('select');
@@ -1722,10 +1753,11 @@ export class UI {
   }
 
   /**
-   * The final card of a chapter (`chapter`). `next` offers to go straight on to the next chapter: Gaia
-   * Nova after chapter 1, the Argonauts' voyage after chapter 2.
+   * The END OF CHAPTER card that closes a chapter's ending film: the ending's name over black, a `hint` when
+   * a secret ending is still out there, and the chapter that comes next (`next`). It moves on by itself
+   * after a few seconds, or on a tap.
    */
-  ending(kind: EndingKind, paragraphs: string[], stats: [string, string][], done: () => void, next?: () => void, chapter = 1) {
+  chapterEnd(kind: EndingKind, chapter: number, hint: string | null, next: number | null, done: () => void) {
     const secret = kind === 'friends' || kind === 'redeemed' || kind === 'gardeners';
     const color = kind === 'friends' ? 'var(--pink)' : kind === 'redeemed' || kind === 'fleece' ? 'var(--gold)' : kind === 'gardeners' ? '#7dff9a' : 'var(--good)';
     const title =
@@ -1740,17 +1772,27 @@ export class UI {
               : kind === 'gardeners'
                 ? tr('NOT THE LAST OF HER KIND')
                 : tr('THE {ship} IS SAVED!', { ship: upper(tr(SHIP)) });
-    // The game's final endings (chapter 3) always say THE END, the secret one too.
-    const kicker = secret ? (chapter === 3 ? `${tr('SECRET ENDING')} · ${tr('THE END')}` : tr('SECRET ENDING')) : next ? tr('END OF CHAPTER {n}', { n: chapter }) : tr('THE END');
-    const nextLabel = chapter === 1 ? tr('Chapter 2: Gaia Nova') : tr('Chapter 3: The Argonauts');
-    const el = this.open(`<div class="panel" style="width:min(820px,94vw);text-align:center">
-      <div class="deck" style="letter-spacing:.3em;color:var(--dim);font-family:Orbitron,sans-serif">${kicker}</div>
-      <div class="big-msg" style="color:${color};margin:6px 0 12px">${title}</div>
-      <div class="story" style="font-size:17px;max-width:none">${paragraphs.map((p) => `<p>${tr(p)}</p>`).join('')}</div>
-      <div class="grid2" style="text-align:left;margin:8px 0">${stats.map(([k, v]) => `<div class="stat"><span>${tr(k)}</span><b>${v}</b></div>`).join('')}</div>
-      ${next ? `<button class="menu-btn primary next">▶ ${nextLabel}</button>` : ''}
-      <button class="menu-btn ${next ? '' : 'primary'} done">${tr('Back to title')}</button></div>`);
-    this.button(el, '.done', done);
-    if (next) this.button(el, '.next', next);
+    const kicker = secret ? `${tr('SECRET ENDING')} · ${tr('END OF CHAPTER {n}', { n: chapter })}` : tr('END OF CHAPTER {n}', { n: chapter });
+    const coming = next === 2 ? tr('Chapter 2: Gaia Nova') : next === 3 ? tr('Chapter 3: The Argonauts') : '';
+    const el = this.open(`<div class="chapter-end">
+      <div class="ce-kicker">${kicker}</div>
+      <div class="ce-title" style="color:${color}">${title}</div>
+      ${hint ? `<div class="ce-hint">${hint}</div>` : ''}
+      ${coming ? `<div class="ce-next">${tr('Next')} ▶ ${coming}</div>` : ''}
+    </div>`);
+    el.classList.add('chapter-end-bg');
+    const start = performance.now();
+    let over = false;
+    const finish = () => {
+      if (over) return;
+      over = true;
+      clearTimeout(timer);
+      this.close();
+      done();
+    };
+    const timer = setTimeout(finish, hint ? 7000 : 5500);
+    el.addEventListener('pointerdown', () => {
+      if (performance.now() - start > 1500) finish();
+    });
   }
 }

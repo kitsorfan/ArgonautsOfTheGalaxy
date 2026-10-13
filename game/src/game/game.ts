@@ -30,9 +30,10 @@ import { buyAtalantaUpgrade, buyOutfit, buyUpgrade, buyWeapon, equipWeapon, take
 import { PostFx } from './post';
 import { enemyIconUrl } from '../entities/badges';
 import { findKind, lootLabels, plannedFinds } from './collectibles';
+import type { PuzzleKind } from './puzzles';
 import { deckQuests, givePrize, payQuests, shardMilestone } from './quests';
 import { takeReviewAsk } from './review';
-import { INTEL, creditsHtml, endingChapter, endingText } from './story';
+import { INTEL, creditsHtml, endingChapter } from './story';
 import { TitleScene } from './title';
 import { World, type WorldHooks } from './world';
 import { VehicleHudView } from '../vehicles/hud';
@@ -291,11 +292,22 @@ export class Game {
       }
       return;
     }
-    // #menu=decks opens the level select (with &all, every level unlocked).
-    if (dev.get('menu') === 'decks') {
-      this.deckSelect();
-      return;
+    // #menu=decks opens the level select (with &all, every level unlocked); #menu=title|settings|about|news|help
+    // opens that screen, for checking how it fits a phone.
+    const menu = dev.get('menu');
+    if (menu === 'decks') return this.deckSelect();
+    if (menu === 'title') return this.toTitle();
+    if (menu === 'settings') return this.settings(() => this.toTitle(), true);
+    if (menu === 'about') return this.ui.about(() => this.toTitle());
+    if (menu === 'news') return this.ui.whatsNew(() => this.toTitle());
+    if (menu === 'help') return this.ui.help(() => this.toTitle());
+    // #menu=results, #menu=end and #menu=hack&kind=<puzzle> show a sample results card, END OF CHAPTER card and LUX HACK puzzle.
+    if (menu === 'results') {
+      const rows: [string, string][] | undefined = dev.has('rows') ? [['Rings', '18 / 20'], ['Drones', '7 / 9']] : undefined;
+      return this.ui.results({ deck: 'The Clashing Rocks', time: '4:05', bolts: 120, shards: '2 / 3', colonists: '1 / 2', next: 'The Harpy Isles', planet: false, voyage: true, labels: lootLabels(3), rows }, () => this.toTitle());
     }
+    if (menu === 'end') return this.ui.chapterEnd('saved', 1, tr('{finds}: {n} / {total}. Find the rest for a secret ending!', { finds: lootLabels(1).finds, n: 12, total: 18 }), 2, () => this.toTitle());
+    if (menu === 'hack') return this.ui.hack(6, () => this.toTitle(), (dev.get('kind') ?? 'memory') as PuzzleKind);
     // #panel=<id> shows one storybook illustration on its own (for checking the art); add &caption or
     // &talk to see a sample caption or line of dialogue over it.
     const art = dev.get('panel') as PanelId | null;
@@ -316,8 +328,9 @@ export class Game {
     else if (film === 'argo') void this.planetCinema((d, p) => argoPrologue(d, p)).then(() => this.moonCinema((d, m) => argoVoyage(d, m))).then(done);
     else if (film === 'voyage') void this.moonCinema((d, m) => argoVoyage(d, m)).then(done);
     else if (film === 'argohop') void this.moonCinema((d, m) => argoHop(d, m, 'rocks', null)).then(done);
-    // #cinema=fleece|gardeners plays the game's final ending (with its credits and card), as if just earned.
-    else if (film === 'fleece' || film === 'gardeners') this.ending(film);
+    // #cinema=<saved|friends|freed|redeemed|fleece|gardeners> plays that ending (with its END OF CHAPTER card, then the
+    // next chapter's opening, or after chapter 3 the end credits), as if just earned.
+    else if (film === 'saved' || film === 'friends' || film === 'freed' || film === 'redeemed' || film === 'fleece' || film === 'gardeners') this.ending(film);
   }
 
   private applySettings(s: Settings) {
@@ -1052,34 +1065,32 @@ export class Game {
     } else this.save.resume = null;
     writeSave(this.save);
     audio.music('ending');
-    const hours = Math.floor(this.save.playSeconds / 3600);
-    const mins = Math.floor((this.save.playSeconds % 3600) / 60);
     const totals = chapterTotals(ch);
+    const finds = inChapter(this.save.shards, ch);
+    const all = plannedFinds(ch, totals.shards);
+    const secret = kind === 'friends' || kind === 'redeemed' || kind === 'gardeners';
     const film =
       kind === 'saved' || kind === 'friends'
         ? this.cinema((d, ship) => space.ending(d, ship, kind))
         : ch === 2
           ? this.planetCinema((d, p) => planet.finale(d, p, kind))
           : this.moonCinema((d, m) => fleeceVoyage(d, m, kind)).then(() => this.planetCinema((d, p) => fleeceHome(d, p, kind)));
+    // No stats screen: the film ends on an END OF CHAPTER card, then chapters 1 and 2 roll straight into the
+    // next chapter's opening, and chapter 3 (the end of the game) into the end credits.
     void film.then(() => {
       this.state = 'ending';
-      this.ui.credits(creditsHtml(kind, this.save), () => {
-        this.ui.fade('#000000', 0, 0.6);
-        this.ui.ending(
-          kind,
-          endingText(kind, this.save),
-          [
-            [lootLabels(ch).finds, `${inChapter(this.save.shards, ch)} / ${plannedFinds(ch, totals.shards)}`],
-            [lootLabels(ch).rescues, `${inChapter(this.save.colonists, ch)} / ${totals.colonists}`],
-            [tr('Bolts in pocket'), String(cleanBolts(this.save.bolts))],
-            [tr('Play time'), tr('{h}h {m}m', { h: hours, m: mins })],
-          ],
-          () => this.toTitle(),
-          next && nextCh ? () => (midNext && this.save.resume ? this.startDeck(this.save.resume.deck, true) : this.startChapter(nextCh)) : undefined,
-          ch,
-        );
-        this.askForReview(LEVELS[finale].index);
-      });
+      this.ui.chapterEnd(
+        kind,
+        ch,
+        !secret && finds < all ? tr('{finds}: {n} / {total}. Find the rest for a secret ending!', { finds: lootLabels(ch).finds, n: finds, total: all }) : null,
+        next && nextCh && !midNext ? nextCh : null,
+        () => {
+          if (ch === 3) this.ui.credits(creditsHtml(kind, this.save), () => this.toTitle());
+          else if (nextCh && !midNext) this.startChapter(nextCh);
+          else this.toTitle();
+        },
+      );
+      this.askForReview(LEVELS[finale].index);
     });
   }
 
