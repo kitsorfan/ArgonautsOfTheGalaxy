@@ -21,16 +21,16 @@ Upload the screenshots in file order. Play shows the first three most, so they'r
 
 | # | English | Greek |
 | --- | --- | --- |
-| 1 | ![Screenshot 1, English](en/01-boss-fight.jpg) | ![Screenshot 1, Greek](el/01-boss-fight.jpg) |
-| 2 | ![Screenshot 2, English](en/02-magma-golem.jpg) | ![Screenshot 2, Greek](el/02-magma-golem.jpg) |
-| 3 | ![Screenshot 3, English](en/03-hydroponics.jpg) | ![Screenshot 3, Greek](el/03-hydroponics.jpg) |
-| 4 | ![Screenshot 4, English](en/04-title.jpg) | ![Screenshot 4, Greek](el/04-title.jpg) |
-| 5 | ![Screenshot 5, English](en/05-wardog.jpg) | ![Screenshot 5, Greek](el/05-wardog.jpg) |
-| 6 | ![Screenshot 6, English](en/06-engine-core.jpg) | ![Screenshot 6, Greek](el/06-engine-core.jpg) |
-| 7 | ![Screenshot 7, English](en/07-prologue.jpg) | ![Screenshot 7, Greek](el/07-prologue.jpg) |
-| 8 | ![Screenshot 8, English](en/08-heart-of-gascu.jpg) | ![Screenshot 8, Greek](el/08-heart-of-gascu.jpg) |
+| 1 | ![Screenshot 1, English](en/01-medusa.jpg) | ![Screenshot 1, Greek](el/01-medusa.jpg) |
+| 2 | ![Screenshot 2, English](en/02-clashing-rocks.jpg) | ![Screenshot 2, Greek](el/02-clashing-rocks.jpg) |
+| 3 | ![Screenshot 3, English](en/03-magma-golem.jpg) | ![Screenshot 3, Greek](el/03-magma-golem.jpg) |
+| 4 | ![Screenshot 4, English](en/04-boreas.jpg) | ![Screenshot 4, Greek](el/04-boreas.jpg) |
+| 5 | ![Screenshot 5, English](en/05-submarine.jpg) | ![Screenshot 5, Greek](el/05-submarine.jpg) |
+| 6 | ![Screenshot 6, English](en/06-story-golden-king.jpg) | ![Screenshot 6, Greek](el/06-story-golden-king.jpg) |
+| 7 | ![Screenshot 7, English](en/07-shop.jpg) | ![Screenshot 7, Greek](el/07-shop.jpg) |
+| 8 | ![Screenshot 8, English](en/08-title.jpg) | ![Screenshot 8, Greek](el/08-title.jpg)
 
-The screenshots were taken from the real game running in a browser at 960 × 540, drawn at 2× (the same layout as a phone in landscape), using a test save with every ability unlocked. If the game's look or name changes, retake them.
+They cover all three chapters: Medusa (Chapter 3), the Argo in the Clashing Rocks, the Magma Golem (Chapter 1), BOREAS (Chapter 2), the submarine, a story picture, PANDORA's shop and the title screen. They were taken from the real game in headless Edge at 960 × 540, drawn at 2× (a phone in landscape), on the trailer tool's frozen clock, so the English and Greek shots match frame for frame. To retake them after the game's look changes: `npm run game:build`, copy `game/dist/index.html` into an empty folder, then `bash game/tools/storeshots/run.sh <that folder> docs/store` (needs Edge and ffmpeg, about a minute). The shot list, with each frame and camera, is `game/tools/storeshots/shots.mjs`.
 
 ## English (en-US)
 
