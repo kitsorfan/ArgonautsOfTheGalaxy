@@ -2,6 +2,7 @@ import * as THREE from 'three';
 
 import { PlanetScene } from '../cinema/planetScene';
 import { CELL } from '../core/constants';
+import { Holo } from '../entities/props';
 import type { World } from '../game/world';
 import type { DeckId, HeroId } from '../world/levelTypes';
 import type { Card } from './cards';
@@ -12,9 +13,10 @@ import type { DeckSet, StageKind, Take } from './stage';
  * The trailer, shot by shot, and the words that go with it.
  *
  * Everything is measured in bars of the music (see cut.ts). The first eleven bars are quiet, and tell
- * the story a chapter at a time: the colony ship, Gaia Nova, the Argo. The drums come in on bar 11 with
- * the logo, over the Argo threading the Clashing Rocks, and from there it is a boss a bar, spelling out
- * the game's own tagline as it goes, with the biggest three on the music's big hits (20, 24 and 28).
+ * the story a chapter at a time (the colony ship, LUX and a hologram for the puzzles and the story,
+ * Gaia Nova, the Argo). The drums come in on bar 11 with the logo, over the Argo threading the
+ * Clashing Rocks, and from there it is a boss a bar, with the biggest three on the music's big hits
+ * (20, 24 and 28), until the end card asks whether you will make it.
  *
  * A shot sets its level or stage up the way it wants it, from a clean slate, and then either flies its
  * own camera or leaves the lens to the game.
@@ -167,6 +169,44 @@ const FILM: Shot[] = [
     subject: (k) => k.memo.spot as Subject,
     camera: follow({ distance: [4.9, 3.7], height: [0.85, 1.1], angle: [0.37, 0.29], relative: true, aim: [0.8, 1.0], fov: 44 }),
   },
+  /* ---- LUX, the puzzles and the story ---- */
+  {
+    // LUX, close up on the title screen's balcony under the colony ship, bobbing nervously.
+    id: 'lux',
+    bars: 1,
+    set: 'title',
+    lead: 0.5,
+    camera: glide({ from: { position: [2.1, 2.25, 3.2], target: [1.1, 2.0, 0.6] }, to: { position: [1.75, 2.15, 2.6], target: [1.1, 2.02, 0.6] }, fov: 40, softness: 0.2 }),
+  },
+  {
+    // Aeëtes's hologram flickers up in the labyrinth, with Atalanta listening.
+    id: 'holo',
+    bars: 1,
+    set: { deck: 'labyrinth', hero: 'atalanta', heroes: ['atalanta', 'jason'] },
+    lead: 1,
+    setup: (k) => {
+      const w = k.world;
+      const holo = w.entities.find((e): e is Holo => e instanceof Holo);
+      if (!holo) return;
+      holo.played = true;
+      holo.show(1);
+      const s = holo.spot;
+      // Stand her on whichever side of the projector has floor, a few steps off it.
+      const sp = w.level.spawn;
+      let a = Math.atan2(sp.cx * CELL + CELL / 2 - s.x, sp.cz * CELL + CELL / 2 - s.z);
+      for (let i = 0; i < 8 && ground(w, s.x + Math.sin(a) * 2.6, s.z + Math.cos(a) * 2.6) !== s.y; i++) a += Math.PI / 4;
+      place(w, s.x + Math.sin(a) * 2.6, s.z + Math.cos(a) * 2.6, [s.x, s.z]);
+      k.memo.holo = holo;
+      k.memo.spot = { x: s.x, y: s.y, z: s.z, facing: a };
+      k.memo.head = holo.headHeight;
+    },
+    act: (_t, k) => {
+      const holo = k.memo.holo as Holo | undefined;
+      if (holo) holo.talking = true;
+    },
+    subject: (k) => (k.memo.spot as Subject | undefined) ?? { x: 0, y: 0, z: 0, facing: 0 },
+    camera: follow({ distance: [5.2, 4.4], height: [1.8, 1.7], angle: [0.72, 0.52], relative: true, aim: 1.25, fov: 42 }),
+  },
   /* ---- Chapter 2: Gaia Nova ---- */
   {
     // The shuttle comes down through the clouds towards the plains.
@@ -192,21 +232,6 @@ const FILM: Shot[] = [
     },
     subject: (k) => ({ ...k.planet.shuttle.position, facing: 0 }),
     camera: (t, s) => ({ position: [s.x - 15 + t * 4, s.y + 6 + t * 2, s.z + 19 - t * 4], target: [s.x + 7, s.y - 5, s.z - 2], fov: 46 }),
-  },
-  {
-    // The jungle region: a slow crane down over the Hydra's pond.
-    id: 'jungle',
-    bars: 2,
-    set: { deck: 'jungle' },
-    lead: 1.5,
-    setup: (k) => {
-      place(k.world, 48.6, 41, [51, 31]);
-      k.world.boss?.engage();
-    },
-    act: (time, k) => {
-      if (every(time, 0.4)) k.tap('shoot');
-    },
-    camera: orbit({ center: [50, 1, 34], radius: [24, 17], height: [13, 6.5], from: -0.75, to: -0.35, aim: [1, 2.2], fov: 44 }),
   },
   /* ---- Chapter 3: the Argonauts ---- */
   {
@@ -375,15 +400,6 @@ const FILM: Shot[] = [
     subject: boss,
     camera: watch({ from: [44.2, 1.5, 26.2], to: [45.4, 1.7, 25], aim: [2.3, 2.6], fov: 42 }),
   }),
-  /* ---- ...and one very nervous robot ---- */
-  {
-    // On the title screen's balcony, under the colony ship: the camera then pulls back for the end card.
-    id: 'lux',
-    bars: 2,
-    set: 'title',
-    lead: 0.5,
-    camera: glide({ from: { position: [2.2, 2.25, 3.3], target: [1.1, 2.0, 0.6] }, to: { position: [1.75, 2.15, 2.55], target: [1.1, 2.02, 0.6] }, fov: 40, softness: 0.3 }),
-  },
   /* ---- The end card ---- */
   {
     id: 'end',
@@ -397,12 +413,19 @@ const FILM: Shot[] = [
 export const SHOTS: Shot[] = FILM;
 
 export const CARDS: Card[] = [
-      { id: 'ch1', kind: 'caption', from: 0.2, to: 1.85, kicker: { en: 'CHAPTER 1 · THE COLONY SHIP', el: 'ΚΕΦΑΛΑΙΟ 1 · ΤΟ ΔΙΑΣΤΗΜΟΠΛΟΙΟ' }, text: { en: 'Wake up among the stars.', el: 'Ξύπνα ανάμεσα στα αστέρια.' } },
-      { id: 'ch2', kind: 'caption', from: 4.2, to: 5.85, kicker: { en: 'CHAPTER 2 · GAIA NOVA', el: 'ΚΕΦΑΛΑΙΟ 2 · ΓΑΙΑ ΝΟΒΑ' }, text: { en: 'Explore a wild new world.', el: 'Εξερεύνησε έναν άγριο νέο κόσμο.' } },
-      { id: 'ch3', kind: 'caption', from: 8.2, to: 9.85, kicker: { en: 'CHAPTER 3 · THE ARGONAUTS', el: 'ΚΕΦΑΛΑΙΟ 3 · ΟΙ ΑΡΓΟΝΑΥΤΕΣ' }, text: { en: 'Sail for the Golden Fleece.', el: 'Σάλπαρε για το Χρυσόμαλλο Δέρας.' } },
-      { id: 'title', kind: 'title', from: 11, to: 12.9 },
-      { id: 'chapters', kind: 'caption', from: 13.05, to: 14.92, text: { en: 'Three chapters.', el: 'Τρία κεφάλαια.' } },
-      { id: 'heroes', kind: 'caption', from: 15.05, to: 16.92, text: { en: 'Three heroes.', el: 'Τρεις ήρωες.' } },
-      { id: 'robot', kind: 'caption', from: 30.15, to: 31.92, text: { en: 'One very nervous robot.', el: 'Ένα πολύ αγχωμένο ρομπότ.' } },
-      { id: 'end', kind: 'end', from: 32.1, to: 35, kicker: { en: 'COMING SOON TO ANDROID', el: 'ΣΥΝΤΟΜΑ ΣΤΟ ANDROID' } },
-    ];
+  { id: 'ch1', kind: 'caption', from: 0.2, to: 1.85, kicker: { en: 'CHAPTER 1 · THE COLONY SHIP', el: 'ΚΕΦΑΛΑΙΟ 1 · ΤΟ ΔΙΑΣΤΗΜΟΠΛΟΙΟ' }, text: { en: 'Wake up among the stars.', el: 'Ξύπνα ανάμεσα στα αστέρια.' } },
+  {
+    id: 'lux',
+    kind: 'caption',
+    from: 4.15,
+    to: 5.92,
+    kicker: { en: 'WITH LUX, YOUR VERY NERVOUS ROBOT FRIEND', el: 'ΜΑΖΙ ΜΕ ΤΟΝ ΛΟΥΞ, ΤΟΝ ΠΟΛΥ ΑΓΧΩΜΕΝΟ ΡΟΜΠΟΤΙΚΟ ΣΟΥ ΦΙΛΟ' },
+    text: { en: 'Solve puzzles. Uncover the story.', el: 'Λύσε γρίφους. Ανακάλυψε την ιστορία.' },
+  },
+  { id: 'ch2', kind: 'caption', from: 6.2, to: 7.85, kicker: { en: 'CHAPTER 2 · GAIA NOVA', el: 'ΚΕΦΑΛΑΙΟ 2 · ΓΑΙΑ ΝΟΒΑ' }, text: { en: 'Explore a wild new world.', el: 'Εξερεύνησε έναν άγριο νέο κόσμο.' } },
+  { id: 'ch3', kind: 'caption', from: 8.2, to: 9.85, kicker: { en: 'CHAPTER 3 · THE ARGONAUTS', el: 'ΚΕΦΑΛΑΙΟ 3 · ΟΙ ΑΡΓΟΝΑΥΤΕΣ' }, text: { en: 'Sail for the Golden Fleece.', el: 'Σάλπαρε για το Χρυσόμαλλο Δέρας.' } },
+  { id: 'title', kind: 'title', from: 11, to: 12.9 },
+  { id: 'chapters', kind: 'caption', from: 13.05, to: 14.92, text: { en: 'Three chapters.', el: 'Τρία κεφάλαια.' } },
+  { id: 'heroes', kind: 'caption', from: 15.05, to: 16.92, text: { en: 'Three heroes.', el: 'Τρεις ήρωες.' } },
+  { id: 'end', kind: 'end', from: 30.1, to: 33, text: { en: 'Will you make it?', el: 'Θα τα καταφέρεις;' }, kicker: { en: 'COMING SOON TO ANDROID', el: 'ΣΥΝΤΟΜΑ ΣΤΟ ANDROID' } },
+];

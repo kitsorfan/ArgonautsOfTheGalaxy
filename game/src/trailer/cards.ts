@@ -44,6 +44,7 @@ function face(card: Card): string {
     const by = lang() === 'el' ? 'Ένα παιχνίδι του' : 'A game by';
     return `<div class="tr-end">
       ${logo()}
+      ${card.text ? `<p class="tr-ask">${esc(say(card.text))}</p>` : ''}
       ${kicker ? `<p class="tr-pill">${esc(say(card.kicker))}</p>` : ''}
       <p class="tr-by">${by} <b>${esc(CREATOR.name)}</b></p>
       <p class="tr-credit">${music}: “${esc(song.title)}” · ${esc(song.artist)} · ${esc(song.license)}</p>
@@ -64,13 +65,15 @@ body.trailer #ui, body.trailer #touch { display: none !important; }
   filter: drop-shadow(0 0 22px rgba(94, 224, 255, 0.6)) drop-shadow(0 4px 10px rgba(0, 0, 0, 0.7)); }
 .tr-logo-a { font-size: 12vh; }
 .tr-logo-b { font-size: 5.4vh; letter-spacing: 0.32em; margin-top: 1.6vh; padding-left: 0.32em; }
-.tr-kicker { margin: 0 0 2.2vh; font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 2.4vh; letter-spacing: 0.32em; color: #ffd166; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9); }
+.tr-kicker { margin: 0 0 2.2vh; font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 2.4vh; letter-spacing: 0.32em; color: #ffd166; text-shadow: 0 0 3px #000, 0 0 10px rgba(0, 0, 0, 0.95), 0 2px 8px rgba(0, 0, 0, 0.9); }
 .tr-caption { display: flex; flex-direction: column; align-items: center; }
 .tr-caption .tr-kicker { margin-bottom: 1.2vh; font-size: 2.1vh; }
 .tr-caption strong { font-family: 'Orbitron', sans-serif; font-weight: 800; font-size: 6.2vh; letter-spacing: 0.04em; line-height: 1.1;
   color: #ffffff; text-shadow: 0 0 24px rgba(94, 224, 255, 0.55), 0 3px 10px rgba(0, 0, 0, 0.95), 0 0 2px rgba(0, 0, 0, 0.9); }
 .tr-end { display: flex; flex-direction: column; align-items: center; }
 .tr-tag { margin: 3.4vh 0 0; font-size: 3vh; font-weight: 600; color: #ffffff; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.95); }
+.tr-ask { margin: 3.6vh 0 0; font-family: 'Orbitron', sans-serif; font-weight: 800; font-size: 4.6vh; letter-spacing: 0.05em; color: #ffd166;
+  text-shadow: 0 0 22px rgba(255, 209, 102, 0.5), 0 3px 10px rgba(0, 0, 0, 0.95); }
 .tr-pill { margin: 3vh 0 0; padding: 1vh 2.6vh; border-radius: 99px; background: #ffd166; color: #1a1030; font-family: 'Orbitron', sans-serif; font-weight: 800; font-size: 2.3vh; letter-spacing: 0.14em; box-shadow: 0 0 26px rgba(255, 209, 102, 0.55); }
 .tr-by { margin: 4vh 0 0; font-size: 2.6vh; color: #cfe0ff; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.95); }
 .tr-by b { color: #ffffff; font-weight: 700; }

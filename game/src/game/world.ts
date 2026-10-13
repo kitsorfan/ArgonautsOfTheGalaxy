@@ -176,7 +176,8 @@ export class World {
   private switches: FloorSwitch[] = [];
   /** Seconds left on each running switch clock, by the flag its switches set. */
   private clocks = new Map<string, number>();
-  private entities: Entity[] = [];
+  /** Every prop, enemy and boss on the level (the trailer finds its hologram projectors here). */
+  readonly entities: Entity[] = [];
   private movers: Entity[] = [];
   private targets: Target[] = [];
   private interactables: Interactable[] = [];
