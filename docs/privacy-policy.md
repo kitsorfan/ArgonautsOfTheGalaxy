@@ -31,7 +31,7 @@ You can delete it at any time: on the title screen, open **Settings** and tap **
 
 ### Children
 
-The game is made for players of about 10 and up, including children. It collects no personal information from anyone, so it collects none from children either. There are no ads, no chat and no way to contact other players.
+The game is made for players of about 9 and up, including children. It collects no personal information from anyone, so it collects none from children either. There are no ads, no chat and no way to contact other players.
 
 ### Google Play
 
@@ -45,7 +45,7 @@ If a future version changes what the game collects, this policy will be updated 
 
 ### Contact
 
-Questions about this policy: **[contact email]**
+Questions about this policy: **[kitsorfan@protonmail.com](mailto:kitsorfan@protonmail.com)**
 
 ## Ελληνικά
 
@@ -76,7 +76,7 @@ Questions about this policy: **[contact email]**
 
 ### Παιδιά
 
-Το παιχνίδι απευθύνεται σε παίκτες από 10 ετών και πάνω, άρα και σε παιδιά. Δεν συλλέγει προσωπικά στοιχεία από κανέναν, επομένως ούτε από παιδιά. Δεν έχει διαφημίσεις, συνομιλίες ή τρόπο επικοινωνίας με άλλους παίκτες.
+Το παιχνίδι απευθύνεται σε παίκτες από 9 ετών και πάνω, άρα και σε παιδιά. Δεν συλλέγει προσωπικά στοιχεία από κανέναν, επομένως ούτε από παιδιά. Δεν έχει διαφημίσεις, συνομιλίες ή τρόπο επικοινωνίας με άλλους παίκτες.
 
 ### Το Google Play
 
@@ -90,4 +90,4 @@ Questions about this policy: **[contact email]**
 
 ### Επικοινωνία
 
-Ερωτήσεις για αυτή την πολιτική: **[contact email]**
+Ερωτήσεις για αυτή την πολιτική: **[kitsorfan@protonmail.com](mailto:kitsorfan@protonmail.com)**
