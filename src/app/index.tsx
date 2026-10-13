@@ -57,6 +57,21 @@ export default function Game() {
   const music = useRef<Music | null>(null);
   // undefined while loading; null when there is no save yet.
   const [save, setSave] = useState<string | null | undefined>(undefined);
+  // Bumped to start the page over from scratch after its process dies.
+  const [run, setRun] = useState(0);
+
+  // The system kills the WebView's page process when memory runs short (a big three.js scene on a
+  // small phone, often while the app is in the background), leaving a dead black view. Start the
+  // page again with the latest save; it boots back to the title screen.
+  const restart = () => {
+    music.current?.play(null, 0);
+    AsyncStorage.getItem(SAVE_KEY)
+      .catch(() => null)
+      .then((raw) => {
+        setSave(raw);
+        setRun((n) => n + 1);
+      });
+  };
 
   useEffect(() => {
     AsyncStorage.getItem(SAVE_KEY)
@@ -139,6 +154,7 @@ export default function Game() {
   return (
     <View style={styles.root}>
       <WebView
+        key={run}
         ref={web}
         style={styles.web}
         source={{ html }}
@@ -146,6 +162,8 @@ export default function Game() {
         injectedJavaScriptBeforeContentLoaded={`window.__SAVE__ = ${JSON.stringify(save ?? '')}; window.__DEVICE__ = ${JSON.stringify(DEVICE)}; true;`}
         onMessage={onMessage}
         onLoadEnd={() => SplashScreen.hideAsync().catch(() => {})}
+        onRenderProcessGone={restart}
+        onContentProcessDidTerminate={restart}
         javaScriptEnabled
         domStorageEnabled
         mediaPlaybackRequiresUserAction={false}

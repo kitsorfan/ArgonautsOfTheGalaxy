@@ -36,7 +36,8 @@ export class Music {
   private fades = new Map<AudioPlayer, ReturnType<typeof setInterval>>();
 
   constructor() {
-    setAudioModeAsync({ playsInSilentMode: true, interruptionMode: 'mixWithOthers', shouldPlayInBackground: false }).catch(() => {});
+    // doNotMix: the soundtrack takes over from whatever the phone was playing, instead of both at once.
+    setAudioModeAsync({ playsInSilentMode: true, interruptionMode: 'doNotMix', shouldPlayInBackground: false }).catch(() => {});
   }
 
   play(file: MusicFile | null, volume: number) {
