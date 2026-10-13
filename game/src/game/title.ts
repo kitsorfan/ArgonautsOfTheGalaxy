@@ -12,7 +12,7 @@ export class TitleScene {
   readonly camera = new THREE.PerspectiveCamera(45, 16 / 9, 0.3, 900);
   private ship = new ColonyShip();
   private jason = makeJason();
-  private bolt = makeBolt();
+  readonly bolt = makeBolt();
   private t = 0;
 
   constructor() {

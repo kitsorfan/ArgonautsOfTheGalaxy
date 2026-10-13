@@ -66,6 +66,7 @@
     "game:dev": "node game/build.mjs --watch",
     "game:check": "node game/tools/run.mjs levelcheck",
     "game:i18n": "node game/tools/run.mjs i18n",
+    "trailer": "node game/tools/trailer.mjs",
     "eas-build-post-install": "npm run game:build"
   },
   "private": true,

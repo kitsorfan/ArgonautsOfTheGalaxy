@@ -660,6 +660,9 @@ export interface BadgeState {
  * drains away after a moment. Tough enemies show their health as a number too. Far away, the whole
  * badge grows so it reads on a phone.
  */
+/** Set to hide every enemy's badge (the trailer films the fights without them). */
+export const BADGES = { hidden: false };
+
 export class Badge {
   readonly group = new THREE.Group();
   private icon: THREE.Sprite;
@@ -742,7 +745,7 @@ export class Badge {
     this.flashT = Math.max(0, this.flashT - dt);
     if (this.chunkWait > 0) this.chunkWait -= dt;
     else this.chunkFrac = Math.max(frac, this.chunkFrac - dt * 0.9);
-    this.group.visible = this.iconA > 0.02 || this.barA > 0.02;
+    this.group.visible = !BADGES.hidden && (this.iconA > 0.02 || this.barA > 0.02);
     if (!this.group.visible) return;
     // Keep the badge about the same size on screen however far the camera is (never smaller than up close).
     this.group.scale.setScalar(Math.max(1, Math.min(2.4, st.camDist / 13)));

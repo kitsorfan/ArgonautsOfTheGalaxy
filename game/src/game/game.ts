@@ -36,6 +36,8 @@ import { takeReviewAsk } from './review';
 import { INTEL, creditsHtml, endingChapter } from './story';
 import { TitleScene } from './title';
 import { World, type WorldHooks } from './world';
+import { Trailer } from '../trailer/director';
+import type { DeckSet, StageKind, TrailerHost } from '../trailer/stage';
 import { VehicleHudView } from '../vehicles/hud';
 import { argoBar } from '../entities/stand/holds';
 
@@ -125,6 +127,8 @@ export class Game {
   private queue: { script: (d: Director) => Promise<void>; resolve: () => void }[] = [];
   /** The boost button, progress bar and call-outs of a vehicle level. */
   private vehicleHud: VehicleHudView;
+  /** Set while the game is filming its own trailer (#trailer, see trailer/director.ts). */
+  private trailer: Trailer | null = null;
 
   constructor(
     private canvas: HTMLCanvasElement,
@@ -189,6 +193,11 @@ export class Game {
     // (&still skips its opening, &all hands over every ability), #cinema=<arrival|descent|hop|finale> plays a
     // chapter 2 cinematic, #cinema=<argo|voyage|argohop> a chapter 3 one, #cinema=<fleece|gardeners> the game's final endings.
     const dev = inApp() ? null : new URLSearchParams(location.hash.slice(1));
+    // #trailer films the game's trailer (&lang=el in Greek); `npm run trailer` records it to an MP4.
+    if (dev?.has('trailer')) {
+      void ready.then(() => this.startTrailer(dev));
+      return;
+    }
     if (dev && (dev.get('deck') || dev.get('cinema') || dev.get('panel') || dev.get('menu'))) {
       void ready.then(() => this.devJump(dev));
       return;
@@ -368,6 +377,8 @@ export class Game {
   }
 
   private persist() {
+    // The trailer plays on a save of its own, which must never overwrite the player's.
+    if (this.trailer) return;
     if (this.world && this.state !== 'ending') {
       this.save.resume = { deck: this.world.def.id, ...this.world.resumeState() };
     }
@@ -1115,11 +1126,12 @@ export class Game {
       this.fpsT = 0;
     }
     this.input.poll();
+    this.trailer?.frame();
     if (this.state === 'cinema' && this.ship && this.director) {
       this.director.update(dt);
       this.ship.update(dt, this.director.rig);
       this.post.setStrength(0.4);
-      this.post.render(this.ship.scene, this.ship.camera);
+      this.draw(this.ship.scene, this.ship.camera);
       return;
     }
     const w = this.world;
@@ -1159,11 +1171,93 @@ export class Game {
         }
       }
       this.post.setStrength(w.theme.bloom);
-      this.post.render(w.scene, w.camera);
+      this.draw(w.scene, w.camera);
       return;
     }
     this.title.update(dt, this.save.upgrades, this.save.wearing.jason);
     this.post.setStrength(0.2);
-    this.post.render(this.title.scene, this.title.camera);
+    this.draw(this.title.scene, this.title.camera);
+  }
+
+  private draw(scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
+    this.trailer?.aim(camera);
+    this.post.render(scene, camera);
+  }
+
+  /* ---------------- the trailer ---------------- */
+
+  /** Hands the game over to the trailer's director, on a save of its own: everything open, graphics on High, silent. */
+  private startTrailer(dev: URLSearchParams) {
+    const save = newSave();
+    save.abilities = ['doubleJump', 'dash', 'glide', 'pulse', 'grapple', 'mirror'];
+    save.unlocked = LEVEL_ORDER.length;
+    save.settings = { ...save.settings, quality: 'high', autoQuality: false, music: 0, sfx: 0, lang: dev.get('lang') === 'el' ? 'el' : 'en', langChosen: true };
+    this.save = save;
+    this.applySettings(save.settings);
+    this.ui.close();
+    const host = {
+      input: this.input,
+      save,
+      deck: (set: DeckSet) => this.trailerDeck(set),
+      stage: (kind: StageKind) => this.trailerStage(kind),
+    };
+    this.trailer = new Trailer(host as TrailerHost);
+  }
+
+  /** Clears whatever the last shot left: its level, or its stage. */
+  private trailerClear() {
+    this.disposeWorld();
+    if (this.ship) disposeScene(this.ship.scene);
+    this.ship = null;
+    this.director = null;
+    this.queue = [];
+    this.input.reset();
+  }
+
+  /** A level, straight into play: no title card, no opening, and nothing in it ever stops to talk. */
+  private trailerDeck(set: DeckSet): World {
+    this.trailerClear();
+    heroDev.heroes = set.heroes;
+    heroDev.hero = set.hero;
+    const hooks: WorldHooks = {
+      ...this.hooks(),
+      say: (_lines, then) => then?.(),
+      hack: (_length, done) => done(true),
+      shop: () => {},
+      complete: () => {},
+      checkpoint: () => {},
+      collect: () => {},
+      down: () => {},
+      ending: () => {},
+      prize: () => {},
+      progress: () => {},
+      cutscene: () => Promise.resolve(),
+    };
+    const w = new World(LEVELS[set.deck], this.save, hooks, this.save.settings.quality, null);
+    w.scene.environment = this.envMap;
+    w.resize(window.innerWidth, window.innerHeight);
+    this.ui.voice = (who, toast) => w.voice(who, toast);
+    this.renderer.compile(w.scene, w.camera);
+    this.world = w;
+    this.state = 'play';
+    return w;
+  }
+
+  /** One of the cinematic stages, or the title screen's own scene. */
+  private trailerStage(kind: StageKind): ShipScene | PlanetScene | MoonScene | TitleScene {
+    this.trailerClear();
+    if (kind === 'title') {
+      this.state = 'title';
+      return this.title;
+    }
+    const s = kind === 'ship' ? new ShipScene() : kind === 'planet' ? new PlanetScene() : new MoonScene();
+    s.scene.environment = this.envMap;
+    s.scene.environmentIntensity = kind === 'ship' ? 0.18 : kind === 'planet' ? 0.4 : 0.25;
+    s.resize(window.innerWidth, window.innerHeight);
+    this.director = new Director(this.ui, { pos: s.camera.position.clone(), look: new THREE.Vector3(), fov: 45 });
+    this.ship = s;
+    this.state = 'cinema';
+    this.renderer.compile(s.scene, s.camera);
+    return s;
   }
 }
