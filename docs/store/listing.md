@@ -28,7 +28,7 @@ Upload the screenshots in file order. Play shows the first three most, so they'r
 | 5 | ![Screenshot 5, English](en/05-submarine.jpg) | ![Screenshot 5, Greek](el/05-submarine.jpg) |
 | 6 | ![Screenshot 6, English](en/06-story-golden-king.jpg) | ![Screenshot 6, Greek](el/06-story-golden-king.jpg) |
 | 7 | ![Screenshot 7, English](en/07-shop.jpg) | ![Screenshot 7, Greek](el/07-shop.jpg) |
-| 8 | ![Screenshot 8, English](en/08-title.jpg) | ![Screenshot 8, Greek](el/08-title.jpg)
+| 8 | ![Screenshot 8, English](en/08-title.jpg) | ![Screenshot 8, Greek](el/08-title.jpg) |
 
 They cover all three chapters: Medusa (Chapter 3), the Argo in the Clashing Rocks, the Magma Golem (Chapter 1), BOREAS (Chapter 2), the submarine, a story picture, PANDORA's shop and the title screen. They were taken from the real game in headless Edge at 960 × 540, drawn at 2× (a phone in landscape), on the trailer tool's frozen clock, so the English and Greek shots match frame for frame. To retake them after the game's look changes: `npm run game:build`, copy `game/dist/index.html` into an empty folder, then `bash game/tools/storeshots/run.sh <that folder> docs/store` (needs Edge and ffmpeg, about a minute). The shot list, with each frame and camera, is `game/tools/storeshots/shots.mjs`.
 
