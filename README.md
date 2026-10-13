@@ -18,7 +18,7 @@ In **Chapter 2** the ship reaches its new home, the planet **Gaia Nova** (Γαί
 
 In **Chapter 3: The Argonauts** Celestia starts to fade, and the crew rebuild the shuttle into the **Argo** to fetch the Golden Fleece from Colchis before the salvage tycoon Aeëtes gets there first. Ten levels of Greek myth in space: the Clashing Rocks, the Harpy Isles, the Sirens' Sea in a little submarine, Talos's forge in a bronze mech, Medusa's labyrinth and the Sleepless Dragon. Jason is joined by **Atalanta**, the colony's fastest runner and best archer, and you also get to play **General Brennus**, out to pay his debts.
 
-It's made for players around 10 and up: bright and forgiving, with three chapters, 22 levels and plenty of secrets to hunt for.
+It's made for players around 9 and up: bright and forgiving, with three chapters, 22 levels and plenty of secrets to hunt for.
 
 | | |
 | --- | --- |

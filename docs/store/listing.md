@@ -6,8 +6,8 @@ Everything to paste into Play Console for the first release, in English (default
 - **Default language:** English (United States), en-US, with a Greek (el-GR) translation
 - **App or game:** Game. **Category:** Adventure
 - **Free or paid:** Free. A free app can never become paid later.
-- **Contact email:** [contact email] (shown publicly on the store page)
-- **Privacy policy URL:** a public web address for [privacy-policy.md](../privacy-policy.md). See [Hosting the privacy policy](#hosting-the-privacy-policy).
+- **Contact email:** kitsorfan@protonmail.com (shown publicly on the store page)
+- **Privacy policy URL:** https://github.com/kitsorfan/ArgonautsOfTheGalaxy/blob/master/docs/privacy-policy.md (see [Hosting the privacy policy](#hosting-the-privacy-policy))
 
 ## Graphics
 
@@ -43,36 +43,41 @@ Argonauts of the Galaxy
 **Short description** (80 max)
 
 ```text
-Save a colony ship from a glowing space plant in a bright 3D action adventure.
+Three chapters. Three heroes. One very nervous robot. A bright 3D adventure.
 ```
 
 **Full description** (4000 max)
 
 ```text
-A glowing space vine called the Galactic Cuscuta Echinochloa, GaScu for short, has grown over every deck of the colony ship Syracusia, and it is steering ten thousand sleeping colonists straight toward a star.
+A glowing space vine has grown over every deck of the colony ship Syracusia, and it is steering ten thousand sleeping colonists straight toward a star. And that is only the beginning.
 
-You are Jason, a junior engineer who wakes up early. Together with LUX, a little repair drone who is scared of the dark, climb six decks to reach the Bridge, free the crew and find out what GaScu really wants.
+You are Jason, a junior engineer who wakes up early. With LUX, a little repair drone who is scared of the dark, you will climb a starship overrun by vines, free a whole planet from General Brennus and his machines, and sail with the Argonauts to win the Golden Fleece.
 
-SIX DECKS, SIX BOSSES
-Frozen cryo bays, overgrown gardens, an engine core full of lava, a habitat ring with homes, a school and a playground, a security deck guarded by lasers, and the Bridge itself. Every deck ends with a boss: the Frost Warden, the Vine Queen, the Magma Golem, King Bloblin, CERBERUS and the Heart of GaScu.
+THREE CHAPTERS, 22 LEVELS
+Chapter 1, the Syracusia: six decks, from frozen cryo bays and a lava-filled engine core up to the Bridge.
+Chapter 2, Gaia Nova: six wild regions of a new planet, from golden plains and a glass desert to a blizzard, a grey jungle and a fortress inside a volcano.
+Chapter 3, the Argonauts: ten levels of Greek myth in space. The Clashing Rocks, the Harpy Isles, the Sirens' Sea, Scylla's Reef, Talos's forge, Medusa's labyrinth, the garden of the Sleepless Dragon and the Golden Fleece itself.
 
-A NEW TRICK ON EVERY DECK
-Find Jet Boots for double jumps, Dash Thrusters, a Hover Pack and LUX's Force Pulse. Each one opens new paths, and you will need it to finish that deck.
+THREE HEROES AND SOME BIG MACHINES
+Play as Jason, as Atalanta, the colony's fastest runner and best archer, and even as General Brennus with his shield and his robot legion. Switch heroes to solve puzzles together. Fly the Argo between slamming rocks, dive the little submarine Dolphin, and stomp around in a bronze mech with a flamethrower.
 
-BLAST, SPIN, DASH
-Tap to shoot, or hold to charge a fireball. Spin to knock enemy shots back at them. Ground-pound switches. Hack terminals by repeating LUX's light patterns.
+BLAST, SPIN, DASH, GRAPPLE
+Tap to shoot, or hold to charge a fireball. Spin to knock enemy shots back at them. Find Jet Boots, Dash Thrusters, a Hover Pack, a grapple hook and a Mirror Shield, and each one opens new paths.
+
+BOSSES TO REMEMBER
+The Magma Golem, CERBERUS, BOREAS, the Colossus, MEDUSA, TALOS, the Golden Ram, a dragon you have to sing to sleep, and Aeëtes, the Golden King. And one boss you really won't want to fight: LUX himself.
 
 SECRETS FOR EXPLORERS
-Free colonists from GaScu cocoons, find hidden heart canisters, crack a secret vault on every deck, and collect all 18 memory shards to unlock a different ending.
+Free trapped colonists and scientists, find hidden hearts, crack secret vaults, and collect every memory shard, journal page and light-stone to unlock each chapter's secret ending.
 
-UPGRADES AT PANDORA'S SHOP
-Spend the bolts you collect on extra hearts, a stronger blaster, a bigger clip, quicker reloads, a bolt magnet and a better zapper for LUX.
+PANDORA'S SHOP
+Spend the bolts you collect on extra hearts, a stronger blaster, new weapons and outfits for Jason and Atalanta.
 
-A STORY TOLD IN CUTSCENES
-Captain's logs hidden around the ship, a ship computer that starts acting strangely, boss entrances with their own name cards, and two endings.
+A STORY LIKE A GRAPHIC NOVEL
+Cutscenes in the game world, bosses that make an entrance with their own name cards, and the big story moments drawn as graphic-novel pictures.
 
 MADE FOR YOUNG PLAYERS AND EVERYONE ELSE
-Bright, forgiving and about 2 to 3 hours long, for players of about 10 and up. Plays fully offline. No ads and no in-app purchases. In English and Greek.
+Bright and forgiving, for players of about 9 and up. Plays fully offline. No ads and no in-app purchases. In English and Greek.
 
 Best played in landscape, with headphones.
 ```
@@ -80,7 +85,13 @@ Best played in landscape, with headphones.
 **Release notes for version 1.0.0** (500 max)
 
 ```text
-First release: six decks, six bosses and the whole story of the Syracusia.
+The first release:
+• 22 levels in three chapters: the Syracusia, Gaia Nova and the Argonauts' voyage.
+• Play as Jason, Atalanta, General Brennus and a bronze mech.
+• Fly the Argo and dive the submarine Dolphin.
+• PANDORA's shop: upgrades, weapons and outfits.
+• Side quests, secret endings and graphic-novel story pictures.
+• English or Greek: switch any time in Settings.
 ```
 
 ## Greek (el-GR)
@@ -94,36 +105,41 @@ First release: six decks, six bosses and the whole story of the Syracusia.
 **Short description** (80 max)
 
 ```text
-Σώσε ένα διαστημόπλοιο από ένα φωτεινό φυτό, σε μια πολύχρωμη περιπέτεια 3D.
+Τρία κεφάλαια. Τρεις ήρωες. Ένα πολύ αγχωμένο ρομπότ. Μια πολύχρωμη περιπέτεια.
 ```
 
 **Full description** (4000 max)
 
 ```text
-Ένα φωτεινό διαστημικό αναρριχητικό φυτό, η Γαλαξιακή Κουσκούτα Εχινόχλοη ή, για συντομία, Γάκου, έχει απλωθεί σε κάθε κατάστρωμα του αποικιακού σκάφους Συρακουσία, και οδηγεί δέκα χιλιάδες κοιμισμένους αποίκους κατευθείαν σε ένα αστέρι.
+Ένα φωτεινό διαστημικό φυτό έχει απλωθεί σε κάθε κατάστρωμα του αποικιακού σκάφους Συρακουσία, και οδηγεί δέκα χιλιάδες κοιμισμένους αποίκους κατευθείαν σε ένα αστέρι. Κι αυτό είναι μόνο η αρχή.
 
-Είσαι ο Ιάσονας, ένας δόκιμος μηχανικός που ξυπνά πιο νωρίς από όλους. Μαζί με τον ΛΟΥΞ, ένα μικρό ρομπότ επισκευών που φοβάται το σκοτάδι, ανέβα έξι καταστρώματα ως τη Γέφυρα, ελευθέρωσε το πλήρωμα και μάθε τι θέλει στ' αλήθεια η Γάκου.
+Είσαι ο Ιάσονας, ένας δόκιμος μηχανικός που ξυπνά πιο νωρίς από όλους. Μαζί με τον ΛΟΥΞ, ένα μικρό ρομπότ επισκευών που φοβάται το σκοτάδι, θα ανέβεις ένα διαστημόπλοιο πνιγμένο στη βλάστηση, θα ελευθερώσεις έναν ολόκληρο πλανήτη από τον Στρατηγό Βρέννο και τις μηχανές του, και θα ταξιδέψεις με τους Αργοναύτες για το Χρυσόμαλλο Δέρας.
 
-ΕΞΙ ΚΑΤΑΣΤΡΩΜΑΤΑ, ΕΞΙ ΓΙΓΑΝΤΙΟΙ ΑΝΤΙΠΑΛΟΙ
-Παγωμένοι θάλαμοι κρυοΰπνου, κήποι που τους έχει καταπιεί η βλάστηση, ένας πυρήνας κινητήρων γεμάτος λάβα, ένας δακτύλιος κατοικιών με σπίτια, σχολείο και παιδική χαρά, ένα κατάστρωμα ασφαλείας με λέιζερ, και η ίδια η Γέφυρα. Κάθε κατάστρωμα τελειώνει με έναν γιγάντιο αντίπαλο: τον Φύλακα του Πάγου, τη Βασίλισσα των Κλημάτων, το Γκόλεμ του Μάγματος, τον Βασιλιά Μπλόμπλιν, τον ΚΕΡΒΕΡΟ και την Καρδιά της Γάκου.
+ΤΡΙΑ ΚΕΦΑΛΑΙΑ, 22 ΠΙΣΤΕΣ
+Κεφάλαιο 1, η Συρακουσία: έξι καταστρώματα, από παγωμένους θαλάμους κρυοΰπνου και έναν πυρήνα κινητήρων γεμάτο λάβα ως τη Γέφυρα.
+Κεφάλαιο 2, η Γαία Νόβα: έξι άγριες περιοχές ενός νέου πλανήτη, από χρυσές πεδιάδες και μια γυάλινη έρημο ως μια χιονοθύελλα, μια γκρίζα ζούγκλα και ένα φρούριο μέσα σε ηφαίστειο.
+Κεφάλαιο 3, οι Αργοναύτες: δέκα πίστες ελληνικής μυθολογίας στο διάστημα. Οι Συμπληγάδες, τα Νησιά των Αρπυιών, η Θάλασσα των Σειρήνων, ο Ύφαλος της Σκύλλας, το Σιδηρουργείο του Τάλω, ο Λαβύρινθος της Μέδουσας, ο κήπος του Ακοίμητου Δράκου και το ίδιο το Χρυσόμαλλο Δέρας.
 
-ΚΑΙΝΟΥΡΓΙΟ ΚΟΛΠΟ ΣΕ ΚΑΘΕ ΚΑΤΑΣΤΡΩΜΑ
-Βρες τις Τζετ-Μπότες για διπλό άλμα, τους Προωθητήρες Ορμής, το Σακίδιο Αιώρησης και τον Παλμό Ισχύος του ΛΟΥΞ. Το καθένα ανοίγει νέους δρόμους και θα το χρειαστείς για να τελειώσεις εκείνο το κατάστρωμα.
+ΤΡΕΙΣ ΗΡΩΕΣ ΚΑΙ ΜΕΡΙΚΕΣ ΜΕΓΑΛΕΣ ΜΗΧΑΝΕΣ
+Παίξε με τον Ιάσονα, με την Αταλάντη, την πιο γρήγορη δρομέα και την καλύτερη τοξότρια της αποικίας, ακόμα και με τον Στρατηγό Βρέννο, με την ασπίδα του και τη λεγεώνα των ρομπότ του. Άλλαξε ήρωα για να λύσετε γρίφους μαζί. Πέτα με την Αργώ ανάμεσα σε βράχους που συγκρούονται, βούτα με το μικρό υποβρύχιο Δελφίνι και περπάτα βαριά με μια χάλκινη ρομποστολή που έχει φλογοβόλο.
 
-ΒΟΛΗ, ΣΒΟΥΡΑ, ΟΡΜΗ
-Πάτα για να πυροβολήσεις ή κράτα πατημένο για να γεμίσεις μια βολίδα φωτιάς. Κάνε σβούρα για να στείλεις πίσω τις βολές των εχθρών. Πέσε με φόρα πάνω στους διακόπτες. Χάκαρε τερματικά επαναλαμβάνοντας τα φώτα του ΛΟΥΞ.
+ΒΟΛΗ, ΣΒΟΥΡΑ, ΟΡΜΗ, ΓΑΝΤΖΟΣ
+Πάτα για να πυροβολήσεις ή κράτα πατημένο για να γεμίσεις μια βολίδα φωτιάς. Κάνε σβούρα για να στείλεις πίσω τις βολές των εχθρών. Βρες Τζετ-Μπότες, Προωθητήρες Ορμής, Σακίδιο Αιώρησης, γάντζο και μια ασπίδα-καθρέφτη, και το καθένα ανοίγει νέους δρόμους.
+
+ΑΝΤΙΠΑΛΟΙ ΠΟΥ ΔΕΝ ΞΕΧΝΙΟΥΝΤΑΙ
+Το Γκόλεμ του Μάγματος, ο ΚΕΡΒΕΡΟΣ, ο ΒΟΡΙΑΣ, ο Κολοσσός, η ΜΕΔΟΥΣΑ, ο ΤΑΛΩΣ, το Χρυσό Κριάρι, ένας δράκος που πρέπει να τον νανουρίσεις, και ο Αιήτης, ο Χρυσός Βασιλιάς. Κι ένας αντίπαλος που δεν θα ήθελες ποτέ να αντιμετωπίσεις: ο ίδιος ο ΛΟΥΞ.
 
 ΜΥΣΤΙΚΑ ΓΙΑ ΕΞΕΡΕΥΝΗΤΕΣ
-Ελευθέρωσε αποίκους από τα κουκούλια της Γάκου, βρες κρυμμένα δοχεία καρδιάς, άνοιξε ένα κρυφό θησαυροφυλάκιο σε κάθε κατάστρωμα και μάζεψε και τα 18 θραύσματα μνήμης για ένα διαφορετικό τέλος.
+Ελευθέρωσε παγιδευμένους αποίκους και επιστήμονες, βρες κρυμμένες καρδιές, άνοιξε κρυφά θησαυροφυλάκια και μάζεψε όλα τα θραύσματα μνήμης, τις σελίδες ημερολογίου και τις φωτόπετρες για να ξεκλειδώσεις το μυστικό τέλος κάθε κεφαλαίου.
 
-ΑΝΑΒΑΘΜΙΣΕΙΣ ΣΤΟ ΜΑΓΑΖΙ ΤΗΣ ΠΑΝΔΩΡΑΣ
-Ξόδεψε τις βίδες που μαζεύεις σε περισσότερες καρδιές, πιο δυνατό όπλο, μεγαλύτερο γεμιστήρα, πιο γρήγορο γέμισμα, μαγνήτη για βίδες και καλύτερο ηλεκτρικό τσίμπημα για τον ΛΟΥΞ.
+ΤΟ ΜΑΓΑΖΙ ΤΗΣ ΠΑΝΔΩΡΑΣ
+Ξόδεψε τις βίδες που μαζεύεις σε περισσότερες καρδιές, πιο δυνατό όπλο, καινούργια όπλα και στολές για τον Ιάσονα και την Αταλάντη.
 
-ΜΙΑ ΙΣΤΟΡΙΑ ΜΕ ΚΙΝΗΜΑΤΟΓΡΑΦΙΚΕΣ ΣΚΗΝΕΣ
-Ημερολόγια του Κυβερνήτη κρυμμένα σε όλο το σκάφος, ένας υπολογιστής του σκάφους που αρχίζει να φέρεται παράξενα, αντίπαλοι που κάνουν την είσοδό τους με το όνομά τους σε μεγάλα γράμματα, και δύο διαφορετικά τέλη.
+ΜΙΑ ΙΣΤΟΡΙΑ ΣΑΝ ΚΟΜΙΚ
+Κινηματογραφικές σκηνές μέσα στον κόσμο του παιχνιδιού, αντίπαλοι που κάνουν την είσοδό τους με το όνομά τους σε μεγάλα γράμματα, και οι μεγάλες στιγμές της ιστορίας ζωγραφισμένες σαν κόμικ.
 
 ΓΙΑ ΜΙΚΡΟΥΣ ΚΑΙ ΜΕΓΑΛΟΥΣ
-Πολύχρωμο, χωρίς άγχος, με διάρκεια περίπου 2 με 3 ώρες, για παίκτες από 10 ετών και πάνω. Παίζεται χωρίς σύνδεση στο διαδίκτυο. Χωρίς διαφημίσεις και χωρίς αγορές μέσα στην εφαρμογή. Στα ελληνικά και στα αγγλικά.
+Πολύχρωμο και χωρίς άγχος, για παίκτες από 9 ετών και πάνω. Παίζεται χωρίς σύνδεση στο διαδίκτυο. Χωρίς διαφημίσεις και χωρίς αγορές μέσα στην εφαρμογή. Στα ελληνικά και στα αγγλικά.
 
 Παίζεται καλύτερα με το κινητό οριζόντια και με ακουστικά.
 ```
@@ -131,7 +147,13 @@ First release: six decks, six bosses and the whole story of the Syracusia.
 **Release notes for version 1.0.0** (500 max)
 
 ```text
-Πρώτη κυκλοφορία: έξι καταστρώματα, έξι γιγάντιοι αντίπαλοι και όλη η ιστορία της Συρακουσίας.
+Η πρώτη κυκλοφορία:
+• 22 πίστες σε τρία κεφάλαια: η Συρακουσία, η Γαία Νόβα και το ταξίδι των Αργοναυτών.
+• Παίξε με τον Ιάσονα, την Αταλάντη, τον Στρατηγό Βρέννο και μια χάλκινη ρομποστολή.
+• Πέτα με την Αργώ και βούτα με το υποβρύχιο Δελφίνι.
+• Το μαγαζί της ΠΑΝΔΩΡΑΣ: αναβαθμίσεις, όπλα και στολές.
+• Δευτερεύουσες αποστολές, μυστικά φινάλε και εικόνες σαν κόμικ.
+• Αγγλικά ή Ελληνικά: άλλαξε όποτε θες από τις Ρυθμίσεις.
 ```
 
 ## App content answers
@@ -152,16 +174,11 @@ The build asks Android for only two permissions: **vibration** for haptics, and 
 
 ## Hosting the privacy policy
 
-Play needs a public, non-editable web page, not a PDF. Two easy options:
-
-- **GitHub:** push this repo as a public repository, then use the link to `docs/privacy-policy.md` on github.com, or turn on GitHub Pages for the `docs/` folder.
-- **Any free site**, such as Google Sites: paste the policy's text into a page.
-
-Replace `[contact email]` in the policy and in this file with the address you want players to see. Play also shows it on the store page.
+Play needs a public, non-editable web page, not a PDF. The repo is public on GitHub, so the policy's github.com page (the URL at the top of this file) is enough: it shows whatever is on `master`, so push before pasting the link into Play Console. GitHub Pages for the `docs/` folder would give a tidier address if you ever want one.
 
 ## Before you submit
 
-1. Build the app bundle: `npx eas-cli@latest build -p android --profile production`.
+1. Build the app bundle: `npx eas-cli@latest build -p android --profile production`. EAS keeps the Android `versionCode` (`appVersionSource: "remote"` in `eas.json`) and raises it on every production build, so each upload is accepted. For a local Gradle build of an upload, run `npx eas-cli@latest build:version:sync -p android` first.
 2. For a personal developer account, run a closed test first: at least 12 testers, opted in for 14 days in a row. Only then can you apply for production.
 3. Upload the first `.aab` by hand in Play Console. Later builds can use `eas submit`.
 
