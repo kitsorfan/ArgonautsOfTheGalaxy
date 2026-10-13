@@ -374,10 +374,12 @@ game/                    the 3D game (TypeScript, three.js), bundled with esbuil
   src/vehicles/          the vehicle levels: the Argo's flight, and (in sub/) the submarine Dolphin's dive,
                          its siren buoys and THE SIREN ORGAN
   src/i18n/              the Greek translation
+  src/trailer/           the game's trailer: the shot list cut to the music's bars, camera moves, title cards
   src/ui/                HUD, touch controls, menus, dialogue and hacking screens
   tools/                 level reachability checker (npm run game:check), translation check (npm run game:i18n),
                          brand art renderer (npm run gen:icons: the app icon, Android icon layers, favicon,
-                         Play Store icon and splash image, drawn from src/ui/emblem.ts; needs Chrome or Edge)
+                         Play Store icon and splash image, drawn from src/ui/emblem.ts; needs Chrome or Edge),
+                         trailer recorder (npm run trailer)
   tests/                 Jest tests: deck data, reachability of every deck, physics, translations, review prompt
 src/app/                 Expo Router screens: the WebView host (plus an iframe version for web)
 src/generated/           game page as a string (generated, git-ignored)
@@ -401,6 +403,10 @@ npm test
 npm run game:check    # per-deck reachability report (add a deck id and --map for a picture)
 npm run game:i18n     # English strings still missing a Greek translation
 ```
+
+### The trailer
+
+The game films its own trailer: about a minute, cut to *Sons of the Storm* (`assets/music/epic.mp3`), with every cut on a bar line. `npm run trailer` builds the game, plays it in a headless Chrome or Edge on a clock of its own (each frame is exactly a sixtieth of a second, however long it took to draw) and writes `trailer/argonauts-trailer.mp4` in full HD with ffmpeg; `-- --lang el` makes the Greek one (`argonauts-trailer-el.mp4`), and `-- --stills` writes three pictures of every shot to `trailer/stills/` instead, which is the quick way to check a change. Opening `game/dist/index.html#trailer` plays it live in a desktop browser. The shots, captions and end card are in `game/src/trailer/shots.ts`; the trailer plays on a save of its own and never touches the player's.
 
 ## Releasing on Google Play
 

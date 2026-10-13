@@ -9,6 +9,8 @@ dist/
 web-build/
 # Copied from assets/music by game/build.mjs
 public/music/
+# Written by `npm run trailer`: the film, and the stills it checks the cut with
+/trailer/
 expo-env.d.ts
 
 # Native
