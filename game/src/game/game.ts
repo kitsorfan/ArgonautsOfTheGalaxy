@@ -311,7 +311,7 @@ export class Game {
       }
       return;
     }
-    // #menu=decks opens the level select (with &all, every level unlocked); #menu=title|settings|about|news|help
+    // #menu=decks opens the level select (with &all, every level unlocked); #menu=title|settings|about|news|help|credits
     // opens that screen, for checking how it fits a phone.
     const menu = dev.get('menu');
     if (menu === 'decks') return this.deckSelect();
@@ -320,6 +320,8 @@ export class Game {
     if (menu === 'about') return this.ui.about(() => this.toTitle());
     if (menu === 'news') return this.ui.whatsNew(() => this.toTitle());
     if (menu === 'help') return this.ui.help(() => this.toTitle());
+    // #menu=credits rolls the end credits (the secret ending's).
+    if (menu === 'credits') return this.ui.credits(creditsHtml('gardeners', this.save), () => this.toTitle());
     // #menu=results, #menu=end and #menu=hack&kind=<puzzle> show a sample results card, END OF CHAPTER card and LUX HACK puzzle.
     if (menu === 'results') {
       const rows: [string, string][] | undefined = dev.has('rows') ? [['Rings', '18 / 20'], ['Drones', '7 / 9']] : undefined;

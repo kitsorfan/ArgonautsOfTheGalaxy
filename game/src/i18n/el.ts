@@ -396,6 +396,8 @@ export const EL: Record<string, string> = {
   "Thank you for playing!": "Ευχαριστούμε που έπαιξες!",
   "STARRING": "ΠΡΩΤΑΓΩΝΙΣΤΟΥΝ",
   "MUSIC": "ΜΟΥΣΙΚΗ",
+  "A big thank you to the composers who shared their music with the world, so games like this one can have a soundtrack:": "Ένα μεγάλο ευχαριστώ στους συνθέτες που μοιράστηκαν τη μουσική τους με όλο τον κόσμο, για να έχουν μουσική και παιχνίδια σαν κι αυτό:",
+  "Used under Creative Commons licenses (creativecommons.org). CC0 tracks are in the public domain.": "Με άδειες Creative Commons (creativecommons.org). Τα κομμάτια CC0 είναι κοινό κτήμα.",
   "Jason, junior engineer": "Ιάσονας, δόκιμος μηχανικός",
   "LUX, a very brave little drone": "ΛΟΥΞ, ένα πολύ γενναίο ρομποτάκι",
   "WITH": "ΣΥΜΜΕΤΕΧΟΥΝ",

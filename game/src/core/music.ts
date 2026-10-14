@@ -88,21 +88,23 @@ export interface MusicCredit {
   title: string;
   artist: string;
   license: string;
+  /** Where the recording was shared. */
+  source: 'incompetech.com' | 'OpenGameArt.org';
 }
 
 /** The recordings' titles, artists and licenses, for the end credits (sources in assets/music/CREDITS.md). */
 export const MUSIC_CREDITS: Record<MusicFile, MusicCredit> = {
-  title: { title: 'Heroic Minority', artist: 'Alexandr Zhelanov', license: 'CC BY 3.0' },
-  ending: { title: 'Eternal Hope', artist: 'Kevin MacLeod', license: 'CC BY 4.0' },
-  'ship-calm': { title: 'Cipher', artist: 'Kevin MacLeod', license: 'CC BY 4.0' },
-  'ship-action': { title: 'High Tech Lab', artist: 'remaxim', license: 'CC BY 4.0' },
-  'planet-adventure': { title: 'Fantasia Fantasia', artist: 'Kevin MacLeod', license: 'CC BY 4.0' },
-  'planet-frost': { title: 'Frost Waltz', artist: 'Kevin MacLeod', license: 'CC BY 4.0' },
-  'planet-wild': { title: 'Big Mojo', artist: 'Kevin MacLeod', license: 'CC BY 4.0' },
-  voyage: { title: 'Trials of the Sea', artist: 'Crocdent', license: 'CC0' },
-  mystery: { title: 'Teller of the Tales', artist: 'Kevin MacLeod', license: 'CC BY 4.0' },
-  epic: { title: 'Sons of the Storm', artist: 'Patrick Maney', license: 'CC BY 3.0' },
-  'boss-ship': { title: 'Orbital Colossus', artist: 'Matthew Pablo', license: 'CC BY 3.0' },
-  boss: { title: 'Epic Boss Battle', artist: 'Juhani Junkala', license: 'CC0' },
-  'boss-final': { title: 'Blackmoor Colossus', artist: 'Matthew Pablo', license: 'CC BY 3.0' },
+  title: { title: 'Heroic Minority', artist: 'Alexandr Zhelanov', license: 'CC BY 3.0', source: 'OpenGameArt.org' },
+  ending: { title: 'Eternal Hope', artist: 'Kevin MacLeod', license: 'CC BY 4.0', source: 'incompetech.com' },
+  'ship-calm': { title: 'Cipher', artist: 'Kevin MacLeod', license: 'CC BY 4.0', source: 'incompetech.com' },
+  'ship-action': { title: 'High Tech Lab', artist: 'remaxim', license: 'CC BY 4.0', source: 'OpenGameArt.org' },
+  'planet-adventure': { title: 'Fantasia Fantasia', artist: 'Kevin MacLeod', license: 'CC BY 4.0', source: 'incompetech.com' },
+  'planet-frost': { title: 'Frost Waltz', artist: 'Kevin MacLeod', license: 'CC BY 4.0', source: 'incompetech.com' },
+  'planet-wild': { title: 'Big Mojo', artist: 'Kevin MacLeod', license: 'CC BY 4.0', source: 'incompetech.com' },
+  voyage: { title: 'Trials of the Sea', artist: 'Crocdent', license: 'CC0', source: 'OpenGameArt.org' },
+  mystery: { title: 'Teller of the Tales', artist: 'Kevin MacLeod', license: 'CC BY 4.0', source: 'incompetech.com' },
+  epic: { title: 'Sons of the Storm', artist: 'Patrick Maney', license: 'CC BY 3.0', source: 'OpenGameArt.org' },
+  'boss-ship': { title: 'Orbital Colossus', artist: 'Matthew Pablo', license: 'CC BY 3.0', source: 'OpenGameArt.org' },
+  boss: { title: 'Epic Boss Battle', artist: 'Juhani Junkala', license: 'CC0', source: 'OpenGameArt.org' },
+  'boss-final': { title: 'Blackmoor Colossus', artist: 'Matthew Pablo', license: 'CC BY 3.0', source: 'OpenGameArt.org' },
 };

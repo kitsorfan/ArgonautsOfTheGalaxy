@@ -911,20 +911,41 @@ export class UI {
     this.glitchT = setTimeout(() => this.cine.classList.remove('glitching'), seconds * 1000);
   }
 
-  /** Scrolling end credits; tap (after a moment) to finish early. */
+  /**
+   * The end credits: they roll up by themselves, and the player can scroll them back and forth with a
+   * finger (the roll waits a few seconds after, then carries on). They stop at THE END. Taps never
+   * close them; only the little ✕ in the corner does.
+   */
   credits(html: string, done: () => void) {
-    const el = this.open(`<div class="credits"><div class="roll">${html}</div></div>`);
-    const roll = $(el, '.roll');
+    const el = this.open(`<div class="credits"><div class="scroller"><div class="roll">${html}</div></div><button class="credits-x" aria-label="${tr('Close')}">✕</button></div>`);
+    const scroller = $(el, '.scroller');
+    /** Pixels a second the roll climbs, and how long it waits after the player scrolls. */
+    const speed = 42;
+    const wait = 3;
     let over = false;
-    const finish = () => {
+    let held = 0;
+    let pos = 0;
+    let last = performance.now();
+    const hold = () => (held = wait);
+    for (const ev of ['pointerdown', 'touchstart', 'wheel'] as const) scroller.addEventListener(ev, hold, { passive: true });
+    const tick = (now: number) => {
+      if (over) return;
+      const dt = Math.min(0.1, (now - last) / 1000);
+      last = now;
+      if (held > 0) {
+        held -= dt;
+        pos = scroller.scrollTop;
+      } else {
+        pos = Math.min(pos + speed * dt, scroller.scrollHeight - scroller.clientHeight);
+        scroller.scrollTop = pos;
+      }
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+    this.button(el, '.credits-x', () => {
       if (over) return;
       over = true;
       done();
-    };
-    roll.addEventListener('animationend', finish);
-    const start = performance.now();
-    el.addEventListener('pointerdown', () => {
-      if (performance.now() - start > 1500) finish();
     });
   }
 

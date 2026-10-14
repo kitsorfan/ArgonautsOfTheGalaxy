@@ -1582,18 +1582,64 @@ canvas#game {
 .credits {
   position: absolute;
   inset: 0;
-  overflow: hidden;
   background: #000;
-  display: flex;
-  justify-content: center;
 }
 
-.credits .roll {
+/* The player can scroll the credits with a finger; they also roll up by themselves (ui.ts). */
+.credits .scroller {
   position: absolute;
-  top: 100%;
+  inset: 0;
+  overflow-y: auto;
+  touch-action: pan-y;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+
+.credits .scroller::-webkit-scrollbar {
+  display: none;
+}
+
+/* Starts just below the screen and ends with THE END in the middle of it. */
+.credits .roll {
   width: min(640px, 86vw);
+  margin: 0 auto;
+  padding: 100vh 0 42vh;
   text-align: center;
-  animation: roll 30s linear forwards;
+}
+
+.credits-x {
+  position: absolute;
+  top: calc(10px + var(--safe-t));
+  right: calc(12px + var(--safe-r));
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-size: 16px;
+  line-height: 32px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.credits .song span {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--dim);
+}
+
+.credits .song {
+  margin: 10px 0;
+}
+
+.credits .thanks {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--dim);
+  margin: 10px auto 14px;
 }
 
 .credits h1 {
@@ -1668,12 +1714,6 @@ canvas#game {
   letter-spacing: 0.12em;
   color: var(--accent);
   animation: fadein 1s 2s both;
-}
-
-@keyframes roll {
-  to {
-    transform: translateY(calc(-100% - 100vh));
-  }
 }
 
 /* ---------------- ammo, charge and threat cards ---------------- */

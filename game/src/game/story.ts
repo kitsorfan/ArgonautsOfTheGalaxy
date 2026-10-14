@@ -402,10 +402,18 @@ export function knowsGardenerWords(save: Pick<SaveData, 'shards'>): boolean {
   return n >= total;
 }
 
-/** The soundtrack's recordings, each once: title, artist and license (names stay untranslated). */
+/**
+ * The soundtrack, with thanks: each recording once, with its composer, where they shared it and its
+ * license (titles and names stay untranslated), then a word on the licenses.
+ */
 function musicCredits(): string {
-  const lines = new Set(Object.values(MUSIC_CREDITS).map((c) => `“${c.title}” · ${c.artist} · ${c.license}`));
-  return [`<h3>${tr('MUSIC')}</h3>`, ...[...lines].map((l) => `<p>${l}</p>`)].join('');
+  const songs = new Set(Object.values(MUSIC_CREDITS).map((c) => `<p class="song">“${c.title}”<span>${c.artist} · ${c.source} · ${c.license}</span></p>`));
+  return [
+    `<h3>${tr('MUSIC')}</h3>`,
+    `<p class="thanks">${tr('A big thank you to the composers who shared their music with the world, so games like this one can have a soundtrack:')}</p>`,
+    ...songs,
+    `<p class="thanks">${tr('Used under Creative Commons licenses (creativecommons.org). CC0 tracks are in the public domain.')}</p>`,
+  ].join('');
 }
 
 function colonistNames(save: SaveData, ch: Chapter): string[] {
