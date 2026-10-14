@@ -26,6 +26,38 @@ import { FloorSwitch } from '../props';
 
 type SealProp = ArrowTarget | FloorSwitch | CrackedWall;
 
+/** Where Atalanta's arrow leaves the bow. */
+function bowOf(world: World) {
+  const b = world.player.body;
+  return new THREE.Vector3(b.x, b.y + 1.15, b.z);
+}
+
+/** True if nothing (a ledge lip, a pillar) stands between Atalanta's bow and a bullseye. */
+export function clearShot(world: World, center: THREE.Vector3, radius: number) {
+  const from = bowOf(world);
+  const len = from.distanceTo(center) - radius;
+  const dir = center.clone().sub(from).normalize();
+  const p = new THREE.Vector3();
+  for (let d = 0.8; d < len; d += 0.4) {
+    p.copy(from).addScaledVector(dir, d);
+    if (pointBlocked(world.grid, world.boxes, p.x, p.y, p.z)) return false;
+  }
+  return true;
+}
+
+/** An action button's POWER ARROW: Atalanta turns and looses one straight at the bullseye. */
+export function powerShot(world: World, center: THREE.Vector3) {
+  const pl = world.player;
+  const from = bowOf(world);
+  pl.facing = Math.atan2(center.x - from.x, center.z - from.z);
+  const dir = center.clone().sub(from).normalize();
+  from.addScaledVector(dir, 0.6);
+  if (!pl.arrows?.fire(from, dir, true, ATALANTA.powerDamage)) return;
+  audio.play('fireball', 1.5);
+  world.flash(from.x, from.y, from.z, HEROES.atalanta.color, 25, 0.2);
+  haptic('medium');
+}
+
 /** Every seal on the level that sets a flag (the ones the vault counts). */
 const registry = new WeakMap<World, VaultSeal[]>();
 
@@ -126,25 +158,10 @@ export class VaultSeal extends Entity implements Interactable {
     return 'SMASH';
   }
 
-  /** Where her arrow leaves the bow. */
-  private bow() {
-    const b = this.world.player.body;
-    return new THREE.Vector3(b.x, b.y + 1.15, b.z);
-  }
-
   /** True if nothing (a ledge lip, a pillar) stands between her bow and the bullseye. */
   private clearShot() {
     const t = this.prop as ArrowTarget;
-    const w = this.world;
-    const from = this.bow();
-    const len = from.distanceTo(t.center) - t.radius;
-    const dir = t.center.clone().sub(from).normalize();
-    const p = new THREE.Vector3();
-    for (let d = 0.8; d < len; d += 0.4) {
-      p.copy(from).addScaledVector(dir, d);
-      if (pointBlocked(w.grid, w.boxes, p.x, p.y, p.z)) return false;
-    }
-    return true;
+    return clearShot(this.world, t.center, t.radius);
   }
 
   interact() {
@@ -160,13 +177,7 @@ export class VaultSeal extends Entity implements Interactable {
       return;
     }
     if (p instanceof ArrowTarget) {
-      const from = this.bow();
-      const dir = p.center.clone().sub(from).normalize();
-      from.addScaledVector(dir, 0.6);
-      if (!pl.arrows?.fire(from, dir, true, ATALANTA.powerDamage)) return;
-      audio.play('fireball', 1.5);
-      w.flash(from.x, from.y, from.z, HEROES.atalanta.color, 25, 0.2);
-      haptic('medium');
+      powerShot(w, p.center);
     } else if (p instanceof FloorSwitch) {
       audio.play('pound');
       w.shake(0.3);

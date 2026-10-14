@@ -5,9 +5,10 @@ import { haptic } from '../../core/bridge';
 import { damp } from '../../core/math';
 import type { World } from '../../game/world';
 import type { Speaker } from '../../world/levelTypes';
-import { Boss } from '../bossBase';
+import { Boss, bossHp } from '../bossBase';
 import type { HitKind, Target } from '../entity';
 import { Shockwave, Strike } from '../hazards';
+import { mat, mesh, torus } from '../models';
 import { DRAGON, makeDragonModel, SEGS } from './dragonModel';
 import { PYLON_KINDS } from './gardenData';
 import { Pylon } from './pylons';
@@ -15,40 +16,62 @@ import { Pylon } from './pylons';
 /**
  * THE SLEEPLESS DRAGON (chapter 3, the Garden of Colchis): a huge serpent of vines and crystal, coiled
  * around the great crystal tree in front of the Fleece vault. It has guarded the Fleece for a thousand
- * years without a wink of sleep, and Aeëtes's drones have been poking it all week. It isn't evil and it
- * can't be beaten: blasts and arrows only make it blink. The heroes light the four LULLABY PYLONS around
- * its lawn (see `pylons.ts`, one hero's skill each), and with every pylon LUX and IRIS sing another verse:
- * it gets drowsy for a moment, then shakes it off a little crosser. With all four lit, it curls up
- * around its tree and falls asleep (the boss bar is how awake it still is).
+ * years without a wink of sleep, and Aeëtes has chained it to its tree with four gold chains and let his
+ * weeder drones poke it all week. It isn't evil, but it is VERY cross.
  *
- * Its moves, each with a clear warning:
+ * 1. CHAINED: it thrashes and roars but can't reach anyone, while Aeëtes's weeder drones buzz the lawn.
+ *    The heroes light the four LULLABY PYLONS (see `pylons.ts`, one hero's skill each). The light of each
+ *    verse melts one gold chain.
+ * 2. FREE: with the last chain gone it is too angry to hear the song, and fights. Hits on its glowing
+ *    snout tire it out (the boss bar); at two thirds and one third it nods off for a moment, then
+ *    shakes itself awake a little crosser.
+ * 3. Worn out, it finally hears the lullaby: LUX and IRIS sing it to sleep (`gardenScenes.ts`).
+ *
+ * Its moves once free, each with a clear warning:
  * - TAIL SLAM: the tail rises and rattles its crystals, then slams: a ring rolls across the lawn (jump it).
- *   Two rings from the second pylon on.
- * - CRYSTAL BREATH: it rears up, its mouth glows, then it breathes a fan of crystal shards at the hero
- *   (two fans from the first pylon on). Three hits on its head while it glows make it sneeze instead.
- * - CRYSTAL RAIN (from the first pylon on): it shakes its tree and crystals drop on glowing circles.
+ *   Two rings once it is tired.
+ * - CRYSTAL BREATH: it rears up, its mouth glows, then it breathes two fans of crystal shards at the
+ *   hero. Three hits on its nose while it glows make it sneeze instead.
+ * - CRYSTAL RAIN: it shakes its tree and crystals drop on glowing circles.
  */
 
-const HP = PYLON_KINDS.length;
+/** How much it can take before it is tired enough to listen to the lullaby. */
+const HP = 28;
 /** The coil around the tree: its radius and how far it climbs. */
 const COIL_R = 4.3;
 const COIL = { from: 9, to: 22, step: 0.5 };
-/** How long it naps after each verse of the lullaby, and the rest between moves. */
+/** How long it nods off as it tires, and the rest between moves at each stage of the fight. */
 const DROWSY = 3.6;
 const REST = [2.6, 2.3, 2.1, 1.9];
+/** Where on the boss bar it nods off. */
+const NODS = [2 / 3, 1 / 3];
+/** How long the chains take to snap once the last pylon is lit. */
+const BREAK = 2.4;
+/** Aeëtes's weeder drones on the lawn while it is chained (cell offsets from the tree). */
+const WEEDERS: [number, number][] = [
+  [-6, -4],
+  [6, -4],
+  [0, 6],
+];
 
-type State = 'watch' | 'wake' | 'idle' | 'slamWarn' | 'slam' | 'breathWarn' | 'breath' | 'rainWarn' | 'drowsy';
+type State = 'watch' | 'wake' | 'bound' | 'break' | 'idle' | 'slamWarn' | 'slam' | 'breathWarn' | 'breath' | 'rainWarn' | 'drowsy';
 type Move = 'slam' | 'breath' | 'rain';
 
 const tmp = new THREE.Vector3();
 const tmp2 = new THREE.Vector3();
 const UP = new THREE.Vector3(0, 1, 0);
 
-/** What the droids say after each verse (LUX is `bolt`). */
+/** What the droids say as each of the first three pylons melts a chain (LUX is `bolt`). */
 const VERSES: { who: Speaker; text: string }[] = [
-  { who: 'bolt', text: 'The first verse! Sing with me, IRIS: “Sleep, sleep...” Look, its eyes are drooping!' },
-  { who: 'iris', text: 'Two words of the lullaby are glowing. It is fighting to stay awake, poor thing.' },
-  { who: 'bolt', text: 'Three! Its head is SO heavy now. One more pylon!' },
+  { who: 'bolt', text: 'The first verse! And look: the light melted one of Aeëtes’s gold chains!' },
+  { who: 'iris', text: 'Two chains gone. It is pulling at the last ones. Careful, everyone!' },
+  { who: 'bolt', text: 'Three! One more pylon and the lullaby is ready... and the dragon is free. Get ready!' },
+];
+
+/** What they say as it nods off in the fight. */
+const NODDING: { who: Speaker; text: string }[] = [
+  { who: 'iris', text: 'It yawned! It is getting tired. Keep going: the song is starting to work!' },
+  { who: 'bolt', text: 'Its eyes are drooping! Just a little more!' },
 ];
 
 export class Dragon extends Boss implements Target {
@@ -57,6 +80,11 @@ export class Dragon extends Boss implements Target {
   readonly aim = new THREE.Vector3();
   radius = 1.7;
   aimable = false;
+  /** Out of its chains and fighting. */
+  private free = false;
+  private nods = 0;
+  private chains: THREE.Mesh[] = [];
+  private weeders: Target[] = [];
   /** 0 wide awake, 1 fast asleep (the lullaby cutscene raises it). */
   sleepK = 0;
   private m = makeDragonModel();
@@ -78,9 +106,18 @@ export class Dragon extends Boss implements Target {
   private pts: THREE.Vector3[] = Array.from({ length: SEGS }, () => new THREE.Vector3());
 
   constructor(world: World, id: string, cx: number, cz: number, h: number) {
-    super(world, id, cx, cz, h, HP);
+    super(world, id, cx, cz, h, bossHp(world, HP));
+    this.phaseMarks = NODS;
     this.m.root.position.copy(this.center);
     this.obj.add(this.m.root);
+    // Aeëtes's four gold chains, wrapped around its coil and the tree.
+    const gold = mat('#ffcc33', { emissive: '#ff9a00', ei: 0.5, metal: 0.8, rough: 0.3 });
+    for (let i = 0; i < 4; i++) {
+      const ring = mesh(torus(COIL_R + 0.45, 0.16), gold, this.center.x, h + 0.9 + i * 0.6, this.center.z, false);
+      ring.rotation.set(Math.PI / 2 + (i % 2 ? 0.08 : -0.08), 0, i * 0.7);
+      this.chains.push(ring);
+      this.obj.add(ring);
+    }
     // The tree and the coil around it are solid (a little inside the coil's outline).
     const r = COIL_R * 0.84;
     const c = this.center;
@@ -130,8 +167,16 @@ export class Dragon extends Boss implements Target {
   protected onStart() {
     this.ensurePylons();
     for (const p of this.pylons) p.active = true;
-    this.set('idle', 2.2);
+    this.set('bound', 2);
     audio.play('roar', 0.7);
+    // Aeëtes's weeder drones are still about, poking it (any knocked out last time come back).
+    const w = this.world;
+    const cx = Math.floor(this.center.x / 2);
+    const cz = Math.floor(this.center.z / 2);
+    WEEDERS.forEach(([dx, dz], i) => {
+      if (this.weeders[i]?.alive) return;
+      this.weeders[i] = w.spawnEnemy('weeder', cx + dx, cz + dz);
+    });
   }
 
   reset() {
@@ -139,22 +184,60 @@ export class Dragon extends Boss implements Target {
     this.lit = 0;
     this.turn = 0;
     this.tail = 0;
+    this.nods = 0;
+    this.free = false;
+    this.world.clearFlag('unchained');
+    for (const c of this.chains) c.visible = true;
     this.set('watch', 0);
     for (const p of this.pylons) p.reset();
   }
 
-  /** A pylon was lit: another verse of the lullaby. */
+  /** A pylon was lit: another verse of the lullaby, and its light melts one of the gold chains. */
   private verse() {
-    if (this.defeated) return;
+    if (this.defeated || this.free) return;
     this.lit += 1;
-    this.damage(1);
-    if (this.defeated) return;
+    this.snap(this.chains[this.lit - 1]);
+    this.notes(26);
+    if (this.lit >= this.chains.length) {
+      // The last chain: it tears itself free.
+      this.set('break', BREAK);
+      audio.play('roar', 0.8);
+      this.world.shake(0.6);
+      return;
+    }
     const v = VERSES[Math.min(VERSES.length - 1, this.lit - 1)];
     this.world.hooks.toast(v.text, v.who);
-    this.set('drowsy', DROWSY);
-    this.tail = 0;
-    this.m.mouthGlow.material.opacity = 0;
-    this.notes(26);
+  }
+
+  /** A gold chain melts and snaps in a shower of sparks. */
+  private snap(chain: THREE.Mesh | undefined) {
+    if (!chain?.visible) return;
+    chain.visible = false;
+    const w = this.world;
+    const c = this.center;
+    for (let i = 0; i < 8; i++) {
+      const a = (i / 8) * Math.PI * 2;
+      w.particles.emit(c.x + Math.cos(a) * (COIL_R + 0.45), chain.position.y, c.z + Math.sin(a) * (COIL_R + 0.45), { count: 3, color: '#ffcc33', speed: 4, up: 2, life: 0.6, size: 0.35 });
+    }
+    audio.play('explode', 1.6, 0.5);
+  }
+
+  /** Out of the last chain: the real fight begins. */
+  private release() {
+    const w = this.world;
+    this.free = true;
+    w.setFlag('unchained');
+    for (const c of this.chains) this.snap(c);
+    audio.play('roar', 0.6);
+    w.shake(0.8);
+    haptic('heavy');
+    w.hooks.toast('It’s free, and too angry to hear the song! Tire it out first: hit its glowing NOSE!', 'iris');
+    this.set('idle', 1.2);
+  }
+
+  /** How tired it is: 1 fresh out of its chains, 2 after its first nod, 3 after its second. */
+  private get stage() {
+    return 1 + this.nods;
   }
 
   /** Music notes of light flying from both droids to its head. */
@@ -183,20 +266,37 @@ export class Dragon extends Boss implements Target {
     this.world.bossDefeated(this);
   }
 
-  hit(_dmg: number, kind: HitKind): boolean {
+  hit(dmg: number, kind: HitKind): boolean {
     if (!this.started || this.defeated) return true;
     const w = this.world;
     this.flinch = 1;
     w.particles.emit(this.aim.x, this.aim.y, this.aim.z, { count: 6, color: DRAGON.crystal, speed: 3, life: 0.3, size: 0.35 });
     audio.play('zap', 1.6, 0.7);
+    if (!this.free) {
+      // Chained: blasts only make it blink.
+      if (!this.hinted.hurt && kind !== 'zap' && kind !== 'pulse') {
+        this.hinted.hurt = true;
+        w.hooks.toast('It’s chained up, it can’t hurt you yet! Light the four LULLABY PYLONS: follow the beams!', 'iris');
+      }
+      return true;
+    }
     if (this.state === 'breathWarn') {
       this.breathHits += 1;
       if (this.breathHits >= 3) this.sneeze();
-      return true;
     }
-    if (!this.hinted.hurt && kind !== 'zap' && kind !== 'pulse') {
-      this.hinted.hurt = true;
-      w.hooks.toast('Blasts just make it blink! It’s only guarding the Fleece. Light the LULLABY PYLONS instead!', 'iris');
+    if (kind === 'zap' || kind === 'pulse') return true;
+    this.damage(dmg);
+    if (this.defeated) return true;
+    // At two thirds and one third it nods off for a moment.
+    const left = this.hp / this.maxHp;
+    if (this.nods < NODS.length && left <= NODS[this.nods]) {
+      const v = NODDING[this.nods];
+      this.nods += 1;
+      w.hooks.toast(v.text, v.who);
+      this.set('drowsy', DROWSY);
+      this.tail = 0;
+      this.m.mouthGlow.material.opacity = 0;
+      this.notes(26);
     }
     return true;
   }
@@ -207,24 +307,24 @@ export class Dragon extends Boss implements Target {
     audio.play('sputter', 0.7);
     w.particles.emit(this.aim.x, this.aim.y, this.aim.z, { count: 24, color: DRAGON.crystal, speed: 6, life: 0.6, size: 0.4 });
     this.m.mouthGlow.material.opacity = 0;
-    this.set('idle', REST[this.lit] + 0.6);
+    this.set('idle', REST[this.stage] + 0.6);
     if (!this.hinted.sneeze) {
       this.hinted.sneeze = true;
       w.hooks.toast('Ha! It sneezed! Hitting its nose while it glows stops the crystal breath.', 'bolt');
     }
   }
 
-  /** Its next move: tail slam and crystal breath, plus crystal rain once the lullaby has begun. */
+  /** Its next move: tail slam, crystal breath and crystal rain, in turn. */
   private nextMove() {
-    const pool: Move[] = this.lit >= 1 ? ['slam', 'breath', 'rain'] : ['slam', 'breath'];
+    const pool: Move[] = ['slam', 'breath', 'rain'];
     const move = pool[this.turn % pool.length];
     this.turn += 1;
     if (move === 'slam') {
-      this.slams = this.lit >= 2 ? 2 : 1;
+      this.slams = this.stage >= 2 ? 2 : 1;
       this.set('slamWarn', 1);
       audio.play('vent', 0.5);
     } else if (move === 'breath') {
-      this.volleys = this.lit >= 1 ? 2 : 1;
+      this.volleys = 2;
       this.breathHits = 0;
       this.set('breathWarn', 1.2);
       audio.play('charge', 0.6);
@@ -244,7 +344,7 @@ export class Dragon extends Boss implements Target {
     const want = Math.atan2(p.z - c.z, p.x - c.x);
     let da = want - this.headA;
     da = Math.atan2(Math.sin(da), Math.cos(da));
-    const turnRate = this.defeated ? 0 : this.state === 'breath' || this.state === 'drowsy' ? 0.15 : 0.8;
+    const turnRate = this.defeated ? 0 : this.state === 'breath' || this.state === 'drowsy' ? 0.15 : this.state === 'bound' ? 0.4 : 0.8;
     this.headA += Math.max(-turnRate * dt, Math.min(turnRate * dt, da));
     if (this.defeated) {
       this.sleepK = Math.max(this.sleepK, damp(this.sleepK, 1, 0.8, dt));
@@ -262,7 +362,25 @@ export class Dragon extends Boss implements Target {
     switch (this.state) {
       case 'watch':
       case 'wake':
-        this.set('idle', 1.5);
+        this.set('bound', 1.5);
+        break;
+      case 'bound':
+        // Chained: it strains and roars at whoever comes close, rattling the gold.
+        if (this.stateT <= 0) {
+          audio.play('roar', 1.1, 0.5);
+          w.shake(0.2);
+          this.tail = 0.6;
+          this.set('bound', 3.5 + Math.random() * 2);
+        }
+        this.tail = damp(this.tail, 0, 3, dt);
+        break;
+      case 'break':
+        // Tearing free: the coil heaves and sparks fly from the last chains.
+        if (Math.random() < dt * 20) {
+          const a = Math.random() * Math.PI * 2;
+          w.particles.emit(c.x + Math.cos(a) * COIL_R, c.y + 1 + Math.random() * 2, c.z + Math.sin(a) * COIL_R, { count: 1, color: '#ffcc33', speed: 3, up: 2, life: 0.5, size: 0.3 });
+        }
+        if (this.stateT <= 0) this.release();
         break;
       case 'idle':
         if (this.stateT <= 0) this.nextMove();
@@ -276,7 +394,7 @@ export class Dragon extends Boss implements Target {
         this.tail = damp(this.tail, 0, 10, dt);
         if (this.stateT <= 0) {
           if (this.slams > 0) this.set('slamWarn', 0.55);
-          else this.set('idle', REST[this.lit]);
+          else this.set('idle', REST[this.stage]);
         }
         break;
       case 'breathWarn':
@@ -289,7 +407,7 @@ export class Dragon extends Boss implements Target {
           if (this.volleys > 0) this.breathe();
           else {
             this.m.mouthGlow.material.opacity = 0;
-            this.set('idle', REST[this.lit]);
+            this.set('idle', REST[this.stage]);
           }
         }
         break;
@@ -343,20 +461,25 @@ export class Dragon extends Boss implements Target {
   private rain() {
     const w = this.world;
     const p = this.player.body;
-    const n = 3 + this.lit;
+    const n = 3 + this.stage;
     for (let i = 0; i < n; i++) {
       const a = Math.random() * Math.PI * 2;
       const r = i === 0 ? 0 : 2.5 + Math.random() * 3.5;
       w.addEntity(new Strike(w, p.x + Math.cos(a) * r, this.center.y, p.z + Math.sin(a) * r, 1.3, 1.3, DRAGON.crystal, 'ice'));
     }
     w.shake(0.3);
-    this.set('idle', REST[this.lit] + 1);
+    this.set('idle', REST[this.stage] + 1);
   }
 
   /** Where the head wants to be (radius from the tree, height) in each state. */
   private headSpot(): [number, number] {
     const t = this.t;
     switch (this.state) {
+      case 'bound':
+        // Straining against the chains, close to its tree.
+        return [5.2, 4.2 + Math.sin(t * 5) * 0.3];
+      case 'break':
+        return [6.4, 6.6 + Math.sin(t * 9) * 0.4];
       case 'breathWarn':
         return [5, 6.4];
       case 'breath':
@@ -398,7 +521,7 @@ export class Dragon extends Boss implements Target {
     const open = this.state === 'breathWarn' ? 0.45 : this.state === 'breath' ? 0.75 : this.state === 'rainWarn' ? 0.5 : yawn;
     m.jaw.rotation.x = damp(m.jaw.rotation.x, open * (1 - k), 8, dt || 1);
     const blink = Math.sin(t * 0.9) > 0.985 ? 1 : 0;
-    const shut = Math.max(k, this.state === 'drowsy' ? 0.7 : this.lit * 0.12, blink);
+    const shut = Math.max(k, this.state === 'drowsy' ? 0.7 : this.nods * 0.15, blink);
     for (const pupil of m.pupils) pupil.visible = shut < 0.6;
     for (const lid of m.lids) {
       lid.scale.y = 0.25 + shut * 0.8;
@@ -446,6 +569,6 @@ export class Dragon extends Boss implements Target {
     // Its weak spot, for blasters and arrows: the snout.
     m.head.updateWorldMatrix(true, false);
     m.head.localToWorld(this.aim.set(0, -0.1, 1.1));
-    this.aimable = this.started && !this.defeated;
+    this.aimable = this.started && this.free && !this.defeated;
   }
 }

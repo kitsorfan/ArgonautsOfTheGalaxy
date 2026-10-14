@@ -15,11 +15,12 @@ import type { LevelDef } from '../world/levelTypes';
  * 4. The fountain plaza: PANDORA's shop, the rainbow gate (FRIEND), the vault (SLEEP, then GROW), a
  *    hedge tower with the heart canister and a crystal plinth with the third light-stone.
  * 5. The hedge yard: an ambush (the door opens when the yard is clear), then the last checkpoint.
- * 6. THE SLEEPLESS DRAGON, guardian of the Fleece: not a fight to win but a lullaby to sing. Dodge its
- *    tail, crystal breath and crystal rain while lighting the four LULLABY PYLONS around the lawn, each
- *    with one hero's skill (SKY: Atalanta's power arrow; GROW: Jason's ground pound; HOME: a high shelf
- *    only Atalanta's wall-jump reaches; FRIEND: a crystal column only Jason's grapple reaches). With all
- *    four lit, LUX and IRIS sing it to sleep in light-words, and the tree-temple's door opens.
+ * 6. THE SLEEPLESS DRAGON, guardian of the Fleece, chained to its tree by Aeëtes. While his weeder
+ *    drones buzz the lawn, light the four LULLABY PYLONS around it, each with one hero's skill (SKY:
+ *    Atalanta's power arrow; GROW: Jason's ground pound; HOME: a high shelf only Atalanta's wall-jump
+ *    reaches; FRIEND: a crystal column only Jason's grapple reaches). Their light melts its chains: it
+ *    breaks free and fights (tail, crystal breath, crystal rain) until it is worn out, then LUX and
+ *    IRIS sing it to sleep in light-words, and the tree-temple's door opens.
  * Side quests: three gold nets with seed-sprites in them, three light-stones (SLEEP, SONG, WAKE), a
  * heart canister and the vault.
  */
@@ -206,7 +207,7 @@ export const garden: LevelDef = {
     i: { type: 'sign', text: 'THE CRYSTAL GATE needs BOTH of you: a bullseye on the spire in the ravine for Atalanta’s POWER ARROW, and a red switch on the crystal pillar for Jason (GRAPPLE up, then GROUND-POUND).' },
     B: { type: 'sign', text: 'The great fountain glows: “Only a FRIEND may pass. Our word for friend shines with the whole rainbow: red, orange, yellow, green, blue and violet.”' },
     C: { type: 'sign', text: 'An old Gardener riddle: “First the seed must SLEEP, then it will GROW.” SLEEP glows violet, then white. GROW glows pink, then green.' },
-    X: { type: 'sign', text: 'LULLABY PYLONS! The dragon won’t sleep until all four are lit. SKY: Atalanta’s POWER ARROW. GROW: Jason’s GROUND POUND. HOME: high on the hedge shelf (Atalanta WALL-JUMPS). FRIEND: on the crystal column (Jason GRAPPLES).' },
+    X: { type: 'sign', text: 'LULLABY PYLONS! Light all four for the lullaby: follow the beams. SKY: Atalanta’s POWER ARROW. GROW: Jason’s GROUND POUND. HOME: high on the hedge shelf (Atalanta WALL-JUMPS). FRIEND: on the crystal column (Jason GRAPPLES). Their light melts gold chains too: be ready for a fight!' },
     // Decor.
     '/': { type: 'decor', kind: 'giantflower' },
     '-': { type: 'decor', kind: 'crystaltree' },
@@ -221,7 +222,9 @@ export const garden: LevelDef = {
     { until: { flag: 'home' }, text: 'Open the light-word gate: step on HOME’s colours, blue then green', at: 'gate1' },
     { until: { all: [{ flag: 'tA' }, { flag: 'sw1' }] }, text: 'Open the crystal gate: a bullseye for Atalanta, a red switch for Jason', at: 'grove' },
     { until: { flag: 'friend' }, text: 'Spell FRIEND in light by the great fountain: the whole rainbow, red to violet', at: 'fountain' },
-    { until: { boss: true }, text: 'Light the four lullaby pylons and sing the Sleepless Dragon to sleep', at: 'boss' },
+    // The dragon sets `unchained` when the last pylon melts its last chain.
+    { until: { flag: 'unchained' }, text: 'Light the four lullaby pylons: follow the beams', at: 'boss' },
+    { until: { boss: true }, text: 'The dragon is free! Tire it out (hit its glowing nose), then sing it to sleep', at: 'boss' },
     { until: { flag: 'never' }, text: 'Enter the tree-temple: the Fleece vault is inside', at: 'exit' },
   ],
   dialogues: {
@@ -236,7 +239,7 @@ export const garden: LevelDef = {
     log: [
       { who: 'hypatia', text: 'Dr. Hypatia here, recording on the Argo. I’ve been studying the light-stones you found. Every Gardener word is a little song of colours.' },
       { who: 'hypatia', text: 'The Gardeners locked their gates with those words. Step on the colours of the right word, in order, and the gate will open.' },
-      { who: 'hypatia', text: 'One more thing. The old carvings speak of a guardian that never sleeps. They don’t say “fight it”. They say “sing to it”. I wonder what that means...' },
+      { who: 'hypatia', text: 'One more thing. The old carvings speak of a guardian that never sleeps. They say: “When it rages, be brave. When it tires, sing to it.” I wonder what that means...' },
     ],
     crystal: [
       { who: 'atalanta', text: 'Another locked gate! That bullseye is on a spire out in the ravine. Nobody can get there... but my arrows can.' },
@@ -244,9 +247,9 @@ export const garden: LevelDef = {
       { who: 'iris', text: 'The Gardeners built this garden for friends who help each other. I think they would like you two.' },
     ],
     boss: [
-      { who: 'aeetes', text: 'Ah, the little Argonauts! My weeder drones have been poking that old dragon all week. It is VERY awake now. Enjoy!' },
+      { who: 'aeetes', text: 'Ah, the little Argonauts! My weeder drones have been poking that old dragon all week, and I chained it to its tree. It is VERY awake now, and VERY cross. Enjoy!' },
       { who: 'iris', text: 'It is not a monster. It is a guardian, and it is so tired. It has not slept for a thousand years, guarding the Fleece.' },
-      { who: 'jason', text: 'Then we won’t fight it. We’ll light the lullaby pylons, and you two sing it to sleep!' },
+      { who: 'jason', text: 'Then we light the lullaby pylons, and you two sing it to sleep. Whatever it takes!' },
       { who: 'bolt', text: 'Sing? To THAT? ...Okay. Okay! I know one song. It is mostly beeps.' },
     ],
     bossDown: [
@@ -289,7 +292,7 @@ export const garden: LevelDef = {
         caption: 'Colchis, at last. The Argonauts step out into the garden the Gardeners planted long, long ago.',
       },
     ],
-    // The lullaby: LUX and IRIS sing the dragon to sleep (played when the fourth pylon is lit).
+    // The lullaby: LUX and IRIS sing the dragon to sleep (played once the fight has worn it out).
     lullaby: [
       {
         panel: 'ch3-dragon',

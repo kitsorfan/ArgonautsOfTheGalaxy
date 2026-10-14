@@ -5,7 +5,8 @@ export const EL_GARDEN: Record<string, string> = {
   "Open the light-word gate: step on HOME’s colours, blue then green": "Άνοιξε την πύλη της φωτολέξης: πάτα τα χρώματα της λέξης ΣΠΙΤΙ, μπλε και μετά πράσινο",
   "Open the crystal gate: a bullseye for Atalanta, a red switch for Jason": "Άνοιξε την κρυστάλλινη πύλη: ένας στόχος για την Αταλάντη, ένας κόκκινος διακόπτης για τον Ιάσονα",
   "Spell FRIEND in light by the great fountain: the whole rainbow, red to violet": "Γράψε ΦΙΛΟΣ με φως δίπλα στο μεγάλο σιντριβάνι: όλο το ουράνιο τόξο, από το κόκκινο ως το μωβ",
-  "Light the four lullaby pylons and sing the Sleepless Dragon to sleep": "Άναψε τους τέσσερις στύλους του νανουρίσματος και κοίμισε τον Ακοίμητο Δράκο",
+  "Light the four lullaby pylons: follow the beams": "Άναψε τους τέσσερις στύλους του νανουρίσματος: ακολούθα τις δέσμες φωτός",
+  "The dragon is free! Tire it out (hit its glowing nose), then sing it to sleep": "Ο δράκος λύθηκε! Κούρασέ τον (χτύπα τη μύτη του που λάμπει) και μετά νανούρισέ τον",
   "Enter the tree-temple: the Fleece vault is inside": "Μπες στον ναό-δέντρο: η κρύπτη του Δέρατος είναι μέσα",
   "The <b>Garden of Colchis</b>. Flowers as tall as houses, trees of glowing crystal, and fountains that whisper in light... and somewhere in the middle, something very big is <b>not</b> asleep.":
     "Ο <b>Κήπος της Κολχίδας</b>. Λουλούδια ψηλά σαν σπίτια, δέντρα από κρύσταλλο που λάμπει και σιντριβάνια που ψιθυρίζουν με φως... και κάπου στη μέση, κάτι πολύ μεγάλο <b>δεν</b> κοιμάται.",
@@ -22,10 +23,13 @@ export const EL_GARDEN: Record<string, string> = {
   "Weeder Drone": "Ρομπότ-Ζιζανιοκτόνο",
   "Aeëtes’s garden wrecker: when its tank glows, it sprays gold weed-killer on the ground. Step off the gold circle, then blast it!":
     "Το ρομπότ του Αιήτη που χαλάει κήπους: όταν λάμπει το ντεπόζιτό του, ψεκάζει χρυσό ζιζανιοκτόνο στο έδαφος. Βγες από τον χρυσό κύκλο και μετά ρίξ’ του ΒΟΛΗ!",
-  "The first verse! Sing with me, IRIS: “Sleep, sleep...” Look, its eyes are drooping!": "Ο πρώτος στίχος! Τραγούδα μαζί μου, ΙΡΙΔΑ: «Κοιμήσου, κοιμήσου...» Κοίτα, τα μάτια του βαραίνουν!",
-  "Two words of the lullaby are glowing. It is fighting to stay awake, poor thing.": "Δύο λέξεις του νανουρίσματος λάμπουν. Παλεύει να μείνει ξύπνιος, το καημένο.",
-  "Three! Its head is SO heavy now. One more pylon!": "Τρεις! Το κεφάλι του είναι ΤΟΣΟ βαρύ τώρα. Άλλος ένας στύλος!",
-  "Blasts just make it blink! It’s only guarding the Fleece. Light the LULLABY PYLONS instead!": "Οι βολές απλώς το κάνουν να ανοιγοκλείνει τα μάτια! Απλώς φυλάει το Δέρας. Άναψε καλύτερα τους ΣΤΥΛΟΥΣ ΤΟΥ ΝΑΝΟΥΡΙΣΜΑΤΟΣ!",
+  "The first verse! And look: the light melted one of Aeëtes’s gold chains!": "Ο πρώτος στίχος! Και κοίτα: το φως έλιωσε μία από τις χρυσές αλυσίδες του Αιήτη!",
+  "Two chains gone. It is pulling at the last ones. Careful, everyone!": "Έφυγαν δύο αλυσίδες. Τραβάει τις τελευταίες. Προσοχή, όλοι!",
+  "Three! One more pylon and the lullaby is ready... and the dragon is free. Get ready!": "Τρεις! Άλλος ένας στύλος και το νανούρισμα είναι έτοιμο... και ο δράκος λεύτερος. Ετοιμαστείτε!",
+  "It’s chained up, it can’t hurt you yet! Light the four LULLABY PYLONS: follow the beams!": "Είναι αλυσοδεμένος, δεν μπορεί να σε πειράξει ακόμα! Άναψε τους τέσσερις ΣΤΥΛΟΥΣ ΤΟΥ ΝΑΝΟΥΡΙΣΜΑΤΟΣ: ακολούθα τις δέσμες φωτός!",
+  "It’s free, and too angry to hear the song! Tire it out first: hit its glowing NOSE!": "Λύθηκε, και είναι πολύ θυμωμένος για να ακούσει το τραγούδι! Κούρασέ τον πρώτα: χτύπα τη ΜΥΤΗ του που λάμπει!",
+  "It yawned! It is getting tired. Keep going: the song is starting to work!": "Χασμουρήθηκε! Αρχίζει να κουράζεται. Συνεχίστε: το τραγούδι αρχίζει να πιάνει!",
+  "Its eyes are drooping! Just a little more!": "Τα μάτια του βαραίνουν! Λίγο ακόμα!",
   "Ha! It sneezed! Hitting its nose while it glows stops the crystal breath.": "Χα! Φτερνίστηκε! Αν το χτυπάς στη μύτη όσο λάμπει, σταματάς την κρυστάλλινη ανάσα του.",
   "The SKY pylon only wakes up for a POWER ARROW. Switch to Atalanta and HOLD the BOW button!": "Ο στύλος ΟΥΡΑΝΟΣ ξυπνάει μόνο με ΔΥΝΑΤΟ ΒΕΛΟΣ. Άλλαξε στην Αταλάντη και ΚΡΑΤΑ πατημένο το ΤΟΞΟ!",
   "The GROW pylon wants a GROUND POUND on its stone. Switch to Jason: jump, then pound!": "Ο στύλος ΜΕΓΑΛΩΝΩ θέλει ένα ΚΑΡΦΩΜΑ στην πέτρα του. Άλλαξε στον Ιάσονα: πήδα και μετά κάρφωσε!",
@@ -43,8 +47,8 @@ export const EL_GARDEN: Record<string, string> = {
     "Το μεγάλο σιντριβάνι λάμπει: «Μόνο ένας ΦΙΛΟΣ μπορεί να περάσει. Η λέξη μας για τον φίλο λάμπει με όλο το ουράνιο τόξο: κόκκινο, πορτοκαλί, κίτρινο, πράσινο, μπλε και μωβ.»",
   "An old Gardener riddle: “First the seed must SLEEP, then it will GROW.” SLEEP glows violet, then white. GROW glows pink, then green.":
     "Ένας παλιός γρίφος των Κηπουρών: «Πρώτα ο σπόρος πρέπει να ΚΟΙΜΗΘΕΙ, και μετά θα ΜΕΓΑΛΩΣΕΙ.» Το ΚΟΙΜΗΣΟΥ λάμπει μωβ και μετά άσπρο. Το ΜΕΓΑΛΩΝΩ λάμπει ροζ και μετά πράσινο.",
-  "LULLABY PYLONS! The dragon won’t sleep until all four are lit. SKY: Atalanta’s POWER ARROW. GROW: Jason’s GROUND POUND. HOME: high on the hedge shelf (Atalanta WALL-JUMPS). FRIEND: on the crystal column (Jason GRAPPLES).":
-    "ΣΤΥΛΟΙ ΤΟΥ ΝΑΝΟΥΡΙΣΜΑΤΟΣ! Ο δράκος δεν θα κοιμηθεί αν δεν ανάψουν και οι τέσσερις. ΟΥΡΑΝΟΣ: το ΔΥΝΑΤΟ ΒΕΛΟΣ της Αταλάντης. ΜΕΓΑΛΩΝΩ: το ΚΑΡΦΩΜΑ του Ιάσονα. ΣΠΙΤΙ: ψηλά στο ράφι του φράχτη (η Αταλάντη κάνει ΑΛΜΑ ΣΤΟΝ ΤΟΙΧΟ). ΦΙΛΟΣ: πάνω στην κρυστάλλινη κολόνα (ο Ιάσονας ανεβαίνει με τον ΓΑΝΤΖΟ).",
+  "LULLABY PYLONS! Light all four for the lullaby: follow the beams. SKY: Atalanta’s POWER ARROW. GROW: Jason’s GROUND POUND. HOME: high on the hedge shelf (Atalanta WALL-JUMPS). FRIEND: on the crystal column (Jason GRAPPLES). Their light melts gold chains too: be ready for a fight!":
+    "ΣΤΥΛΟΙ ΤΟΥ ΝΑΝΟΥΡΙΣΜΑΤΟΣ! Άναψε και τους τέσσερις για το νανούρισμα: ακολούθα τις δέσμες φωτός. ΟΥΡΑΝΟΣ: το ΔΥΝΑΤΟ ΒΕΛΟΣ της Αταλάντης. ΜΕΓΑΛΩΝΩ: το ΚΑΡΦΩΜΑ του Ιάσονα. ΣΠΙΤΙ: ψηλά στο ράφι του φράχτη (η Αταλάντη κάνει ΑΛΜΑ ΣΤΟΝ ΤΟΙΧΟ). ΦΙΛΟΣ: πάνω στην κρυστάλλινη κολόνα (ο Ιάσονας ανεβαίνει με τον ΓΑΝΤΖΟ). Το φως τους λιώνει και τις χρυσές αλυσίδες: ετοιμάσου για μάχη!",
   /* The seed-sprites in Aeëtes's gold nets. */
   "Seed-sprite Pip": "Σποροξωτικό Πιπ",
   "Seed-sprite Bud": "Σποροξωτικό Μπουμπούκι",
@@ -77,20 +81,20 @@ export const EL_GARDEN: Record<string, string> = {
     "Εδώ Δρ. Υπατία, ηχογραφώ από την Αργώ. Μελετάω τις φωτόπετρες που βρήκατε. Κάθε λέξη των Κηπουρών είναι ένα μικρό τραγούδι από χρώματα.",
   "The Gardeners locked their gates with those words. Step on the colours of the right word, in order, and the gate will open.":
     "Οι Κηπουροί κλείδωναν τις πύλες τους με αυτές τις λέξεις. Πατήστε τα χρώματα της σωστής λέξης, με τη σειρά, και η πύλη θα ανοίξει.",
-  "One more thing. The old carvings speak of a guardian that never sleeps. They don’t say “fight it”. They say “sing to it”. I wonder what that means...":
-    "Κάτι ακόμα. Τα παλιά σκαλίσματα μιλάνε για έναν φύλακα που δεν κοιμάται ποτέ. Δεν λένε «πολεμήστε τον». Λένε «τραγουδήστε του». Αναρωτιέμαι τι σημαίνει αυτό...",
+  "One more thing. The old carvings speak of a guardian that never sleeps. They say: “When it rages, be brave. When it tires, sing to it.” I wonder what that means...":
+    "Κάτι ακόμα. Τα παλιά σκαλίσματα μιλάνε για έναν φύλακα που δεν κοιμάται ποτέ. Λένε: «Όταν λυσσομανά, να είστε γενναίοι. Όταν κουραστεί, τραγουδήστε του.» Αναρωτιέμαι τι σημαίνει αυτό...",
   "Another locked gate! That bullseye is on a spire out in the ravine. Nobody can get there... but my arrows can.":
     "Άλλη μια κλειδωμένη πύλη! Ο στόχος είναι πάνω σε έναν βράχο μέσα στη χαράδρα. Κανείς δεν φτάνει εκεί... αλλά τα βέλη μου φτάνουν.",
   "And the red switch is up on that crystal pillar. Too smooth to climb. Good thing I brought a grapple.":
     "Κι ο κόκκινος διακόπτης είναι πάνω σε εκείνη την κρυστάλλινη κολόνα. Πολύ λεία για σκαρφάλωμα. Καλά που έφερα τον γάντζο μου.",
   "The Gardeners built this garden for friends who help each other. I think they would like you two.":
     "Οι Κηπουροί έφτιαξαν αυτόν τον κήπο για φίλους που βοηθάνε ο ένας τον άλλον. Νομίζω ότι θα σας συμπαθούσαν πολύ.",
-  "Ah, the little Argonauts! My weeder drones have been poking that old dragon all week. It is VERY awake now. Enjoy!":
-    "Α, οι μικροί Αργοναύτες! Τα ρομπότ μου τσιγκλάνε εκείνον τον γέρο-δράκο όλη την εβδομάδα. Είναι ΠΟΛΥ ξύπνιος τώρα. Καλή διασκέδαση!",
+  "Ah, the little Argonauts! My weeder drones have been poking that old dragon all week, and I chained it to its tree. It is VERY awake now, and VERY cross. Enjoy!":
+    "Α, οι μικροί Αργοναύτες! Τα ρομπότ μου τσιγκλάνε εκείνον τον γέρο-δράκο όλη την εβδομάδα, κι εγώ τον αλυσόδεσα στο δέντρο του. Είναι ΠΟΛΥ ξύπνιος τώρα, και ΠΟΛΥ θυμωμένος. Καλή διασκέδαση!",
   "It is not a monster. It is a guardian, and it is so tired. It has not slept for a thousand years, guarding the Fleece.":
     "Δεν είναι τέρας. Είναι φύλακας, και είναι τόσο κουρασμένος. Δεν έχει κοιμηθεί εδώ και χίλια χρόνια, φυλάγοντας το Δέρας.",
-  "Then we won’t fight it. We’ll light the lullaby pylons, and you two sing it to sleep!":
-    "Τότε δεν θα τον πολεμήσουμε. Θα ανάψουμε τους στύλους του νανουρίσματος, κι εσείς οι δύο θα τον νανουρίσετε!",
+  "Then we light the lullaby pylons, and you two sing it to sleep. Whatever it takes!":
+    "Τότε θα ανάψουμε τους στύλους του νανουρίσματος, κι εσείς οι δύο θα τον νανουρίσετε. Ό,τι κι αν χρειαστεί!",
   "Sing? To THAT? ...Okay. Okay! I know one song. It is mostly beeps.": "Να τραγουδήσω; Σε ΑΥΤΟ; ...Εντάξει. Εντάξει! Ξέρω ένα τραγούδι. Είναι κυρίως μπιπ.",
   "Shhh... Listen. It is snoring. Very, very softly.": "Σσσς... Ακούστε. Ροχαλίζει. Πολύ, πολύ σιγανά.",
   "We did it! We sang a dragon to sleep! I am the bravest singer in the galaxy.": "Τα καταφέραμε! Νανουρίσαμε έναν δράκο! Είμαι ο πιο γενναίος τραγουδιστής του γαλαξία.",

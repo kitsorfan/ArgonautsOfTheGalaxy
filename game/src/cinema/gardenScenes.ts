@@ -6,7 +6,7 @@ import type { World } from '../game/world';
 import { ease, type Director } from './director';
 
 /**
- * The Garden of Colchis: the lullaby. When the fourth pylon is lit, LUX and IRIS fly up to the Sleepless
+ * The Garden of Colchis: the lullaby. Once the fight has worn it out, LUX and IRIS fly up to the Sleepless
  * Dragon's head and sing it to sleep in light-words (music notes of light stream into it), while it
  * curls up around its tree and closes its eyes (the boss's own `sleepK` rises once it is "defeated").
  * Then the storybook picture of it asleep, the heroes' lines, and a look at the tree-temple's door.

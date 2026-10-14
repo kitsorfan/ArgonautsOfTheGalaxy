@@ -4,9 +4,10 @@ import { audio } from '../../core/audio';
 import { haptic } from '../../core/bridge';
 import type { World } from '../../game/world';
 import { PYLONS, type PylonKind } from './gardenData';
-import { Entity, type HitKind, type Target } from '../entity';
+import { Entity, type HitKind, type Interactable, type Target } from '../entity';
 import { HEROES } from '../heroes/heroes';
 import { cyl, glowSprite, mat, mesh, ownMat, torus } from '../models';
+import { clearShot, powerShot } from './seals';
 
 /**
  * The LULLABY PYLONS around the Sleepless Dragon's lawn: four old Gardener light-pylons, one for each
@@ -16,11 +17,15 @@ import { cyl, glowSprite, mat, mesh, ownMat, torus } from '../models';
  * - HOME: up on a high hedge shelf; only Atalanta's wall-jump gets there. Touch it.
  * - FRIEND: on top of a crystal column; only Jason's grapple gets there. Touch it.
  * They only wake up once the fight has begun; the dragon resets them if the heroes are knocked out.
+ * Until it is lit, each one sends up a thin beam in the colour of the hero who can light it, and the
+ * SKY pylon gives Atalanta a POWER ARROW button whenever her shot is clear.
  */
 
-export class Pylon extends Entity implements Target {
+export class Pylon extends Entity implements Target, Interactable {
   readonly aim: THREE.Vector3;
   radius = 0.9;
+  range = 16;
+  reachY = 6;
   aimable = false;
   lit = false;
   /** Set by the dragon while the fight is on. */
@@ -29,6 +34,9 @@ export class Pylon extends Entity implements Target {
   private ringMat: THREE.MeshStandardMaterial;
   private beam: THREE.Mesh;
   private beamMat: THREE.MeshBasicMaterial;
+  /** The thin beam in the hero's colour that marks it until it is lit. */
+  private need: THREE.Mesh;
+  private needMat: THREE.MeshBasicMaterial;
   private glow: THREE.Sprite;
   private top = new THREE.Group();
   private hinted = false;
@@ -73,6 +81,11 @@ export class Pylon extends Entity implements Target {
     this.beam.position.set(x, y + 20, z);
     this.beam.visible = false;
     this.obj.add(this.beam);
+    this.needMat = new THREE.MeshBasicMaterial({ color: HEROES[def.hero].color, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false });
+    this.need = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.4, 30, 10, 1, true), this.needMat);
+    this.need.position.set(x, y + 15, z);
+    this.need.visible = false;
+    this.obj.add(this.need);
     this.glow = glowSprite(def.color, 3.2, 0);
     this.glow.position.copy(this.top.position);
     this.obj.add(this.glow);
@@ -80,6 +93,22 @@ export class Pylon extends Entity implements Target {
     if (kind === 'grow') this.aim.set(x, y + 0.3, z);
     if (kind === 'grow') this.radius = 1.6;
     world.addTarget(this);
+    if (kind === 'sky') world.addInteractable(this);
+  }
+
+  /** The SKY pylon's button: POWER ARROW for Atalanta, whenever nothing hides it from her bow. */
+  label() {
+    return this.shootable() && clearShot(this.world, this.aim, this.radius) ? 'POWER ARROW' : null;
+  }
+
+  /** True while Atalanta could light this pylon with an arrow. */
+  private shootable() {
+    const pl = this.world.player;
+    return this.def.how === 'arrow' && this.active && !this.lit && !pl.down && pl.hero === 'atalanta';
+  }
+
+  interact() {
+    if (this.label()) powerShot(this.world, this.aim);
   }
 
   get def() {
@@ -148,6 +177,8 @@ export class Pylon extends Entity implements Target {
     this.glow.position.copy(this.top.position);
     this.glow.material.opacity = this.lit ? 0.7 : this.active ? 0.25 + Math.sin(t * 4) * 0.1 : 0;
     this.beamMat.opacity = this.lit ? 0.22 + Math.sin(t * 3) * 0.06 + this.flare * 0.4 : 0;
+    this.need.visible = this.active && !this.lit;
+    this.needMat.opacity = 0.3 + Math.sin(t * 3 + this.spot.x) * 0.1;
     // Only Atalanta's bow locks on to the SKY pylon (Jason's blaster shouldn't waste shots on it).
     this.aimable = this.def.how === 'arrow' && this.active && !this.lit && w.player.hero === 'atalanta';
     if (this.lit && Math.random() < dt * 6) w.particles.emit(this.top.position.x, this.top.position.y, this.top.position.z, { count: 1, color: this.def.color, speed: 0.6, up: 3, life: 1.2, size: 0.4, gravity: -1 });
