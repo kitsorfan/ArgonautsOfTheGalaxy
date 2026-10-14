@@ -3,7 +3,7 @@ import { isCollectible, reach, refillGaps, timedRoutes } from '../tools/reach';
 import { FLYOVER, TRANSITIONS } from '../src/game/story';
 import { CHAPTER_DECKS, FOOT_LEVELS, LEVELS, LEVEL_ORDER, chapterSize, isFinale } from '../src/levels';
 import { parseLevel } from '../src/world/grid';
-import type { Ability } from '../src/world/levelTypes';
+import { PASSABLE_DECOR, type Ability } from '../src/world/levelTypes';
 
 const ALL: Ability[] = ['doubleJump', 'dash', 'glide', 'pulse', 'grapple', 'mirror'];
 // The levels Jason walks; the flight levels have their own checks in chapter3.test.ts.
@@ -93,6 +93,20 @@ describe.each(FOOT_LEVELS)('%s layout', (id) => {
     const r = reach(level, after);
     const stuck = r.missing.filter((e) => !isCollectible(e.spec)).map((e) => `${e.id} at ${e.cx},${e.cz}`);
     expect(stuck).toEqual([]);
+  });
+
+  it('never stands a solid prop right in front of a door or cracked wall', () => {
+    // The checker can squeeze past a pillar diagonally; the heroes can't (a pillar once sealed a door in the Golden Fleece).
+    const at = new Map(level.entities.map((e) => [e.cz * level.width + e.cx, e.spec]));
+    const blocked: string[] = [];
+    for (const e of level.entities) {
+      if (e.spec.type !== 'door' && e.spec.type !== 'cracked') continue;
+      for (const [dx, dz] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+        const s = at.get((e.cz + dz) * level.width + e.cx + dx);
+        if (s?.type === 'decor' && s.solid !== false && !PASSABLE_DECOR.includes(s.kind)) blocked.push(`${e.id} at ${e.cx},${e.cz}: ${s.kind}`);
+      }
+    }
+    expect(blocked).toEqual([]);
   });
 
   it('keeps every collectible reachable (some may need later abilities)', () => {
