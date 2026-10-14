@@ -157,6 +157,8 @@ export const EL_FLEECE: Record<string, string> = {
   "SMASH": "ΣΠΑΣ’ ΤΟ",
   "This seal is for Atalanta! Tap the SWITCH button until she is playing, then press POWER ARROW.": "Αυτή η σφραγίδα είναι για την Αταλάντη! Πάτα το κουμπί ΑΛΛΑΓΗ ώσπου να παίζεις μ’ εκείνη, και μετά πάτα ΔΥΝΑΤΟ ΒΕΛΟΣ.",
   "Atalanta can’t pound switches! Tap the SWITCH button to play as Jason or General Brennus, then press POUND.": "Η Αταλάντη δεν μπορεί να καρφώσει διακόπτες! Πάτα το κουμπί ΑΛΛΑΓΗ για να παίξεις με τον Ιάσονα ή τον Στρατηγό Βρέννο, και μετά πάτα ΚΑΡΦΩΜΑ.",
+  "This seal is up on the pillar: only Jason’s GRAPPLE gets there! Tap the SWITCH button until he is playing, then press GRAPPLE.": "Αυτή η σφραγίδα είναι πάνω στην κολόνα: μόνο ο ΓΑΝΤΖΟΣ του Ιάσονα φτάνει εκεί! Πάτα το κουμπί ΑΛΛΑΓΗ ώσπου να παίζεις μ’ εκείνον, και μετά πάτα ΓΑΝΤΖΟΣ.",
+  "Atalanta can’t see the bullseye from here! Step back until POWER ARROW shows up.": "Η Αταλάντη δεν βλέπει τον στόχο από εδώ! Κάνε λίγα βήματα πίσω ώσπου να φανεί το ΔΥΝΑΤΟ ΒΕΛΟΣ.",
   "Only General Brennus can smash this rock! Tap the SWITCH button until he is playing, then press SMASH.": "Μόνο ο Στρατηγός Βρέννος μπορεί να σπάσει αυτόν τον βράχο! Πάτα το κουμπί ΑΛΛΑΓΗ ώσπου να παίζεις μ’ εκείνον, και μετά πάτα ΣΠΑΣ’ ΤΟ.",
   "Seal broken! {n} more to go.": "Η σφραγίδα έσπασε! Μένουν ακόμα: {n}.",
   "All three seals are broken! The Fleece vault is open!": "Έσπασαν και οι τρεις σφραγίδες! Το θησαυροφυλάκιο του Δέρατος άνοιξε!",
