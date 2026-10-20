@@ -126,7 +126,7 @@ describe('the game’s final endings', () => {
   it('rolls the final credits for the whole game, with who made it', () => {
     const save = newSave();
     const credits = creditsHtml('gardeners', save);
-    for (const name of ['Frost Warden', 'the Colossus', 'AELLO', 'Golden King', 'Atalanta', 'General Brennus', 'THE END', 'Kitsos Orfanopoulos']) expect(credits).toContain(name);
+    for (const name of ['Frost Warden', 'the Colossus', 'AELLO', 'Golden King', 'Atalanta', 'General Brennus', 'THE END', 'Kitsu Game Studios', 'Kitsos Orfanopoulos']) expect(credits).toContain(name);
     expect(creditsHtml('fleece', save)).toContain('in full bloom');
     // Every composer is thanked, with where they shared the music and its license.
     for (const name of ['Kevin MacLeod', 'incompetech.com', 'Matthew Pablo', 'OpenGameArt.org', 'CC BY 4.0', 'creativecommons.org']) expect(credits).toContain(name);

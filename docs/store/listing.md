@@ -2,7 +2,8 @@
 
 Everything to paste into Play Console for the first release, in English (default) and Greek. Character counts are checked against Play's limits by the snippet at the end of this file.
 
-- **Package:** `com.hullbreach.leviathan` (this can never change after the first upload)
+- **Developer name:** Kitsu Game Studios (set in Play Console's developer account settings, not in the app; the account itself is a personal one in Kitsos Orfanopoulos's name)
+- **Package:** `com.kitsugamestudios.argonauts` (this can never change after the first upload)
 - **Default language:** English (United States), en-US, with a Greek (el-GR) translation
 - **App or game:** Game. **Category:** Adventure
 - **Free or paid:** Free. A free app can never become paid later.

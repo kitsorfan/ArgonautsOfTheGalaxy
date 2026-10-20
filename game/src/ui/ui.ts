@@ -1497,7 +1497,7 @@ export class UI {
       <div class="panel-head"><div class="about-emblem">${emblemSvg(96)}</div>
         <div><div class="about-name logo">${upper(tr(GAME_NAME))}</div><div class="about-ver">${tr('Version {v}', { v: VERSION })}</div></div>
         <button class="icon-btn back" aria-label="${tr('Back')}">${ICON.close}</button></div>
-      <p class="about-by">${tr('Created by {name}', { name: `<b>${CREATOR.name}</b>` })}</p>
+      <p class="about-by">${tr('Created by {name}', { name: `<b>${CREATOR.studio}</b> (${CREATOR.name})` })}</p>
       <div class="about-links">
         <button class="menu-btn mail">${ICON.mail}<span>${tr('Contact me')}<small>${CREATOR.email}</small></span></button>
         <button class="menu-btn site">${ICON.globe}<span>${tr('My website')}<small>${CREATOR.site}</small></span></button>

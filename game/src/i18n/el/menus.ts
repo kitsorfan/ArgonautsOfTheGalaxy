@@ -3,7 +3,7 @@ export const EL_MENUS: Record<string, string> = {
   // The END OF CHAPTER card and the end credits.
   "Next": "Επόμενο",
   "{finds}: {n} / {total}. Find the rest for a secret ending!": "{finds}: {n} / {total}. Βρες όσα λείπουν για ένα μυστικό φινάλε!",
-  "A GAME BY": "ΕΝΑ ΠΑΙΧΝΙΔΙ ΤΟΥ",
+  "A GAME BY": "ΕΝΑ ΠΑΙΧΝΙΔΙ ΤΗΣ",
   "CREATED BY": "ΔΗΜΙΟΥΡΓΟΣ",
 
   // What"s new.

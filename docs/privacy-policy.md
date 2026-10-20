@@ -6,7 +6,7 @@
 
 **Effective date:** 5 October 2026
 
-Argonauts of the Galaxy (in Greek, Αργοναύτες του Γαλαξία; formerly AstroTroubles!) is a single-player game for Android made by Kitsos Orfanopoulos.
+Argonauts of the Galaxy (in Greek, Αργοναύτες του Γαλαξία; formerly AstroTroubles!) is a single-player game for Android made by Kitsu Game Studios, the studio name of Kitsos Orfanopoulos.
 
 **In short: the game collects no information about you.** It has no accounts, no ads, no analytics and no in-app purchases, and it never sends anything over the internet.
 
@@ -51,7 +51,7 @@ Questions about this policy: **[kitsorfan@protonmail.com](mailto:kitsorfan@proto
 
 **Ισχύει από:** 5 Οκτωβρίου 2026
 
-Οι Αργοναύτες του Γαλαξία (στα αγγλικά, Argonauts of the Galaxy· παλιότερα Αστρομπελάδες) είναι ένα παιχνίδι ενός παίκτη για Android, από τον Κίτσο Ορφανόπουλο.
+Οι Αργοναύτες του Γαλαξία (στα αγγλικά, Argonauts of the Galaxy· παλιότερα Αστρομπελάδες) είναι ένα παιχνίδι ενός παίκτη για Android, από την Kitsu Game Studios, το στούντιο του Κίτσου Ορφανόπουλου.
 
 **Με λίγα λόγια: το παιχνίδι δεν συλλέγει καμία πληροφορία για σένα.** Δεν έχει λογαριασμούς, διαφημίσεις, στατιστικά χρήσης ή αγορές μέσα στην εφαρμογή, και δεν στέλνει ποτέ τίποτα μέσω του διαδικτύου.
 

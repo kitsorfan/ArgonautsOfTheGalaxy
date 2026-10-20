@@ -440,7 +440,7 @@ export function creditsHtml(kind: EndingKind, save: SaveData): string {
     `<h1>${upper(tr(GAME_NAME))}</h1>`,
     `<h2>${tr('THE ARGONAUTS')}</h2>`,
     head('A GAME BY'),
-    `<p class="creator">${CREATOR.name}</p>`,
+    `<p class="creator">${CREATOR.studio}</p>`,
     head('STARRING'),
     p('Jason, junior engineer'),
     p('LUX, a very brave little drone'),

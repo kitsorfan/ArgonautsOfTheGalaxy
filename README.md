@@ -2,7 +2,7 @@
 
 <img src="assets/images/icon.png" alt="The app icon: LUX, a little white repair drone with a big glowing eye, circled by a golden orbit in deep space" width="112" align="right"/>
 
-**Version 1.0.0** · made by **Kitsos Orfanopoulos** ([kitsorfan@protonmail.com](mailto:kitsorfan@protonmail.com) · [www.kitsorfan.com](https://www.kitsorfan.com)) · [release notes](#release-notes)
+**Version 1.0.0** · made by **Kitsu Game Studios** (Kitsos Orfanopoulos, [kitsorfan@protonmail.com](mailto:kitsorfan@protonmail.com) · [www.kitsorfan.com](https://www.kitsorfan.com)) · [release notes](#release-notes)
 
 ![The title screen: ARGONAUTS OF THE GALAXY over Jason waving in front of the colony ship Syracusia, overgrown with pink GaScu vines, with LUX flying by](docs/screenshots/title.jpg)
 
@@ -426,7 +426,7 @@ The app icon is LUX in deep space, circled by a golden orbit (the Argonauts' voy
 
 ## About, version and release notes
 
-**Settings → About** shows the game's version, who made it, a **Contact me** button (opens an email to kitsorfan@protonmail.com), **My website** (www.kitsorfan.com, in the phone's browser) and **What's new**, the release notes. The version comes from `expo.version` in `app.json`, stamped into the game page by `game/build.mjs`. The release notes live in `game/src/game/releaseNotes.ts` (their Greek in `game/src/i18n/el.ts`); a test fails if the newest entry doesn't match `app.json`, so a new version needs both.
+**Settings → About** shows the game's version, who made it (Kitsu Game Studios, with Kitsos Orfanopoulos's name beside it), a **Contact me** button (opens an email to kitsorfan@protonmail.com), **My website** (www.kitsorfan.com, in the phone's browser) and **What's new**, the release notes. The version comes from `expo.version` in `app.json`, stamped into the game page by `game/build.mjs`. The release notes live in `game/src/game/releaseNotes.ts` (their Greek in `game/src/i18n/el.ts`); a test fails if the newest entry doesn't match `app.json`, so a new version needs both.
 
 ## Release notes
 
@@ -445,7 +445,7 @@ The first release:
 
 ## Credits
 
-Created by **Kitsos Orfanopoulos**: [kitsorfan@protonmail.com](mailto:kitsorfan@protonmail.com) · [www.kitsorfan.com](https://www.kitsorfan.com).
+Created by **Kitsu Game Studios**, the studio name of Kitsos Orfanopoulos: [kitsorfan@protonmail.com](mailto:kitsorfan@protonmail.com) · [www.kitsorfan.com](https://www.kitsorfan.com).
 
 The music is by the artists credited in [assets/music/CREDITS.md](assets/music/CREDITS.md) (and in the game's end credits).
 

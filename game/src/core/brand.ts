@@ -7,8 +7,8 @@ export const GAME_NAME = 'Argonauts of the Galaxy';
 /** The colony ship Jason lives on. Story text refers to it as {ship}. */
 export const SHIP = 'Syracusia';
 
-/** Who made the game, shown under Settings → About. */
-export const CREATOR = { name: 'Kitsos Orfanopoulos', email: 'kitsorfan@protonmail.com', site: 'www.kitsorfan.com' };
+/** Who made the game: Kitsu Game Studios is the studio name of Kitsos Orfanopoulos. Shown under Settings → About and in the end credits. */
+export const CREATOR = { studio: 'Kitsu Game Studios', name: 'Kitsos Orfanopoulos', email: 'kitsorfan@protonmail.com', site: 'www.kitsorfan.com' };
 
 declare const __APP_VERSION__: string | undefined;
 

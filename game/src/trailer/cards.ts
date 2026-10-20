@@ -45,7 +45,7 @@ function face(card: Card): string {
       ${logo()}
       ${card.text ? `<p class="tr-ask">${esc(say(card.text))}</p>` : ''}
       ${kicker ? `<p class="tr-pill">${esc(say(card.kicker))}</p>` : ''}
-      ${lang() === 'el' ? '' : `<p class="tr-by">A game by <b>${esc(CREATOR.name)}</b></p>`}
+      ${lang() === 'el' ? '' : `<p class="tr-by">A game by <b>${esc(CREATOR.studio)}</b></p>`}
       <p class="tr-credit">${music}: “${esc(song.title)}” · ${esc(song.artist)} · ${esc(song.license)}</p>
     </div>`;
   }
