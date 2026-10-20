@@ -78,7 +78,7 @@ A STORY LIKE A GRAPHIC NOVEL
 Cutscenes in the game world, bosses that make an entrance with their own name cards, and the big story moments drawn as graphic-novel pictures.
 
 MADE FOR YOUNG PLAYERS AND EVERYONE ELSE
-Bright and forgiving, for players of about 9 and up. Plays fully offline. No ads and no in-app purchases. In English and Greek.
+Bright and forgiving, for players of about 7 and up. Plays fully offline. No ads and no in-app purchases. In English and Greek.
 
 Best played in landscape, with headphones.
 ```
@@ -140,7 +140,7 @@ The first release:
 Κινηματογραφικές σκηνές μέσα στον κόσμο του παιχνιδιού, αντίπαλοι που κάνουν την είσοδό τους με το όνομά τους σε μεγάλα γράμματα, και οι μεγάλες στιγμές της ιστορίας ζωγραφισμένες σαν κόμικ.
 
 ΓΙΑ ΜΙΚΡΟΥΣ ΚΑΙ ΜΕΓΑΛΟΥΣ
-Πολύχρωμο και χωρίς άγχος, για παίκτες από 9 ετών και πάνω. Παίζεται χωρίς σύνδεση στο διαδίκτυο. Χωρίς διαφημίσεις και χωρίς αγορές μέσα στην εφαρμογή. Στα ελληνικά και στα αγγλικά.
+Πολύχρωμο και χωρίς άγχος, για παίκτες από 7 ετών και πάνω. Παίζεται χωρίς σύνδεση στο διαδίκτυο. Χωρίς διαφημίσεις και χωρίς αγορές μέσα στην εφαρμογή. Στα ελληνικά και στα αγγλικά.
 
 Παίζεται καλύτερα με το κινητό οριζόντια και με ακουστικά.
 ```
@@ -167,7 +167,7 @@ These are the answers for Play Console's **Policy → App content** forms, based
 | Ads | No, the app contains no ads |
 | App access | All functionality is available without any access restrictions |
 | Content rating (IARC questionnaire) | Category: Game. Violence: yes, cartoon or fantasy violence against robots and monsters, with no blood or gore and no realistic human violence. No sexual content, bad language, drugs, alcohol or gambling. No user-to-user chat or sharing, no location sharing, no digital purchases. Play gives the final rating; expect about PEGI 7 / ESRB Everyone 10+ |
-| Target audience | 9 to 12, 13 to 15, 16 to 17 and 18+. Including 9 to 12 means the [Families policy](https://support.google.com/googleplay/android-developer/answer/9893335) applies, which the game already meets: no ads, no data collection, no purchases |
+| Target audience | 6 to 8, 9 to 12, 13 to 15, 16 to 17 and 18+. Including children means the [Families policy](https://support.google.com/googleplay/android-developer/answer/9893335) applies, which the game already meets: no ads, no data collection, no purchases |
 | Data safety | "Does your app collect or share any of the required user data types?" **No.** The save stays on the device and is never sent anywhere |
 | Government app, financial features, health, news | No |
 
