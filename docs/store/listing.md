@@ -179,9 +179,26 @@ Play needs a public, non-editable web page, not a PDF. The repo is public on Git
 
 ## Before you submit
 
-1. Build the app bundle: `npx eas-cli@latest build -p android --profile production`. EAS keeps the Android `versionCode` (`appVersionSource: "remote"` in `eas.json`) and raises it on every production build, so each upload is accepted. For a local Gradle build of an upload, run `npx eas-cli@latest build:version:sync -p android` first.
-2. For a personal developer account, run a closed test first: at least 12 testers, opted in for 14 days in a row. Only then can you apply for production.
-3. Upload the first `.aab` by hand in Play Console. Later builds can use `eas submit`.
+1. Raise `android.versionCode` in `app.json` by one for every upload after the first (Play refuses a number it has seen before), and `expo.version` when players should see a new version.
+2. Build and sign the app bundle on this PC, as below. No EAS account is needed.
+3. For a personal developer account, run a closed test first: at least 12 testers, opted in for 14 days in a row. Only then can you apply for production.
+4. Upload the `.aab` in Play Console. On the first upload, keep **Play App Signing** on: Google signs what players download with its own key, and the upload key below only proves that uploads come from you.
+
+### Building the upload bundle locally
+
+The upload key is `kitsu-upload.jks`, kept outside the repo in `C:\Users\ChristosOrfanopoulos\android-tools\keys\`, with its alias and password in `kitsu-upload.properties` next to it. Back both files up together and never commit them. If the key is ever lost, Play Console support can reset the upload key; the app itself is safe, because Google holds the app signing key.
+
+`android/` is generated, so the signing isn't written into it: Gradle's `android.injected.signing.*` properties sign the release build from the command line. In PowerShell, from a checkout at a short path such as `C:\atb` (long paths break the native build), with `JAVA_HOME` and `ANDROID_HOME` set:
+
+```powershell
+npm run game:build
+npx expo prebuild --platform android --clean --no-install
+$k = @{}; Get-Content "$env:USERPROFILE\android-tools\keys\kitsu-upload.properties" | Where-Object { $_ -match '^(\w+)=(.*)$' } | ForEach-Object { $k[$Matches[1]] = $Matches[2] }
+cd android
+.\gradlew.bat bundleRelease assembleRelease --no-daemon "-PreactNativeArchitectures=arm64-v8a,armeabi-v7a" "-Pandroid.injected.signing.store.file=$($k.storeFile)" "-Pandroid.injected.signing.store.password=$($k.storePassword)" "-Pandroid.injected.signing.key.alias=$($k.keyAlias)" "-Pandroid.injected.signing.key.password=$($k.keyPassword)"
+```
+
+The bundle for Play is `android\app\build\outputs\bundle\release\app-release.aab`; the APK in `outputs\apk\release\` is for installing straight on a phone. To check that the bundle carries the upload key and not the debug key, `keytool -printcert -jarfile app-release.aab` should show `CN=Kitsu Game Studios`.
 
 ## Checking the character limits
 
