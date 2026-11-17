@@ -7,7 +7,7 @@ import { tr } from '../core/i18n';
 import type { Boss } from '../entities/bosses';
 import type { BoltFind, Exit, Holo } from '../entities/props';
 import type { World } from '../game/world';
-import { BOSS_CARD, FLYOVER, lightStones } from '../game/story';
+import { BOSS_CARD, FLYOVER, READY_TO_TALK, lightStones } from '../game/story';
 import { inChapter, isFinale } from '../levels';
 import type { Line } from '../world/levelTypes';
 import { ease, type Director, type Rig } from './director';
@@ -248,7 +248,7 @@ function bossLines(w: World, b: Boss): Line[] {
     const n = inChapter(w.save.shards, 1);
     lines.push(
       n >= 18
-        ? { who: 'bolt', text: 'Jason, I know its light-words now! Get close to the Heart and press SPEAK!' }
+        ? READY_TO_TALK.heart
         : { who: 'bolt', text: tr('If only we had all 18 memory shards... (we have {n}) then I could try to TALK to it.', { n }) },
     );
   }
@@ -256,7 +256,7 @@ function bossLines(w: World, b: Boss): Line[] {
     const n = inChapter(w.save.shards, 2);
     lines.push(
       n >= 18
-        ? { who: 'bolt', text: 'Jason, you read every page of his journal. You know who he really is. Get close and TALK to him!' }
+        ? READY_TO_TALK.colossus
         : { who: 'bolt', text: tr('If only we had all 18 journal pages... (we have {n}) then maybe we could reach the man inside that machine.', { n }) },
     );
   }
@@ -265,7 +265,7 @@ function bossLines(w: World, b: Boss): Line[] {
     const { n, total } = lightStones(w.save);
     lines.push(
       n >= total
-        ? { who: 'iris', text: 'LUX, we know every Gardener word now. When this is over, we can speak to the Fleece itself!' }
+        ? READY_TO_TALK.goldenking
         : { who: 'bolt', text: tr('If only we had every Gardener light-stone... (we have {n} of {total}) then IRIS and I could talk to the Fleece in its own words.', { n, total }) },
     );
   }

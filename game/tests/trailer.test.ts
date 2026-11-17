@@ -1,13 +1,30 @@
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { MUSIC_CREDITS, MUSIC_FILES } from '../src/core/music';
 import { BAR, FPS, MUSIC, barFrame, layout, presence } from '../src/trailer/cut';
 import { drift, follow, glide, orbit } from '../src/trailer/moves';
+import { NARRATION, NARRATOR, VOICE_DIR } from '../src/trailer/narration';
 import { CARDS, SHOTS } from '../src/trailer/shots';
 
 const SLOTS = layout(SHOTS.map((s) => s.bars));
 const TOTAL = SLOTS[SLOTS.length - 1].to;
+const VOICE = join(__dirname, '../..', VOICE_DIR);
+
+/** Seconds of sound in a WAV file. */
+function wavSeconds(file: string): number {
+  const b = readFileSync(file);
+  let byteRate = 0;
+  let data = 0;
+  for (let at = 12; at + 8 <= b.length; ) {
+    const size = b.readUInt32LE(at + 4);
+    const id = b.toString('ascii', at, at + 4);
+    if (id === 'fmt ') byteRate = b.readUInt32LE(at + 16);
+    if (id === 'data') data = size;
+    at += 8 + size + (size % 2);
+  }
+  return data / byteRate;
+}
 
 describe('the trailer cut', () => {
   it('lays shots end to end, every cut on a bar line', () => {
@@ -64,6 +81,33 @@ describe('the trailer cut', () => {
     // The music starts on one of its own bar lines.
     const bars = (MUSIC.from - 0.012) / BAR;
     expect(Math.abs(bars - Math.round(bars))).toBeLessThan(0.001);
+  });
+});
+
+describe('the trailer narration', () => {
+  it('speaks its lines in order, inside the trailer', () => {
+    expect(new Set(NARRATION.map((l) => l.id)).size).toBe(NARRATION.length);
+    NARRATION.forEach((line, i) => {
+      expect(line.say.trim()).toBeTruthy();
+      expect(barFrame(line.at)).toBeLessThan(TOTAL);
+      if (i > 0) expect(line.at).toBeGreaterThan(NARRATION[i - 1].at);
+    });
+  });
+
+  it('has a recording of every line, in the narrator’s voice and the line’s words (npm run voice)', () => {
+    const made = JSON.parse(readFileSync(join(VOICE, 'lines.json'), 'utf8'));
+    for (const line of NARRATION) {
+      expect(made.lines[line.id]).toMatchObject({ engine: NARRATOR.engine, voice: NARRATOR.voice, say: line.say });
+      expect(existsSync(join(VOICE, `${line.id}.wav`))).toBe(true);
+    }
+  });
+
+  it('lets every line finish before the next begins, and before the film ends', () => {
+    NARRATION.forEach((line, i) => {
+      const end = line.at * BAR + wavSeconds(join(VOICE, `${line.id}.wav`));
+      const next = i + 1 < NARRATION.length ? NARRATION[i + 1].at * BAR : TOTAL / FPS - 0.3;
+      expect(end).toBeLessThan(next - 0.1);
+    });
   });
 });
 

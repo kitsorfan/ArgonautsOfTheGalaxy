@@ -1,8 +1,9 @@
-import type { HeroId } from '../../world/levelTypes';
+import type { HeroId, Line } from '../../world/levelTypes';
 
 /**
  * The Garden of Colchis's rules as plain data (no three.js, so the tests can read them): the four
- * lullaby pylons around the Sleepless Dragon's lawn, and the weeder drones' timings.
+ * lullaby pylons around the Sleepless Dragon's lawn, the weeder drones' timings, and what the droids
+ * say during the fight (so the voice-over, game/tools/voice.ts, finds it too).
  *
  * Each pylon is one word of the Gardeners' lullaby and needs one hero's skill to light: SKY a power
  * arrow (Atalanta), GROW a ground pound (Jason), HOME a touch up on a hedge shelf only Atalanta's
@@ -19,6 +20,19 @@ export const PYLONS: Record<PylonKind, { word: string; color: string; hero: Hero
   home: { word: 'HOME', color: '#7dff9a', hero: 'atalanta', how: 'touch', text: '' },
   friend: { word: 'FRIEND', color: '#ffe066', hero: 'jason', how: 'touch', text: '' },
 };
+
+/** What the droids say as each of the first three pylons melts one of the dragon's chains (LUX is `bolt`). */
+export const DRAGON_VERSES: Line[] = [
+  { who: 'bolt', text: 'The first verse! And look: the light melted one of Aeëtes’s gold chains!' },
+  { who: 'iris', text: 'Two chains gone. It is pulling at the last ones. Careful, everyone!' },
+  { who: 'bolt', text: 'Three! One more pylon and the lullaby is ready... and the dragon is free. Get ready!' },
+];
+
+/** What they say as the dragon nods off in the fight. */
+export const DRAGON_NODDING: Line[] = [
+  { who: 'iris', text: 'It yawned! It is getting tired. Keep going: the song is starting to work!' },
+  { who: 'bolt', text: 'Its eyes are drooping! Just a little more!' },
+];
 
 /** Weeder drones: health, hover height, how far they keep from the hero, and the spray's warning, rest and splash timings. */
 export const WEEDER_TUNING = {

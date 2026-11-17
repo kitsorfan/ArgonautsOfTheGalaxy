@@ -374,16 +374,18 @@ game/                    the 3D game (TypeScript, three.js), bundled with esbuil
   src/vehicles/          the vehicle levels: the Argo's flight, and (in sub/) the submarine Dolphin's dive,
                          its siren buoys and THE SIREN ORGAN
   src/i18n/              the Greek translation
-  src/trailer/           the game's trailer: the shot list cut to the music's bars, camera moves, title cards
+  src/trailer/           the game's trailer: the shot list cut to the music's bars, camera moves, title cards,
+                         narration
   src/ui/                HUD, touch controls, menus, dialogue and hacking screens
   tools/                 level reachability checker (npm run game:check), translation check (npm run game:i18n),
                          brand art renderer (npm run gen:icons: the app icon, Android icon layers, favicon,
                          Play Store icon and splash image, drawn from src/ui/emblem.ts; needs Chrome or Edge),
-                         trailer recorder (npm run trailer)
+                         trailer recorder (npm run trailer), narration recorder (npm run voice, voice/)
   tests/                 Jest tests: deck data, reachability of every deck, physics, translations, review prompt
 src/app/                 Expo Router screens: the WebView host (plus an iframe version for web)
 src/generated/           game page as a string (generated, git-ignored)
-assets/                  app icons and splash image, plus the app's name on phones set to Greek (languages/)
+assets/                  app icons and splash image, the app's name on phones set to Greek (languages/), the
+                         soundtrack (music/) and the trailer's narration (voice/)
 docs/                    privacy policy, plus the Google Play listing text, screenshots and store graphics
 .claude/                 instructions and settings for Claude Code
 ```
@@ -407,6 +409,14 @@ npm run game:i18n     # English strings still missing a Greek translation
 ### The trailer
 
 The game films its own trailer: about a minute, cut to *Sons of the Storm* (`assets/music/epic.mp3`), with every cut on a bar line. `npm run trailer` builds the game, plays it in a headless Chrome or Edge on a clock of its own (each frame is exactly a sixtieth of a second, however long it took to draw) and writes `trailer/argonauts-trailer.mp4` in full HD with ffmpeg; `-- --lang el` makes the Greek one (`argonauts-trailer-el.mp4`), and `-- --stills` writes three pictures of every shot to `trailer/stills/` instead, which is the quick way to check a change. Opening `game/dist/index.html#trailer` plays it live in a desktop browser. The shots, captions and end card are in `game/src/trailer/shots.ts`; the trailer plays on a save of its own and never touches the player's.
+
+The English trailer has a narrator (see **Voices**), who reads the captions as they come up, says the game's name on the drop and asks *Will you make it?* at the end; the music dips under every line. The lines are in `game/src/trailer/narration.ts`. The recorder won't film with a recording that doesn't match its line (`-- --no-voice` leaves the narrator out); the Greek trailer has none, as the voices speak only English.
+
+### Voices
+
+The whole story is voiced in English: every cutscene, conversation, hologram log, storybook page and caption, and the signs LUX reads out (about 1,140 lines, two hours of speech). It is spoken by [Kyutai's Pocket TTS](https://huggingface.co/kyutai/pocket-tts), on the CPU, ahead of time; General Brennus and Aeëtes, whom none of its voices suited, by [Resemble AI's Chatterbox](https://huggingface.co/ResembleAI/chatterbox), copying voices donated to Kyutai. In the game, a line or caption that has a recording is spoken as it comes up (dialogue then types out without its blips, a caption stays up until the narrator has finished, and the music dips underneath); a tap moves on and stops it. In the app the phone plays the recordings natively (`src/voice.ts`), in a browser an `<audio>` element does; the Greek game stays silent, as the voices speak only English, and so does a line whose words depend on the game (a count of shards, say). `game/src/core/cast.ts` gives each speaker a voice (and the robots and the plant an effect); `#cinema=arrival` plays chapter 2's opening, and `#deck=harpies&play=meet` Atalanta joining the Argonauts.
+
+The recordings are committed (`assets/voice/trailer` as WAV for the trailer, `assets/voice/game` as small MP3s named by a hash of speaker and words, with an `index.json` of their lengths for the game), so building the game or the trailer needs no speech engine; only whoever changes a line or the cast does. `npm run voice` finds every line in the levels and the story by itself, records whatever is new or changed (`-- --only <id>` asks for a fresh take of one line, `-- --force` of all, `-- --dry` only says what it would record) and has Whisper listen to every take and name any that leave out or swap a word. A long run keeps what it has made if it stops, and the next run carries on. It needs Python 3.12 with the packages in `game/tools/voice/requirements.txt`, set up once outside the project (the file says how), and, for Chatterbox's parts, a second one with `requirements-chatterbox.txt`. The voices and their licenses are in [assets/voice/CREDITS.md](assets/voice/CREDITS.md).
 
 ## Releasing on Google Play
 
@@ -447,7 +457,7 @@ The first release:
 
 Created by **Kitsu Game Studios**, the studio name of Kitsos Orfanopoulos: [kitsorfan@protonmail.com](mailto:kitsorfan@protonmail.com) · [www.kitsorfan.com](https://www.kitsorfan.com).
 
-The music is by the artists credited in [assets/music/CREDITS.md](assets/music/CREDITS.md) (and in the game's end credits).
+The music is by the artists credited in [assets/music/CREDITS.md](assets/music/CREDITS.md) (and in the game's end credits). The voices are credited in [assets/voice/CREDITS.md](assets/voice/CREDITS.md).
 
 ## License
 

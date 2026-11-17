@@ -1,0 +1,58 @@
+{
+  "lines": {
+    "ch1": {
+      "engine": "pocket-tts",
+      "voice": "javert",
+      "say": "Wake up among the stars.",
+      "seconds": 1.549
+    },
+    "lux": {
+      "engine": "pocket-tts",
+      "voice": "javert",
+      "say": "Solve puzzles. Uncover the story.",
+      "seconds": 2.611
+    },
+    "ch2": {
+      "engine": "pocket-tts",
+      "voice": "javert",
+      "say": "Explore a wild new world.",
+      "seconds": 2.161
+    },
+    "ch3": {
+      "engine": "pocket-tts",
+      "voice": "javert",
+      "say": "Sail for the Golden Fleece.",
+      "seconds": 1.692
+    },
+    "title": {
+      "engine": "pocket-tts",
+      "voice": "javert",
+      "say": "Argonauts of the Galaxy.",
+      "seconds": 1.511
+    },
+    "chapters": {
+      "engine": "pocket-tts",
+      "voice": "javert",
+      "say": "Three chapters.",
+      "seconds": 1.016
+    },
+    "heroes": {
+      "engine": "pocket-tts",
+      "voice": "javert",
+      "say": "Three heroes.",
+      "seconds": 1.095
+    },
+    "end": {
+      "engine": "pocket-tts",
+      "voice": "javert",
+      "say": "Will you make it?",
+      "seconds": 0.931
+    },
+    "soon": {
+      "engine": "pocket-tts",
+      "voice": "javert",
+      "say": "Coming soon, to Android.",
+      "seconds": 2.326
+    }
+  }
+}

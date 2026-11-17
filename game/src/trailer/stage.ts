@@ -76,6 +76,11 @@ export interface Tally {
   shots: { id: string; from: number; to: number }[];
   /** The recording the soundtrack is cut from (assets/music/<file>.mp3), where it starts, and its tempo. */
   music: { file: string; from: number; bpm: number };
+  /**
+   * The narrator: the engine and voice its recordings (in `dir`) must have been made with, and each line
+   * with the second it starts. No lines when the trailer has no narrator.
+   */
+  voice: { engine: string; voice: string; dir: string; lines: { id: string; at: number; text: string }[] };
 }
 
 declare global {

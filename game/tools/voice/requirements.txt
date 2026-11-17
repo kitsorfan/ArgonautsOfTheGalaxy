@@ -1,0 +1,13 @@
+# The speech engine behind `npm run voice` (game/tools/voice.ts). Python 3.12, kept outside the project
+# so Metro never crawls it, and shared by every checkout:
+#
+#   uv venv ~/.argonauts-voice --python 3.12
+#   uv pip install --python ~/.argonauts-voice -r game/tools/voice/requirements.txt
+#
+# (or set VOICE_PYTHON to another interpreter that has these). Everything runs on the CPU. The parts
+# Chatterbox reads need a second Python: see requirements-chatterbox.txt.
+pocket-tts
+soundfile
+numpy
+# Listens to every take and names the ones that say something else. Optional, but cheap insurance.
+faster-whisper

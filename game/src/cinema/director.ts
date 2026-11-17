@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 
+import { hush, speak } from '../core/voice';
 import type { PanelId } from '../ui/panels';
 import type { UI } from '../ui/ui';
 import type { Line, StoryBeat } from '../world/levelTypes';
@@ -140,11 +141,16 @@ export class Director {
     });
   }
 
-  /** Shows a line of narration until it has been on screen long enough to read, or the player taps. */
+  /**
+   * Shows a line of narration until it has been on screen long enough to read, or the player taps. When
+   * the narrator reads it (core/voice.ts) it stays up until he has finished.
+   */
   async caption(text: string, seconds = Math.max(2.8, text.length * 0.06)) {
     if (this.skipping) return;
     this.ui.caption(text);
-    await Promise.race([this.wait(seconds), this.tapped()]);
+    const read = speak('narrator', text);
+    await Promise.race([this.wait(Math.max(seconds, read + 0.5)), this.tapped()]);
+    if (read) hush();
     this.ui.caption(null);
     await this.wait(0.25);
   }
@@ -210,5 +216,6 @@ export class Director {
     this.tap();
     this.cancelSpeech?.();
     this.ui.caption(null);
+    hush();
   }
 }

@@ -13,6 +13,7 @@ import { WebView, type WebViewMessageEvent } from 'react-native-webview';
 
 import html from '@/generated/gameHtml';
 import { Music } from '@/music';
+import { Voice } from '@/voice';
 
 import type { DeviceInfo } from '../../game/src/core/graphics';
 import type { MusicFile } from '../../game/src/core/music';
@@ -33,6 +34,7 @@ type GameMessage =
   | { type: 'link'; url: string }
   | { type: 'music'; file: MusicFile | null; volume: number }
   | { type: 'musicVolume'; volume: number }
+  | { type: 'voice'; key: string | null; volume: number }
   | { type: 'error'; message: string };
 
 function haptic(kind: Extract<GameMessage, { type: 'haptic' }>['kind']) {
@@ -57,6 +59,7 @@ export default function Game() {
   // parameter to `undefined`, and `WebViewProps & undefined` is `never`, which rejects every prop.
   const web = useRef<WebView<object>>(null);
   const music = useRef<Music | null>(null);
+  const voice = useRef<Voice | null>(null);
   // undefined while loading; null when there is no save yet.
   const [save, setSave] = useState<string | null | undefined>(undefined);
   // Bumped to start the page over from scratch after its process dies.
@@ -67,6 +70,7 @@ export default function Game() {
   // page again with the latest save; it boots back to the title screen.
   const restart = () => {
     music.current?.play(null, 0);
+    voice.current?.stop();
     AsyncStorage.getItem(SAVE_KEY)
       .catch(() => null)
       .then((raw) => {
@@ -88,10 +92,14 @@ export default function Game() {
 
   useEffect(() => {
     const m = new Music();
+    const v = new Voice();
     music.current = m;
+    voice.current = v;
     return () => {
       m.release();
+      v.stop();
       music.current = null;
+      voice.current = null;
     };
   }, []);
 
@@ -102,6 +110,7 @@ export default function Game() {
     });
     const app = AppState.addEventListener('change', (state) => {
       music.current?.setActive(state === 'active');
+      if (state !== 'active') voice.current?.stop();
       if (state !== 'active') web.current?.injectJavaScript('window.__onPause && window.__onPause(); true;');
       else if (Platform.OS === 'android') NavigationBar.setVisibilityAsync('hidden').catch(() => {});
     });
@@ -144,6 +153,9 @@ export default function Game() {
         break;
       case 'musicVolume':
         music.current?.setVolume(msg.volume);
+        break;
+      case 'voice':
+        voice.current?.play(msg.key, msg.volume);
         break;
       case 'error':
         console.warn('[game]', msg.message);

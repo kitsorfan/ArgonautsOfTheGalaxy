@@ -2,6 +2,7 @@ import { GAME_NAME, CREATOR } from '../core/brand';
 import { lang, tr } from '../core/i18n';
 import { MUSIC_CREDITS } from '../core/music';
 import { MUSIC } from './cut';
+import { NARRATOR } from './narration';
 
 /** A line in both of the game's languages. */
 export interface Words {
@@ -46,7 +47,7 @@ function face(card: Card): string {
       ${card.text ? `<p class="tr-ask">${esc(say(card.text))}</p>` : ''}
       ${kicker ? `<p class="tr-pill">${esc(say(card.kicker))}</p>` : ''}
       ${lang() === 'el' ? '' : `<p class="tr-by">A game by <b>${esc(CREATOR.studio)}</b></p>`}
-      <p class="tr-credit">${music}: “${esc(song.title)}” · ${esc(song.artist)} · ${esc(song.license)}</p>
+      <p class="tr-credit">${music}: “${esc(song.title)}” · ${esc(song.artist)} · ${esc(song.license)}${lang() === 'el' ? '' : `<span class="tr-gap"></span>${esc(NARRATOR.credit)}`}</p>
     </div>`;
   }
   return `<div class="tr-caption">${kicker}<strong>${esc(say(card.text))}</strong></div>`;
@@ -77,6 +78,7 @@ body.trailer #ui, body.trailer #touch { display: none !important; }
 .tr-by { margin: 4vh 0 0; font-size: 2.6vh; color: #cfe0ff; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.95); }
 .tr-by b { color: #ffffff; font-weight: 700; }
 .tr-credit { position: absolute; bottom: 3vh; left: 0; right: 0; margin: 0; font-size: 1.6vh; color: rgba(207, 224, 255, 0.75); }
+.tr-gap { display: inline-block; width: 3vh; }
 .tr-slate { position: absolute; inset: 0; background: #000; opacity: 1; }
 `;
 

@@ -740,6 +740,33 @@ export class World {
       rogue.defeated = true;
       this.luxBack(rogue);
     }
+    // &play=meet stands Jason a few steps from the hero who joins on this deck and plays their meeting
+    // (Atalanta by her skiff: #deck=harpies&play=meet).
+    else if (play === 'meet') {
+      const hero = (Object.keys(this.def.joins ?? {}) as HeroId[]).find((h) => this.markers.has(h));
+      const at = hero ? this.markers.get(hero) : undefined;
+      if (hero && at) {
+        const spot = this.standingNear(at);
+        if (spot) this.player.teleport(spot.x, spot.y, spot.z);
+        this.heroJoins(hero);
+      }
+    }
+  }
+
+  /** A floor cell two to four cells from `at`, at about its height, to stand someone on. */
+  private standingNear(at: THREE.Vector3): THREE.Vector3 | null {
+    const cx = Grid.toCell(at.x);
+    const cz = Grid.toCell(at.z);
+    for (let r = 2; r <= 4; r++) {
+      for (let dz = -r; dz <= r; dz++) {
+        for (let dx = -r; dx <= r; dx++) {
+          if (Math.max(Math.abs(dx), Math.abs(dz)) !== r) continue;
+          const top = this.grid.standTop(cx + dx, cz + dz);
+          if (Math.abs(top - at.y) < 0.6) return new THREE.Vector3(Grid.center(cx + dx), top + 0.05, Grid.center(cz + dz));
+        }
+      }
+    }
+    return null;
   }
 
   /** Brennus's reprogrammed LUX waits at the `rogue` marker until he is beaten and himself again. */

@@ -4,6 +4,7 @@ import { inApp, openLink } from '../core/bridge';
 import { RELEASES } from '../game/releaseNotes';
 import { LANGS, lang, tr, upper, type Lang } from '../core/i18n';
 import { resolveAuto } from '../core/graphics';
+import { hush, speak } from '../core/voice';
 import type { ButtonName, Input } from '../core/input';
 import { cleanBolts, type AtalantaUpgradeId, type OutfitHero, type Quality, type SaveData, type Settings, type UpgradeId } from '../core/save';
 import {
@@ -788,6 +789,8 @@ export class UI {
     let shown = 0;
     let text = '';
     let finished = false;
+    /** The line on screen is being spoken (core/voice.ts), so it types out without blips. */
+    let voiced = false;
     let timer: ReturnType<typeof setInterval> | null = null;
     const el = this.open(`<div class="dialogue"><div class="portrait"></div><div style="flex:1"><div class="who"></div><div class="text"></div></div><div class="more">${tr('TAP')} ▶</div></div>`, false);
     el.style.alignItems = 'flex-end';
@@ -802,6 +805,7 @@ export class UI {
       who.textContent = tr(line.name ?? SPEAKER_NAME[speaker]);
       who.style.color = SPEAKER_COLOR[speaker];
       box.classList.toggle('glitchy', speaker === 'glitch' || speaker === 'rogue');
+      voiced = speak(speaker, line.text) > 0;
       shown = 0;
       // Clear the last line at once, so it never shows next to the new speaker's face.
       $(el, '.text').textContent = '';
@@ -809,7 +813,7 @@ export class UI {
       timer = setInterval(() => {
         shown = Math.min(text.length, shown + 2);
         $(el, '.text').textContent = text.slice(0, shown);
-        if (shown % 6 === 0) audio.play('blip', speaker === 'bolt' || speaker === 'rogue' ? 1.4 : speaker === 'iris' ? 1.6 : speaker === 'halcyon' || speaker === 'glitch' ? 0.7 : 1);
+        if (!voiced && shown % 6 === 0) audio.play('blip', speaker === 'bolt' || speaker === 'rogue' ? 1.4 : speaker === 'iris' ? 1.6 : speaker === 'halcyon' || speaker === 'glitch' ? 0.7 : 1);
         if (shown >= text.length && timer) {
           clearInterval(timer);
           timer = null;
@@ -820,6 +824,7 @@ export class UI {
       if (finished) return;
       finished = true;
       if (timer) clearInterval(timer);
+      if (voiced) hush();
       window.removeEventListener('keydown', onKey);
       this.close();
       done();
