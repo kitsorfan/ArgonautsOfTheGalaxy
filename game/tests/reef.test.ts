@@ -17,9 +17,6 @@ import { makeBody } from '../src/world/physics';
 import { FLOOD, RAFT_TOP, TIDE_WARN, isTidal, tideLevel, tidePeriod, tidePhase } from '../src/world/tides';
 import { isCollectible, reach } from '../tools/reach';
 
-// three is ESM-only, which Jest's module loader can't read; Node's own require can, so load it with that.
-jest.mock('three', () => process.getBuiltinModule('node:module').createRequire(__filename)('three'));
-
 /** A stand-in for the browser canvas: every 2D call does nothing and returns something callable. */
 const anything = (): unknown =>
   new Proxy(() => undefined, {

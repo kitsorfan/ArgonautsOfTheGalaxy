@@ -14,8 +14,6 @@ import type { HeroId, Spec } from '../src/world/levelTypes';
 import { makeBody, type Box } from '../src/world/physics';
 import { togetherCheck } from '../tools/reach';
 
-jest.mock('three', () => process.getBuiltinModule('node:module').createRequire(__filename)('three'));
-
 // The follower's "..." bubble draws itself on a canvas: a canvas that draws nothing is enough here.
 const g = globalThis as unknown as { document?: unknown };
 g.document ??= { createElement: () => ({ getContext: () => new Proxy({}, { get: () => () => undefined }) }) };

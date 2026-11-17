@@ -25,9 +25,6 @@ import { flightGoals, flightTotals, recordFlight } from '../src/vehicles/quests'
 import { parseLevel } from '../src/world/grid';
 import type { DeckId } from '../src/world/levelTypes';
 
-// three is ESM-only, which Jest's module loader can't read; Node's own require can, so load it with that.
-jest.mock('three', () => process.getBuiltinModule('node:module').createRequire(__filename)('three'));
-
 // newSave() reads navigator for its quality default; give Jest a stand-in.
 beforeAll(() => {
   (globalThis as { navigator?: unknown }).navigator ??= { hardwareConcurrency: 8 };

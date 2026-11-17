@@ -12,9 +12,6 @@ import { Grid, parseLevel } from '../src/world/grid';
 import type { EnemyKind, LevelDef } from '../src/world/levelTypes';
 import { makeBody } from '../src/world/physics';
 
-// three is ESM-only, which Jest's module loader can't read; Node's own require can, so load it with that.
-jest.mock('three', () => process.getBuiltinModule('node:module').createRequire(__filename)('three'));
-
 const ALL_KINDS: EnemyKind[] = ['sporeling', 'snapper', 'buzzer', 'sentry', 'turret', 'brute', ...ROBOT_KINDS];
 const CHAPTER2 = ['plains', 'desert', 'snow', 'rockies', 'jungle', 'volcano'] as const;
 

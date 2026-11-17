@@ -53,7 +53,9 @@ function haptic(kind: Extract<GameMessage, { type: 'haptic' }>['kind']) {
 /** Hosts the three.js game (a self-contained HTML page) full screen in a WebView. */
 export default function Game() {
   useKeepAwake();
-  const web = useRef<WebView>(null);
+  // `WebView<object>`, here and in the JSX: react-native-webview 14 defaults the class's extra-props
+  // parameter to `undefined`, and `WebViewProps & undefined` is `never`, which rejects every prop.
+  const web = useRef<WebView<object>>(null);
   const music = useRef<Music | null>(null);
   // undefined while loading; null when there is no save yet.
   const [save, setSave] = useState<string | null | undefined>(undefined);
@@ -153,7 +155,7 @@ export default function Game() {
 
   return (
     <View style={styles.root}>
-      <WebView
+      <WebView<object>
         key={run}
         ref={web}
         style={styles.web}

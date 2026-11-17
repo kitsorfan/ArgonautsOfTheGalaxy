@@ -6,9 +6,6 @@ import { BAR, FPS, MUSIC, barFrame, layout, presence } from '../src/trailer/cut'
 import { drift, follow, glide, orbit } from '../src/trailer/moves';
 import { CARDS, SHOTS } from '../src/trailer/shots';
 
-// three is ESM-only, which Jest's module loader can't read; Node's own require can, so load it with that.
-jest.mock('three', () => process.getBuiltinModule('node:module').createRequire(__filename)('three'));
-
 const SLOTS = layout(SHOTS.map((s) => s.bars));
 const TOTAL = SLOTS[SLOTS.length - 1].to;
 

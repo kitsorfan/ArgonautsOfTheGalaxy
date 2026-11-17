@@ -13,9 +13,6 @@ import { parseLevel } from '../src/world/grid';
 import type { HeroId } from '../src/world/levelTypes';
 import { footHeroes, isCollectible, levelHeroes, mechReach, reach, vehicleStart } from '../tools/reach';
 
-// The robots' module builds three.js models; the test only needs its tuning, so give it the real module.
-jest.mock('three', () => process.getBuiltinModule('node:module').createRequire(__filename)('three'));
-
 const level = parseLevel(LEVELS.forge);
 const ALL = ['doubleJump', 'dash', 'glide', 'pulse', 'grapple'] as const;
 const find = (pred: (e: (typeof level.entities)[number]) => boolean) => level.entities.filter(pred);

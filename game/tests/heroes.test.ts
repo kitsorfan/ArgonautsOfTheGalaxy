@@ -9,9 +9,6 @@ import { makeBody, moveBody, type Box } from '../src/world/physics';
 import { atalantaReach, brennusReach, jumpReach, reach, wallRunStrips } from '../tools/reach';
 import { voiceOf } from '../src/game/companions';
 
-// heroProps builds three.js props; the test only needs its constants, so give it the real module.
-jest.mock('three', () => process.getBuiltinModule('node:module').createRequire(__filename)('three'));
-
 describe('hero table', () => {
   it('describes every hero, keyed by its own id', () => {
     for (const id of HERO_IDS) {

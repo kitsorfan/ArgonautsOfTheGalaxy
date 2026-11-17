@@ -29,9 +29,6 @@ import { Grid, parseLevel } from '../src/world/grid';
 import type { LevelDef } from '../src/world/levelTypes';
 import { makeBody } from '../src/world/physics';
 
-// three is ESM-only, which Jest's module loader can't read; Node's own require can, so load it with that.
-jest.mock('three', () => process.getBuiltinModule('node:module').createRequire(__filename)('three'));
-
 /** A stand-in for the browser: canvases that draw nothing, a window and a navigator. */
 const anything = (): unknown =>
   new Proxy(() => undefined, {

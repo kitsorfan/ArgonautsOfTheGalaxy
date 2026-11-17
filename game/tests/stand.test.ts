@@ -17,9 +17,6 @@ import type { LevelDef, PlacedEntity, Spec } from '../src/world/levelTypes';
 import { makeBody } from '../src/world/physics';
 import { isCollectible, reach } from '../tools/reach';
 
-// three is ESM-only, which Jest's module loader can't read; Node's own require can, so load it with that.
-jest.mock('three', () => process.getBuiltinModule('node:module').createRequire(__filename)('three'));
-
 /** A stand-in for the browser canvas: every 2D call does nothing. */
 const anything = (): unknown =>
   new Proxy(() => undefined, {
