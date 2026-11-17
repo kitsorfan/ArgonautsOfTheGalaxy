@@ -10,7 +10,7 @@ export const EL_HEROES: Record<string, string> = {
   "Too weak! HOLD the BOW button to charge a power arrow.": "Πολύ αδύναμο! ΚΡΑΤΑ πατημένο το ΤΟΞΟ για να γεμίσεις ένα δυνατό βέλος.",
   // How to play.
   "SWITCH": "ΑΛΛΑΓΗ",
-  "SPRINT": "ΣΠΡΙΝΤ",
+  "SPRINT": "ΤΡΕΞΙΜΟ",
   "WALL-JUMP": "ΑΛΜΑ ΣΤΟΝ ΤΟΙΧΟ",
   "Atalanta: J bow · K kick · L or Shift slide · C switch hero": "Αταλάντη: J τόξο · K κλοτσιά · L ή Shift γλίστρα · C αλλαγή ήρωα",
 };

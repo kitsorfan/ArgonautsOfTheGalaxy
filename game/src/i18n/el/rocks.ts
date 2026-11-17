@@ -11,7 +11,7 @@ export const EL_ROCKS: Record<string, string> = {
   "The Golden Fleece is waiting there. If the old light-words are right, it can make Celestia strong again.": "Εκεί μας περιμένει το Χρυσόμαλλο Δέρας. Αν οι παλιές φωτολέξεις λένε αλήθεια, μπορεί να κάνει τη Σελέστια ξανά δυνατή.",
   "Um. Captain? Why is the space in front of us full of ROCKS?": "Εμ. Κυβερνήτη; Γιατί το διάστημα μπροστά μας είναι γεμάτο ΒΡΑΧΟΥΣ;",
   "That is the asteroid belt. Jason, you have the sharpest eyes on board: you fly. I will keep the engines happy.": "Αυτή είναι η ζώνη των αστεροειδών. Ιάσονα, έχεις τα πιο κοφτερά μάτια στο πλοίο: εσύ θα πιλοτάρεις. Εγώ θα κρατάω τις μηχανές χαρούμενες.",
-  "Me? Flying the Argo? ...Best. Day. EVER.": "Εγώ; Να πιλοτάρω την Αργώ; ...Η. Καλύτερη. Μέρα. ΕΒΕΡ.",
+  "Me? Flying the Argo? ...Best. Day. EVER.": "Εγώ; Να πιλοτάρω την Αργώ; ...Καλύτερη μέρα της ζωής μου!",
   "Steer with the stick, Jason. The SPEED lever next to BLAST sets how fast we fly: up is faster, down is slower.": "Στρίβε με το χειριστήριο, Ιάσονα. Ο μοχλός ΤΑΧΥΤΗΤΑΣ δίπλα στη ΒΟΛΗ λέει πόσο γρήγορα πετάμε: πάνω πιο γρήγορα, κάτω πιο αργά.",
   "And BLAST shoots! Pew pew! ...Sorry. I am excited.": "Και η ΒΟΛΗ πυροβολεί! Πιου πιου! ...Συγγνώμη. Έχω ενθουσιαστεί.",
   "Those gold rings are old space buoys. Fly through them for luck!": "Αυτά τα χρυσά δαχτυλίδια είναι παλιές διαστημικές σημαδούρες. Πέρνα μέσα τους για γούρι!",

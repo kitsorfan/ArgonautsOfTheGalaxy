@@ -57,7 +57,7 @@ export const EL_REEF: Record<string, string> = {
   "Crackers, raisins and a brand new sandwich!": "Κράκερ, σταφίδες κι ένα ολοκαίνουργιο σάντουιτς!",
   "Captain Argus’s jam jars": "Τα βάζα με τη μαρμελάδα του Κυβερνήτη Άργου",
   "My jam! Strawberry, fig and moon-plum!": "Η μαρμελάδα μου! Φράουλα, σύκο και φεγγαρο-δαμάσκηνο!",
-  "That’s the Argo’s fruit basket! Every single mango, safe and sound. I’ll send a drone to fetch it.": "Αυτό είναι το καλάθι με τα φρούτα της Αργώς! Όλα τα μάνγκο, σώα και αβλαβή. Θα στείλω ένα ντρόουν να το φέρει.",
+  "That’s the Argo’s fruit basket! Every single mango, safe and sound. I’ll send a drone to fetch it.": "Αυτό είναι το καλάθι με τα φρούτα της Αργώς! Όλα τα μάνγκο, σώα και αβλαβή. Θα στείλω ένα ιπτάμενο ρομποτάκι να το φέρει.",
   "My snack bag! Crackers, raisins and... a sandwich. A NEW sandwich. Today is getting better and better.": "Η τσάντα με τα σνακ μου! Κράκερ, σταφίδες και... ένα σάντουιτς. ΚΑΙΝΟΥΡΓΙΟ σάντουιτς. Η μέρα γίνεται όλο και καλύτερη.",
   "MY JAM! Strawberry, fig and the very rare moon-plum. You are true heroes, Argonauts.": "Η ΜΑΡΜΕΛΑΔΑ ΜΟΥ! Φράουλα, σύκο και το πολύ σπάνιο φεγγαρο-δαμάσκηνο. Είστε αληθινοί ήρωες, Αργοναύτες.",
   "He sounds happier about the jam than about the whole strait.": "Ακούγεται πιο χαρούμενος για τη μαρμελάδα παρά για όλο το στενό.",

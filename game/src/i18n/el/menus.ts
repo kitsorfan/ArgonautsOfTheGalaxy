@@ -42,7 +42,7 @@ export const EL_MENUS: Record<string, string> = {
   "Brennus": "Βρέννος",
   "Mech": "Ρομποστολή",
   "Left side moves. Drag the right side to look around.": "Η αριστερή πλευρά σε κινεί. Σύρε τη δεξιά για να κοιτάξεις γύρω.",
-  "Hold to jump higher. With the Jet Boots, jump again in mid-air.": "Κράτα για πιο ψηλό άλμα. Με τις Τζετ-Μπότες πηδάς ξανά στον αέρα.",
+  "Hold to jump higher. With the Jet Boots, jump again in mid-air.": "Κράτα για πιο ψηλό άλμα. Με τις Πυραυλομπότες πηδάς ξανά στον αέρα.",
   "Tap to shoot. Hold for a big FIREBALL.": "Πάτα για βολή. Κράτα για μεγάλη ΒΟΛΙΔΑ ΦΩΤΙΑΣ.",
   "Blocks attacks, 3 in a row. In mid-air: GROUND POUND.": "Σταματάει επιθέσεις, 3 στη σειρά. Στον αέρα: ΚΑΡΦΩΜΑ.",
   "Ram enemies and zoom over gaps. Uses an energy cell.": "Πέρνα μέσα από εχθρούς και πάνω από κενά. Ξοδεύει μία κυψέλη ενέργειας.",
@@ -65,4 +65,5 @@ export const EL_MENUS: Record<string, string> = {
   "Hits wear it down; bronze gears and checkpoints mend it. Only the mech can fight TALOS.":
     "Τα χτυπήματα τη λιώνουν· τη φτιάχνουν τα χάλκινα γρανάζια και τα σημεία ελέγχου. Μόνο η ρομποστολή μπορεί να παλέψει τον ΤΑΛΩ.",
   "The action button climbs out. Walk back to climb in.": "Το κουμπί δράσης σε βγάζει έξω. Πήγαινε πίσω για να ξανανέβεις.",
+  "{n} m": "{n} μ.",
 };

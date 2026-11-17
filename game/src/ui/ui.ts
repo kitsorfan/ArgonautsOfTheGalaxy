@@ -607,7 +607,7 @@ export class UI {
     this.wpEl.style.transform = `translate(${Math.round(w.x)}px, ${Math.round(w.y)}px)`;
     this.wpEl.classList.toggle('edge', w.edge);
     $(this.wpEl, '.wp-arrow').style.transform = `rotate(${w.angle}rad)`;
-    $(this.wpEl, 'b').textContent = `${Math.round(w.dist)} m`;
+    $(this.wpEl, 'b').textContent = tr('{n} m', { n: Math.round(w.dist) });
   }
 
   private rewardQueue: string[] = [];
