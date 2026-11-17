@@ -195,8 +195,10 @@ npm run game:build
 npx expo prebuild --platform android --clean --no-install
 $k = @{}; Get-Content "$env:USERPROFILE\android-tools\keys\kitsu-upload.properties" | Where-Object { $_ -match '^(\w+)=(.*)$' } | ForEach-Object { $k[$Matches[1]] = $Matches[2] }
 cd android
-.\gradlew.bat bundleRelease assembleRelease --no-daemon "-PreactNativeArchitectures=arm64-v8a,armeabi-v7a" "-Pandroid.injected.signing.store.file=$($k.storeFile)" "-Pandroid.injected.signing.store.password=$($k.storePassword)" "-Pandroid.injected.signing.key.alias=$($k.keyAlias)" "-Pandroid.injected.signing.key.password=$($k.keyPassword)"
+.\gradlew.bat bundleRelease assembleRelease --no-daemon "-PreactNativeArchitectures=arm64-v8a,armeabi-v7a" "-Pexpo.android.cmakeObjectPathMax=0" "-Pandroid.injected.signing.store.file=$($k.storeFile)" "-Pandroid.injected.signing.store.password=$($k.storePassword)" "-Pandroid.injected.signing.key.alias=$($k.keyAlias)" "-Pandroid.injected.signing.key.password=$($k.keyPassword)"
 ```
+
+`expo.android.cmakeObjectPathMax=0` keeps CMake's Windows limit of 250 characters, so CMake shortens the deepest object file paths itself. Since SDK 58, Expo raises that limit to 1024 by default, and the Ninja bundled with Android's default CMake then fails on paths past Windows' 260-character limit (react-native-gesture-handler and react-native-safe-area-context both reach them).
 
 The bundle for Play is `android\app\build\outputs\bundle\release\app-release.aab`; the APK in `outputs\apk\release\` is for installing straight on a phone. To check that the bundle carries the upload key and not the debug key, `keytool -printcert -jarfile app-release.aab` should show `CN=Kitsu Game Studios`.
 
