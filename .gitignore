@@ -7,11 +7,14 @@ node_modules/
 .expo/
 dist/
 web-build/
-# Copied from assets/music by game/build.mjs
+# Copied from assets/music and assets/voice/game by game/build.mjs
 public/music/
+public/voice/
 # Written by `npm run trailer`: the film, and the stills it checks the cut with
 /trailer/
 expo-env.d.ts
+# Python bytecode from the voice tools
+__pycache__/
 
 # Native
 .kotlin/

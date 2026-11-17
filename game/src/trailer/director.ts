@@ -7,9 +7,11 @@ import type { PlanetScene } from '../cinema/planetScene';
 import type { ShipScene } from '../cinema/shipScene';
 import type { TitleScene } from '../game/title';
 import type { World } from '../game/world';
+import { lang } from '../core/i18n';
 import { Cards } from './cards';
-import { FPS, MUSIC, barFrame, layout, presence } from './cut';
+import { BAR, FPS, MUSIC, barFrame, layout, presence } from './cut';
 import type { Pose, Subject } from './moves';
+import { NARRATION, NARRATOR, VOICE_DIR } from './narration';
 import { CARDS, SHOTS, type Shot } from './shots';
 import type { Tally, Take, TrailerHost } from './stage';
 
@@ -60,6 +62,13 @@ export class Trailer {
     shot: '',
     shots: SHOTS.map((s, i) => ({ id: s.id, ...SLOTS[i] })),
     music: { ...MUSIC },
+    voice: {
+      engine: NARRATOR.engine,
+      voice: NARRATOR.voice,
+      dir: VOICE_DIR,
+      // The narrator speaks English only.
+      lines: lang() === 'en' ? NARRATION.map((l) => ({ id: l.id, at: l.at * BAR, text: l.say })) : [],
+    },
   };
 
   constructor(private host: TrailerHost) {

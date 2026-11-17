@@ -1,0 +1,15 @@
+# The second speech engine behind `npm run voice`, for the parts game/src/core/cast.ts gives to
+# Chatterbox. It wants older torch and numpy than Pocket TTS (requirements.txt), so it gets a Python of
+# its own, also kept outside the project:
+#
+#   uv venv ~/.argonauts-chatterbox --python 3.12
+#   uv pip install --python ~/.argonauts-chatterbox -r game/tools/voice/requirements-chatterbox.txt
+#
+# (or set CHATTERBOX_PYTHON to another interpreter that has these). Everything runs on the CPU.
+chatterbox-tts==0.1.7
+# Its watermarker still imports pkg_resources, which setuptools 81 dropped.
+setuptools<81
+soundfile
+numpy
+# Listens to every take and names the ones that say something else.
+faster-whisper

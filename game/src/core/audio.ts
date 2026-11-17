@@ -51,6 +51,9 @@ const midi = (n: number) => 440 * Math.pow(2, (n - 69) / 12);
 /** The recordings are mastered loud: at full music volume they play at this level, under the sound effects. */
 const MUSIC_LEVEL = 0.6;
 
+/** The music dips to this much of itself (about -7 dB) while someone is talking. */
+const DUCK = 0.45;
+
 export class AudioEngine {
   private ctx: AudioContext | null = null;
   private master!: GainNode;
@@ -104,6 +107,7 @@ export class AudioEngine {
       if (on) this.el.pause();
       else this.startElement();
     }
+    if (on) this.voice(null);
     if (!this.ctx) return;
     if (on) void this.ctx.suspend();
     else void this.ctx.resume();
@@ -115,10 +119,15 @@ export class AudioEngine {
     this.applyVolumes();
   }
 
+  /** How loud the music plays: its setting, at the recordings' level, dipped while someone is talking. */
+  private musicLevel() {
+    return this.musicVolume * MUSIC_LEVEL * (this.talking ? DUCK : 1);
+  }
+
   private applyVolumes() {
-    if (inApp()) post({ type: 'musicVolume', volume: this.musicVolume * MUSIC_LEVEL });
+    if (inApp()) post({ type: 'musicVolume', volume: this.musicLevel() });
     else if (this.el) {
-      this.el.volume = this.musicVolume * MUSIC_LEVEL;
+      this.el.volume = this.musicLevel();
       if (this.musicVolume > 0.01) this.startElement();
       else this.el.pause();
     }
@@ -344,7 +353,7 @@ export class AudioEngine {
     if (file === this.file) return;
     this.file = file;
     if (inApp()) {
-      post({ type: 'music', file, volume: this.musicVolume * MUSIC_LEVEL });
+      post({ type: 'music', file, volume: this.musicLevel() });
       return;
     }
     this.el?.pause();
@@ -352,7 +361,7 @@ export class AudioEngine {
     if (!file) return;
     const el = new Audio(`music/${file}.mp3`);
     el.loop = true;
-    el.volume = this.musicVolume * MUSIC_LEVEL;
+    el.volume = this.musicLevel();
     this.el = el;
     this.startElement();
   }
@@ -362,6 +371,44 @@ export class AudioEngine {
     const el = this.el;
     if (!el || !this.unlocked || this.musicVolume <= 0.01 || document.hidden) return;
     el.play().catch(() => {});
+  }
+
+  /* ---------------- voices ---------------- */
+
+  /** In a browser: the <audio> element speaking. */
+  private voiceEl: HTMLAudioElement | null = null;
+  private talking = false;
+  private doneTalking: ReturnType<typeof setTimeout> | null = null;
+
+  /**
+   * Speaks a recording from assets/voice/game (see core/voice.ts) that runs `seconds`, or stops with
+   * null; the music dips until it has finished. Voices play at the sound effects' volume. Returns
+   * whether it will be heard (in a browser, not before a tap has let the page make a sound).
+   */
+  voice(key: string | null, seconds = 0): boolean {
+    const volume = Math.min(1, this.sfxVolume);
+    const on = !!key && volume > 0.01 && (inApp() || this.unlocked);
+    if (inApp()) post({ type: 'voice', key: on ? key : null, volume });
+    else {
+      this.voiceEl?.pause();
+      this.voiceEl = null;
+      if (on) {
+        const el = new Audio(`voice/${key}.mp3`);
+        el.volume = volume;
+        this.voiceEl = el;
+        el.play().catch(() => {});
+      }
+    }
+    if (this.doneTalking) clearTimeout(this.doneTalking);
+    this.doneTalking = on ? setTimeout(() => this.setTalking(false), seconds * 1000 + 200) : null;
+    this.setTalking(on);
+    return on;
+  }
+
+  private setTalking(on: boolean) {
+    if (on === this.talking) return;
+    this.talking = on;
+    this.applyVolumes();
   }
 
   /* ---------------- the Flamethrower's roar ---------------- */

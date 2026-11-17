@@ -20,7 +20,7 @@ import { heroCourse } from '../entities/heroes/course';
 import { heroDev, parseHeroes } from '../entities/heroes/heroes';
 import { cleanBolts, clearSave, loadSave, newSave, writeSave, type SaveData, type Settings } from '../core/save';
 import { CHAPTER_DECKS, GAME_FINALE, LEVELS, LEVEL_ORDER, catchUpChapters, chapterIndex, chapterOf, chapterSize, chapterTotals, comingSoon, inChapter, isFinale, nextChapterStart, type Chapter } from '../levels';
-import type { DeckId, EndingKind, Line } from '../world/levelTypes';
+import type { DeckId, EndingKind } from '../world/levelTypes';
 import { THEMES } from '../world/themes';
 import { PANEL_IDS, type PanelId } from '../ui/panels';
 import { UI } from '../ui/ui';
@@ -33,7 +33,7 @@ import { findKind, lootLabels, plannedFinds } from './collectibles';
 import type { PuzzleKind } from './puzzles';
 import { deckQuests, givePrize, payQuests, shardMilestone } from './quests';
 import { takeReviewAsk } from './review';
-import { INTEL, creditsHtml, endingChapter } from './story';
+import { ABILITY_LINES, INTEL, creditsHtml, endingChapter } from './story';
 import { TitleScene } from './title';
 import { World, type WorldHooks } from './world';
 import { Trailer } from '../trailer/director';
@@ -68,39 +68,6 @@ function disposeScene(scene: THREE.Scene) {
     if (o instanceof THREE.Light) o.dispose();
   });
 }
-
-const ABILITY_LINES: Record<string, Line[]> = {
-  doubleJump: [
-    { who: 'bolt', text: 'JET BOOTS! Now you can jump again while you are in the air. Double jump!' },
-    { who: 'jason', text: 'Up, up and away!' },
-  ],
-  dash: [
-    { who: 'bolt', text: 'DASH THRUSTERS! Press DASH to zoom forward, even in mid-air. Great for long gaps!' },
-    { who: 'bolt', text: 'A dash hits HARD too: ram straight through enemies! Each one uses an energy cell. Checkpoints and violet energy cells fill you back up.' },
-    { who: 'jason', text: 'Nyoom!' },
-  ],
-  glide: [
-    { who: 'bolt', text: 'A HOVER PACK! Hold JUMP while you fall to float gently down. Wheee!' },
-    { who: 'jason', text: 'I can glide across the whole Ring with this!' },
-    { who: 'bolt', text: 'King Bloblin is on the island in the MIDDLE of the Ring. Climb the launch tower, follow the gold marker and glide over!' },
-  ],
-  pulse: [
-    { who: 'bolt', text: 'FORCE PULSE installed! Press PULSE and I blast out a shockwave. It knocks out every enemy around you!' },
-    { who: 'bolt', text: 'It also shorts out lasers for a few seconds. But it takes me a LONG time to recharge, so pick your moment.' },
-    { who: 'jason', text: 'Those laser walls don’t stand a chance.' },
-  ],
-  grapple: [
-    { who: 'bolt', text: 'A GRAPPLE HOOK! See the glowing rings? Look at one and press GRAPPLE to zip right over to it!' },
-    { who: 'bolt', text: 'It works over gaps, up cliffs, even across quicksand. If the ring glows bright, you can reach it.' },
-    { who: 'jason', text: 'Hold on to your antenna, LUX!' },
-  ],
-  mirror: [
-    { who: 'bolt', text: 'The Gardeners’ MIRROR SHIELD! It’s polished so bright, I can see all my scratches.' },
-    { who: 'bolt', text: 'HOLD the SPIN button to raise it. MEDUSA’s green gaze bounces right off it instead of turning you to stone!' },
-    { who: 'atalanta', text: 'And turn while you hold it up: the bounced beam goes where the shield points. Light a crystal with it!' },
-    { who: 'jason', text: 'A shield that bounces light. Just like Perseus in the old story!' },
-  ],
-};
 
 const tmpV = new THREE.Vector3();
 
@@ -198,7 +165,16 @@ export class Game {
       void ready.then(() => this.startTrailer(dev));
       return;
     }
-    if (dev && (dev.get('deck') || dev.get('cinema') || dev.get('panel') || dev.get('menu'))) {
+    // A cinematic (or a deck's scene, &play=) has music and voices, which a browser only plays after a
+    // tap: it waits for one.
+    if (dev?.get('cinema') || (dev?.get('deck') && dev.get('play'))) {
+      this.ui.tapToStart(ready, null, () => {
+        audio.unlock();
+        this.devJump(dev);
+      });
+      return;
+    }
+    if (dev && (dev.get('deck') || dev.get('panel') || dev.get('menu'))) {
       void ready.then(() => this.devJump(dev));
       return;
     }
@@ -276,7 +252,8 @@ export class Game {
       }
       if (dev.has('shop')) setTimeout(() => this.world && this.hooks().shop(), 3600);
       // &flags=iris,luxback starts with story flags set, &play=taken|iris|rogue|reunion plays one of
-      // LUX's chapter 2 scenes, and &talk clicks through dialogue by itself (for checking cutscenes).
+      // LUX's chapter 2 scenes (&play=meet the deck's meeting with a new hero, like Atalanta on the
+      // Harpy Isles), and &talk clicks through dialogue by itself (for checking cutscenes).
       const flags = dev.get('flags')?.split(',') ?? [];
       const play = dev.get('play');
       if (flags.length || play) setTimeout(() => this.world?.devStory(flags, play), 3600);

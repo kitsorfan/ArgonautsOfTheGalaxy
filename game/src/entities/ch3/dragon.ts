@@ -4,13 +4,12 @@ import { audio } from '../../core/audio';
 import { haptic } from '../../core/bridge';
 import { damp } from '../../core/math';
 import type { World } from '../../game/world';
-import type { Speaker } from '../../world/levelTypes';
 import { Boss, bossHp } from '../bossBase';
 import type { HitKind, Target } from '../entity';
 import { Shockwave, Strike } from '../hazards';
 import { mat, mesh, torus } from '../models';
 import { DRAGON, makeDragonModel, SEGS } from './dragonModel';
-import { PYLON_KINDS } from './gardenData';
+import { DRAGON_NODDING as NODDING, DRAGON_VERSES as VERSES, PYLON_KINDS } from './gardenData';
 import { Pylon } from './pylons';
 
 /**
@@ -60,19 +59,6 @@ type Move = 'slam' | 'breath' | 'rain';
 const tmp = new THREE.Vector3();
 const tmp2 = new THREE.Vector3();
 const UP = new THREE.Vector3(0, 1, 0);
-
-/** What the droids say as each of the first three pylons melts a chain (LUX is `bolt`). */
-const VERSES: { who: Speaker; text: string }[] = [
-  { who: 'bolt', text: 'The first verse! And look: the light melted one of Aeëtes’s gold chains!' },
-  { who: 'iris', text: 'Two chains gone. It is pulling at the last ones. Careful, everyone!' },
-  { who: 'bolt', text: 'Three! One more pylon and the lullaby is ready... and the dragon is free. Get ready!' },
-];
-
-/** What they say as it nods off in the fight. */
-const NODDING: { who: Speaker; text: string }[] = [
-  { who: 'iris', text: 'It yawned! It is getting tired. Keep going: the song is starting to work!' },
-  { who: 'bolt', text: 'Its eyes are drooping! Just a little more!' },
-];
 
 export class Dragon extends Boss implements Target {
   readonly title = 'THE SLEEPLESS DRAGON';

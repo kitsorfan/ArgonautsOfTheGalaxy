@@ -1,14 +1,16 @@
-// Records the trailer: about a minute of the game, cut to its own music.
+// Records the trailer: about a minute of the game, cut to its own music, with a narrator.
 //
 //   npm run trailer                      builds, records, writes trailer/argonauts-trailer.mp4
-//   npm run trailer -- --lang el         the Greek one: trailer/argonauts-trailer-el.mp4
+//   npm run trailer -- --lang el         the Greek one: trailer/argonauts-trailer-el.mp4 (no narrator)
 //   npm run trailer -- --stills          three pictures from every shot (trailer/stills), to check the cut
 //   npm run trailer -- --only argo,end   just those shots' stills (with --stills)
 //   npm run trailer -- --no-build        records the game/dist already there
+//   npm run trailer -- --no-voice        leaves the narrator out
 //
-// The shots themselves are in game/src/trailer/shots.ts. Opening game/dist/index.html#trailer plays them
-// live in any desktop browser, which is the quick way to look at a change; this is the slow way, and the
-// one that comes out smooth.
+// The shots themselves are in game/src/trailer/shots.ts, the narration in narration.ts (recorded ahead of
+// time by `npm run voice`). Opening game/dist/index.html#trailer plays the shots live in any desktop
+// browser, without the narrator, which is the quick way to look at a change; this is the slow way, and
+// the one that comes out smooth.
 //
 // Smooth because the page runs on a clock of our own. Timers, animation frames, performance.now(), the
 // date and every CSS animation are stood still and stepped forward exactly a sixtieth of a second at a
@@ -293,6 +295,71 @@ async function launch(browser, profile) {
   return { child, page: await connect(target.webSocketDebuggerUrl) };
 }
 
+/* ------------------------------ the soundtrack ------------------------- */
+
+const RATE = 48000;
+/** How far the music dips under the narrator: to about -9 dB. */
+const DIP = 0.65;
+
+/** Any audio ffmpeg can read, as float samples at RATE. */
+function decode(ffmpeg, name, args, channels) {
+  const run = spawnSync(ffmpeg, ['-v', 'error', ...args, '-f', 'f32le', '-ac', String(channels), '-ar', String(RATE), '-'], { maxBuffer: 1 << 30 });
+  if (run.status !== 0) throw new Error(`ffmpeg could not read ${name}: ${run.stderr}`);
+  const b = run.stdout;
+  return new Float32Array(b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength));
+}
+
+/** Throws unless every line the narrator will speak has a recording made with its voice and its words. */
+function checkNarration(voice) {
+  const list = join(ROOT, voice.dir, 'lines.json');
+  const made = existsSync(list) ? JSON.parse(readFileSync(list, 'utf8')) : { lines: {} };
+  const stale = voice.lines.filter(
+    (l) =>
+      made.lines[l.id]?.engine !== voice.engine ||
+      made.lines[l.id]?.voice !== voice.voice ||
+      made.lines[l.id]?.say !== l.text ||
+      !existsSync(join(ROOT, voice.dir, `${l.id}.wav`)),
+  );
+  if (stale.length) {
+    throw new Error(`No recording matches the narration's ${stale.map((l) => l.id).join(', ')}: run \`npm run voice\`, or record with --no-voice.`);
+  }
+}
+
+/**
+ * The music, cut and levelled the way the trailer always had it, with the narrator over it, written to
+ * `file` as raw samples for the encoder. The music dips under every line: down over 0.15 s just before
+ * the voice comes in, and back up over 0.6 s once it has finished, which lets a voice at speaking
+ * level ride over the drums.
+ */
+function soundtrack(ffmpeg, music, voice, length, file) {
+  const song = join(ROOT, 'assets', 'music', `${music.file}.mp3`);
+  const shape = `loudnorm=I=-14:TP=-1.5:LRA=11,afade=t=in:d=0.6,afade=t=out:st=${(length - 2.5).toFixed(3)}:d=2.5`;
+  const mix = decode(ffmpeg, song, ['-ss', String(music.from), '-i', song, '-af', shape, '-t', length.toFixed(3)], 2);
+  const frames = mix.length / 2;
+  const spoken = new Float32Array(frames);
+  /** Whether someone is talking, a hundred samples at a time. */
+  const BLOCK = 100;
+  const talking = new Uint8Array(Math.ceil(frames / BLOCK));
+  for (const line of voice.lines) {
+    const take = decode(ffmpeg, line.id, ['-i', join(ROOT, voice.dir, `${line.id}.wav`)], 1);
+    const start = Math.round(line.at * RATE);
+    for (let i = 0; i < take.length && start + i < frames; i++) spoken[start + i] += take[i];
+    talking.fill(1, Math.max(0, Math.floor((start - 0.12 * RATE) / BLOCK)), Math.ceil((start + take.length + 0.25 * RATE) / BLOCK));
+  }
+  const down = BLOCK / (0.15 * RATE);
+  const up = BLOCK / (0.6 * RATE);
+  let dip = 0;
+  for (let k = 0; k < talking.length; k++) {
+    dip = talking[k] > dip ? Math.min(dip + down, 1) : Math.max(dip - up, talking[k]);
+    const gain = 1 - DIP * dip;
+    for (let i = k * BLOCK; i < Math.min(frames, (k + 1) * BLOCK); i++) {
+      mix[i * 2] = mix[i * 2] * gain + spoken[i];
+      mix[i * 2 + 1] = mix[i * 2 + 1] * gain + spoken[i];
+    }
+  }
+  writeFileSync(file, new Uint8Array(mix.buffer));
+}
+
 /* ------------------------------- recording ----------------------------- */
 
 const STEP = `(() => {
@@ -313,6 +380,7 @@ async function record() {
   }
   const site = await serve();
   const profile = mkdtempSync(join(tmpdir(), 'trailer-profile-'));
+  const scratch = mkdtempSync(join(tmpdir(), 'trailer-sound-'));
   const { child, page } = await launch(browser, profile);
 
   try {
@@ -344,8 +412,9 @@ async function record() {
       if (step.phase !== 'loading' && step.phase !== 'warmup') break;
       if (Date.now() - started > 120_000) throw new Error(`The game never got going (stuck at ${step.phase}).`);
     }
-    const { total, shots, music } = await evaluate(page, '({ total: __trailer.total, shots: __trailer.shots, music: __trailer.music })');
-    console.log(`${shots.length} shots, ${total} frames, ${seconds(total)}s`);
+    const { total, shots, music, voice } = await evaluate(page, '({ total: __trailer.total, shots: __trailer.shots, music: __trailer.music, voice: __trailer.voice })');
+    if (flag('no-voice')) voice.lines = [];
+    console.log(`${shots.length} shots, ${total} frames, ${seconds(total)}s, ${voice.lines.length ? `${voice.lines.length} lines of narration` : 'no narrator'}`);
 
     let encoder = null;
     /** For the stills: the frames to keep, and what to call each. */
@@ -365,15 +434,18 @@ async function record() {
     } else {
       mkdirSync(join(OUT, '..'), { recursive: true });
       const length = total / FPS;
-      const song = join(ROOT, 'assets', 'music', `${music.file}.mp3`);
+      // The whole soundtrack first, so a missing recording stops the run before a minute of filming.
+      checkNarration(voice);
+      const sound = join(scratch, 'soundtrack.f32');
+      soundtrack(ffmpeg, music, voice, length, sound);
       encoder = spawn(
         ffmpeg,
         [
           ...['-y', '-loglevel', 'error'],
           ...['-f', 'image2pipe', '-framerate', String(FPS), '-c:v', 'png', '-i', '-'],
-          ...['-ss', String(music.from), '-i', song],
-          '-af',
-          `loudnorm=I=-14:TP=-1.5:LRA=11,afade=t=in:d=0.6,afade=t=out:st=${(length - 2.5).toFixed(3)}:d=2.5`,
+          ...['-f', 'f32le', '-ar', String(RATE), '-ac', '2', '-i', sound],
+          // The voice on top of the music can peak a little over; a limiter catches it.
+          ...['-af', 'alimiter=limit=0.94:level=disabled'],
           ...['-map', '0:v', '-map', '1:a'],
           ...['-c:v', 'libx264', '-preset', 'slow', '-crf', '16', '-profile:v', 'high', '-pix_fmt', 'yuv420p'],
           ...['-c:a', 'aac', '-b:a', '192k', '-ar', '48000'],
@@ -429,6 +501,7 @@ async function record() {
     // The browser takes a moment to let go of its profile on Windows.
     await new Promise((r) => setTimeout(r, 500));
     rmSync(profile, { recursive: true, force: true, maxRetries: 5 });
+    rmSync(scratch, { recursive: true, force: true });
   }
 }
 

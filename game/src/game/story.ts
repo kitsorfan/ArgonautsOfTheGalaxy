@@ -291,6 +291,50 @@ export const AEETES_INTRO: Line[] = [
   { who: 'aeetes', text: 'I am Aeëtes, and I buy and sell EVERYTHING. Find me that Fleece, my little drones. Before anyone else does.' },
 ];
 
+/** What LUX (and whoever is along) says as each new ability is installed. */
+export const ABILITY_LINES: Record<string, Line[]> = {
+  doubleJump: [
+    { who: 'bolt', text: 'JET BOOTS! Now you can jump again while you are in the air. Double jump!' },
+    { who: 'jason', text: 'Up, up and away!' },
+  ],
+  dash: [
+    { who: 'bolt', text: 'DASH THRUSTERS! Press DASH to zoom forward, even in mid-air. Great for long gaps!' },
+    { who: 'bolt', text: 'A dash hits HARD too: ram straight through enemies! Each one uses an energy cell. Checkpoints and violet energy cells fill you back up.' },
+    { who: 'jason', text: 'Nyoom!' },
+  ],
+  glide: [
+    { who: 'bolt', text: 'A HOVER PACK! Hold JUMP while you fall to float gently down. Wheee!' },
+    { who: 'jason', text: 'I can glide across the whole Ring with this!' },
+    { who: 'bolt', text: 'King Bloblin is on the island in the MIDDLE of the Ring. Climb the launch tower, follow the gold marker and glide over!' },
+  ],
+  pulse: [
+    { who: 'bolt', text: 'FORCE PULSE installed! Press PULSE and I blast out a shockwave. It knocks out every enemy around you!' },
+    { who: 'bolt', text: 'It also shorts out lasers for a few seconds. But it takes me a LONG time to recharge, so pick your moment.' },
+    { who: 'jason', text: 'Those laser walls don’t stand a chance.' },
+  ],
+  grapple: [
+    { who: 'bolt', text: 'A GRAPPLE HOOK! See the glowing rings? Look at one and press GRAPPLE to zip right over to it!' },
+    { who: 'bolt', text: 'It works over gaps, up cliffs, even across quicksand. If the ring glows bright, you can reach it.' },
+    { who: 'jason', text: 'Hold on to your antenna, LUX!' },
+  ],
+  mirror: [
+    { who: 'bolt', text: 'The Gardeners’ MIRROR SHIELD! It’s polished so bright, I can see all my scratches.' },
+    { who: 'bolt', text: 'HOLD the SPIN button to raise it. MEDUSA’s green gaze bounces right off it instead of turning you to stone!' },
+    { who: 'atalanta', text: 'And turn while you hold it up: the bounced beam goes where the shield points. Light a crystal with it!' },
+    { who: 'jason', text: 'A shield that bounces light. Just like Perseus in the old story!' },
+  ],
+};
+
+/**
+ * Said as a boss fight starts when the heroes have everything they need to talk it down instead (every
+ * memory shard, journal page or Gardener light-stone of the chapter).
+ */
+export const READY_TO_TALK: Record<Extract<BossKind, 'heart' | 'colossus' | 'goldenking'>, Line> = {
+  heart: { who: 'bolt', text: 'Jason, I know its light-words now! Get close to the Heart and press SPEAK!' },
+  colossus: { who: 'bolt', text: 'Jason, you read every page of his journal. You know who he really is. Get close and TALK to him!' },
+  goldenking: { who: 'iris', text: 'LUX, we know every Gardener word now. When this is over, we can speak to the Fleece itself!' },
+};
+
 /** Name cards for boss entrances. */
 export const BOSS_CARD: Record<BossKind, { sub: string; color: string }> = {
   warden: { sub: 'Cryo-bay guard robot · frozen and grumpy', color: '#7fe6ff' },
@@ -416,6 +460,25 @@ function musicCredits(): string {
   ].join('');
 }
 
+/**
+ * The voice-over (assets/voice/CREDITS.md): the speech engines that speak it, and whose recorded voices
+ * they speak in. Names stay untranslated.
+ */
+function voiceCredits(): string {
+  const row = (what: string, by: string) => `<p class="song">${what}<span>${by}</span></p>`;
+  return [
+    `<h3>${tr('VOICES')}</h3>`,
+    `<p class="thanks">${tr('The English voices are synthetic speech, made with:')}</p>`,
+    row('Pocket TTS', 'Kyutai · CC BY 4.0'),
+    row('Chatterbox', 'Resemble AI · MIT'),
+    `<p class="thanks">${tr('in voices generously shared by:')}</p>`,
+    row(tr('the volunteers of the Unmute Voice Donation Project'), 'Kyutai · CC0'),
+    row(tr('LibriVox readers, via Voice-Zero'), 'CC0'),
+    row(tr('the speakers of the VCTK corpus'), 'CSTR, University of Edinburgh · CC BY 4.0'),
+    row('Alba MacKenna', 'CC BY 4.0'),
+  ].join('');
+}
+
 function colonistNames(save: SaveData, ch: Chapter): string[] {
   const names: string[] = [];
   for (const id of CHAPTER_DECKS[ch]) {
@@ -474,6 +537,7 @@ export function creditsHtml(kind: EndingKind, save: SaveData): string {
     head('GARDENER LIGHT-STONES'),
     `<p>${tr('{n} of {total}', { n, total })}</p>`,
     musicCredits(),
+    voiceCredits(),
     head('CREATED BY'),
     `<p class="creator">${CREATOR.name}</p>`,
     `<h2>${tr('THE END')}</h2>`,
